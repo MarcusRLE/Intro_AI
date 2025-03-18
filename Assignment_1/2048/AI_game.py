@@ -7,7 +7,7 @@ import time
 from utils import Action
 import utils as ut
 
-depth = 2
+depth = 3
 reached_2048 = False
 reached_4096 = False
 screen_size = (480, 480)
@@ -38,6 +38,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            print("Average smoothness value: ", s.average_smooth_value())
         # if event.type == pygame.KEYDOWN:
         #     print("Key pressed")
         #     grid_copy = copy.deepcopy(grid_values)

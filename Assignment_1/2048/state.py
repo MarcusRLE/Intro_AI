@@ -1,19 +1,21 @@
 import copy
 from enum import Enum
+import math
 import random
 import utils as ut
 from utils import Action
 from typing import List
 
-a = 4
+a = 3.5
+b = 1.9
+smoothness_weight = 1
+total_smooth_value = 0
+smooth_called = 0
 
-#weight_matrix = [
-#    [a**15, a**8, a**7, a**0],
-#    [a**14, a**9, a**6, a**1],
-#    [a**13, a**10,  a**5, a**2],
-#    [a**12, a**11,  a**4, a**3]
-#]
-
+empty_weight_matrix = [[b**0, b**1, b**2, b**3],
+                       [b**7, b**6, b**5, b**4],
+                       [b**8, b**9, b**10, b**11],
+                       [b**15, b**14, b**13, b**12]]
 
 weight_matrix = [[a**15, a**14, a**13, a**12],
                  [a**8, a**9, a**10, a**11],
@@ -28,6 +30,25 @@ class Probability_State:
     def __init__(self, state, probability):
         self.state = state
         self.probability = probability
+
+def set_a(a_value):
+    global a
+    a = a_value
+
+def set_b(b_value):
+    global b
+    b = b_value
+
+def set_smoothness_weight(smoothness_weight_value):
+    global smoothness_weight
+    smoothness_weight = smoothness_weight_value
+
+def average_smooth_value():
+    global total_smooth_value
+    global smooth_called
+    if smooth_called == 0:
+        return 0
+    return total_smooth_value / smooth_called
 
 # return a list of Action
 def actions(s: State) -> List[Action]:
@@ -55,6 +76,7 @@ def chance_actions(s: State) -> List[Probability_State]:
                 possible_states.append(Probability_State(State(grid_with_4), 0.1))
     return possible_states
 
+
 def terminal_test(s: State) -> bool:
     # return True if the state is terminal
     for i in range(4):
@@ -63,27 +85,7 @@ def terminal_test(s: State) -> bool:
                 return True
     return False
 
-def utility(s: State) -> float:
-    # return the value of the state
-    numbers_as_list = []
-    for x in range(4):
-        if x % 2 == 0:
-            for y in range(4):
-                numbers_as_list.append(s.grid[x][y])
-        else:
-            for y in range(3, -1, -1):
-                numbers_as_list.append(s.grid[x][y])
-    
-    # calculate how ordered the list is (descending)
-    utility = 0
-    length = len(numbers_as_list)
-    for i in range(length):
-        if numbers_as_list[i] > numbers_as_list[i - 1]:
-            utility -= i - length
-    
-    return utility
-
-def utility2(s: State) -> float:
+def snake_heuristic(s: State) -> float:
     global weight_matrix
     utility = 0
     for i in range(4):
@@ -91,12 +93,51 @@ def utility2(s: State) -> float:
             utility += weight_matrix[i][j] * s.grid[i][j]
     return utility
 
+def empty_cells_heuristic(s: State) -> float:
+    global empty_weight_matrix
+    utility = 0
+    for i in range(4):
+        for j in range(4):
+            if s.grid[i][j] == 0:
+                utility += empty_weight_matrix[i][j]
+    return utility
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+def smoothness_heuristic(s: State) -> float:
+    smoothness = 0
+    for i in range(4):
+        for j in range(4):
+            if s.grid[i][j] != 0:
+                if i > 0 and s.grid[i - 1][j] != 0:
+                    smoothness -= abs(s.grid[i][j] - s.grid[i - 1][j])
+                if i < 3 and s.grid[i + 1][j] != 0:
+                    smoothness -= abs(s.grid[i][j] - s.grid[i + 1][j])
+                if j > 0 and s.grid[i][j - 1] != 0:
+                    smoothness -= abs(s.grid[i][j] - s.grid[i][j - 1])
+                if j < 3 and s.grid[i][j + 1] != 0:
+                    smoothness -= abs(s.grid[i][j] - s.grid[i][j + 1])
+    utility = smoothness_weight ** smoothness
+    global total_smooth_value
+    global smooth_called
+    total_smooth_value += utility
+    smooth_called += 1
+    return utility
+
+def utility(s: State) -> float:
+    utility = 0
+    #utility += snake_heuristic(s)
+    utility += empty_cells_heuristic(s)
+    #utility *= smoothness_heuristic(s)
+    return utility
+
 def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
     # return the best action
     
     # if the depth is 0 or the state is terminal, return the utility of the state
     if depth == 0:
-        return utility2(s)
+        return utility(s)
     
     # if the player is the maximizing player
     if isMaxPlayer:
@@ -104,7 +145,6 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
         possible_actions = actions(s)
         for a in possible_actions:
             value = max(value, expectimax(result(s, a), depth - 1, False))
-        # print("Depth to go:", depth, "  -  Call from Max Player with value: ", value)
         return value
     # if calculate eval based on probability
     else:
@@ -112,32 +152,26 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
         possibilities = chance_actions(s)
         for a in possibilities:
             value += a.probability * expectimax(a.state, depth - 1, True)
-        # print("Depth to go:", depth, "  -  Call from probability with value: ", value)
         return value / len(possibilities)
     
 def best_action(s: State, depth: int) -> Action:
-    # print("\n----------------------------------\n")
-    # print("Current grid:")
-    # ut.print_grid(s.grid)
-    best_action = Action.UP
+    best_action = None
     best_value = -float('inf')
-    actions_list = actions(s)
-    # actions_str = "Possbilie actions: \n"
-    # for a in actions_list:
-    #    actions_str += a.name + "  -  "
-    # print("\nPossible actions: ", actions_str)
-    for a in actions(s):
-        # print("\nAction: ", a)
-        # print("Resulting grid:")
-        # ut.print_grid(result(s, a).grid)
+    possible_actions = actions(s)
+    actions_str = ""
+    for a in possible_actions:
+        actions_str += str(a) + ""
         s_copy = copy.deepcopy(s)
-        act_value = utility2(result(s_copy, a))
         value = expectimax(result(s_copy, a), depth, False)
-        # print("Actual Value: ", act_value)
-        # print("Expectimax Value: ", value)
+        actions_str += " with value: " + str(value) + " "
         if value > best_value:
             best_value = value
             best_action = a
+        if value == best_value:
+            if random.randint(0, 1) == 0:
+                best_action = a
+    # print("Actions: ", actions_str)
+    # print("Best actions: ", best_action)
     return best_action
 
 def random_action() -> Action:
