@@ -7,6 +7,9 @@ import time
 from utils import Action
 import utils as ut
 
+
+reached_2048 = False
+reached_4096 = False
 screen_size = (480, 480)
 grid_values = [[0, 0, 0, 0],
                 [0, 0, 0, 0],
@@ -29,6 +32,7 @@ screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 running = True
 game_over = False
+start_time = time.time()
 
 while running:
     for event in pygame.event.get():
@@ -91,7 +95,17 @@ while running:
                 elif grid_values[y][x] == 1024:
                     color = "light green"
                 elif grid_values[y][x] == 2048:
+                    if(reached_2048 == False):
+                        reached_2048 = True
+                        time_2048 = time.time()
+                        print("Time taken to reach 2048: ", time_2048 - start_time)
                     color = "dark green"
+                elif grid_values[y][x] == 4096:
+                    if(reached_4096 == False):
+                        reached_4096 = True
+                        time_4096 = time.time()
+                        print("Time taken to reach 4096: ", time_4096 - start_time)
+                    color = "white"
                 pygame.draw.rect(screen, color, (x * 120 + 5, y * 120 + 5, 110, 110))
                 font = pygame.font.Font(None, 36)
                 text = font.render(str(grid_values[y][x]), True, "black")
