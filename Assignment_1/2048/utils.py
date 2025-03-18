@@ -36,23 +36,23 @@ def transpose(grid):
     return [list(row) for row in zip(*grid)]
 
 def move_direction(grid: list[list[int]], direction: Action) -> list[list[int]]:
-    if direction == Action.UP:
+    if direction == Action.LEFT:
         grid = compress(grid)
         grid = merge(grid)
         grid = compress(grid)
-    elif direction == Action.DOWN:
-        grid = reverse(grid)
-        grid = compress(grid)
-        grid = merge(grid)
-        grid = compress(grid)
-        grid = reverse(grid)
-    elif direction == Action.LEFT:
-        grid = transpose(grid)
-        grid = compress(grid)
-        grid = merge(grid)
-        grid = compress(grid)
-        grid = transpose(grid)
     elif direction == Action.RIGHT:
+        grid = reverse(grid)
+        grid = compress(grid)
+        grid = merge(grid)
+        grid = compress(grid)
+        grid = reverse(grid)
+    elif direction == Action.UP:
+        grid = transpose(grid)
+        grid = compress(grid)
+        grid = merge(grid)
+        grid = compress(grid)
+        grid = transpose(grid)
+    elif direction == Action.DOWN:
         grid = transpose(grid)
         grid = reverse(grid)
         grid = compress(grid)
@@ -66,7 +66,7 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
     """Returns True if the grid can be moved in the specified direction."""
     return grid != move_direction(grid, direction)
 
-def print_grid(grid: list[list[int]]) -> None:
-    """Prints the grid to the console."""
-    for row in grid:
-        print(row)
+# def print_grid(grid: list[list[int]]) -> None:
+#     """Prints the grid to the console."""
+#     for row in grid:
+#         print(row)
