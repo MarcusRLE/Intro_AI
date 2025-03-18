@@ -115,7 +115,7 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
         # print("Depth to go:", depth, "  -  Call from probability with value: ", value)
         return value / len(possibilities)
     
-def best_action(s: State) -> Action:
+def best_action(s: State, depth: int) -> Action:
     # print("\n----------------------------------\n")
     # print("Current grid:")
     # ut.print_grid(s.grid)
@@ -132,7 +132,7 @@ def best_action(s: State) -> Action:
         # ut.print_grid(result(s, a).grid)
         s_copy = copy.deepcopy(s)
         act_value = utility2(result(s_copy, a))
-        value = expectimax(result(s_copy, a), 4, False)
+        value = expectimax(result(s_copy, a), depth, False)
         # print("Actual Value: ", act_value)
         # print("Expectimax Value: ", value)
         if value > best_value:

@@ -7,7 +7,7 @@ import time
 from utils import Action
 import utils as ut
 
-
+depth = 2
 reached_2048 = False
 reached_4096 = False
 screen_size = (480, 480)
@@ -33,7 +33,7 @@ clock = pygame.time.Clock()
 running = True
 game_over = False
 start_time = time.time()
-
+print("Playing with search depth: ", depth)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -51,7 +51,7 @@ while running:
 
 
     grid_copy = copy.deepcopy(grid_values)
-    action = s.best_action(s.State(grid_copy))
+    action = s.best_action(s.State(grid_copy), depth)
     # print("Action: ", action)
     new_grid = ut.move_direction(grid=grid_values, direction=action)
     if new_grid != grid_values:
