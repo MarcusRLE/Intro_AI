@@ -8,10 +8,10 @@ from utils import Action
 import utils as ut
 
 screen_size = (480, 480)
-grid_values = [[0, 0, 0, 4],
+grid_values = [[0, 0, 0, 0],
                 [0, 0, 0, 0],
                 [0, 0, 0, 0],
-                [8, 0, 0, 0]]
+                [0, 0, 0, 0]]
 
 def add_new_value():
     random_i = random.randint(0, 3)
