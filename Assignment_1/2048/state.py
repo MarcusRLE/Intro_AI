@@ -5,6 +5,7 @@ import random
 import utils as ut
 from utils import Action
 from typing import List
+import time
 
 a = 3.5
 b = 1.9
@@ -23,13 +24,34 @@ weight_matrix = [[a**15, a**14, a**13, a**12],
                  [a**0, a**1, a**2, a**3]]
 
 class State:
+    util_val = None
+    has_util_val = False
+
     def __init__(self, grid):
         self.grid = grid
+    
+    def set_util_val(self, val):
+        self.util_val = val
+        self.has_util_val = True
+
+    def add_util_val(self, val):
+        self.util_val += val
+
+    def get_util_val(self):
+        return self.util_val
+    
+    def has_utility(self):
+        return self.has_util_val
+    
+
+    
+
 
 class Probability_State:
-    def __init__(self, state, probability):
+    def __init__(self, state, probability, added_utility):
         self.state = state
         self.probability = probability
+        self.added_utility = added_utility
 
 def set_a(a_value):
     global a
@@ -54,28 +76,37 @@ def average_smooth_value():
 def actions(s: State) -> List[Action]:
     possible_actions = []
     for action in Action:
-        grid_copy = copy.deepcopy(s.grid)
-        if ut.can_move(grid_copy, action):
+        grid_copy = [row[:] for row in s.grid]
+        if ut.can_move(s.grid, action):
             possible_actions.append(action)
     return possible_actions
 
 def result(s: State, a: Action) -> State:
-    new_state = copy.deepcopy(s)
-    return State(ut.move_direction(grid=new_state.grid, direction=a))
+    new_state_grid = [row[:] for row in s.grid]
+    return State(ut.move_direction(grid=new_state_grid, direction=a))
     
 def chance_actions(s: State) -> List[Probability_State]:
     possible_states = []
+    current_state_util = 0
     for i in range(4):
         for j in range(4):
             if s.grid[i][j] == 0:
-                grid_with_2 = copy.deepcopy(s.grid)
-                grid_with_4 = copy.deepcopy(s.grid)
-                grid_with_2[i][j] = 2
-                grid_with_4[i][j] = 4
-                possible_states.append(Probability_State(State(grid_with_2), 0.9))
-                possible_states.append(Probability_State(State(grid_with_4), 0.1))
+                # Create a shallow copy of the grid for efficiency
+                new_grid_2 = [row[:] for row in s.grid]
+                new_grid_4 = [row[:] for row in s.grid]
+                
+                new_grid_2[i][j] = 2
+                new_grid_4[i][j] = 4
+
+                possible_states.append(Probability_State(State(new_grid_2), 0.9, utility_by_idx(i, j, 2)))
+                possible_states.append(Probability_State(State(new_grid_4), 0.1, utility_by_idx(i, j, 4)))
+            else:
+                current_state_util += utility_by_idx(i, j, s.grid[i][j])
+    s.set_util_val(current_state_util)
     return possible_states
 
+def utility_by_idx(i,j, cell_value) -> float:
+    return weight_matrix[i][j] * cell_value
 
 def terminal_test(s: State) -> bool:
     # return True if the state is terminal
@@ -137,6 +168,8 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
     
     # if the depth is 0 or the state is terminal, return the utility of the state
     if depth == 0:
+        if(s.has_utility()):
+            return s.get_util_val()
         return utility(s)
     
     # if the player is the maximizing player
@@ -151,6 +184,7 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
         value = 0
         possibilities = chance_actions(s)
         for a in possibilities:
+            a.state.set_util_val(s.get_util_val() + a.added_utility)
             value += a.probability * expectimax(a.state, depth - 1, True)
         return value / len(possibilities)
     

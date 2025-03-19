@@ -7,7 +7,7 @@ import time
 from utils import Action
 import utils as ut
 
-depth = 3
+depth = 4
 reached_2048 = False
 reached_4096 = False
 screen_size = (480, 480)
