@@ -74,10 +74,30 @@ def move_direction_bool_points(grid: list[list[int]], direction: Action):
     return grid, has_2048, total_points
 
 def can_move(grid: list[list[int]], direction: Action) -> bool:
-    """Returns True if the grid can be moved in the specified direction."""
-    return grid != move_direction(grid, direction)
-
-# def print_grid(grid: list[list[int]]) -> None:
-#     """Prints the grid to the console."""
-#     for row in grid:
-#         print(row)
+    def can_merge_or_shift(line: list[int]) -> bool:
+        """Check if a row or column can be moved by shifting or merging."""
+        for i in range(3):
+            if line[i] == line[i + 1] and line[i] != 0:
+                return True  # Merge is possible
+            if line[i] == 0 and line[i + 1] != 0:
+                return True  # Shift is possible
+        return False
+    
+    if direction == Action.LEFT:
+        for row in grid:
+            if can_merge_or_shift(row):
+                return True
+    elif direction == Action.RIGHT:
+        for row in grid:
+            if can_merge_or_shift(row[::-1]):  # Check reversed row
+                return True
+    elif direction == Action.UP:
+        for col in range(4):
+            if can_merge_or_shift([grid[row][col] for row in range(4)]):
+                return True
+    elif direction == Action.DOWN:
+        for col in range(4):
+            if can_merge_or_shift([grid[row][col] for row in range(3, -1, -1)]):  # Check reversed column
+                return True
+    
+    return False

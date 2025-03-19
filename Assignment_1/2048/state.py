@@ -127,8 +127,8 @@ def smoothness_heuristic(s: State) -> float:
 
 def utility(s: State) -> float:
     utility = 0
-    #utility += snake_heuristic(s)
-    utility += empty_cells_heuristic(s)
+    utility += snake_heuristic(s)
+    #utility += empty_cells_heuristic(s)
     #utility *= smoothness_heuristic(s)
     return utility
 

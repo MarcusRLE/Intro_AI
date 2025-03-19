@@ -64,7 +64,7 @@ while running:
     if not game_over:
         game_over = True
         for action in Action:
-            if ut.move_direction(grid_values, action) != grid_values:
+            if ut.can_move(grid_values, action):
                 game_over = False
                 break
         
