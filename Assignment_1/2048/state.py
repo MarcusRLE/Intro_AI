@@ -11,7 +11,7 @@ a = 3.5
 b = 1.9
 
 use_snake = True
-use_empty_cell = True
+use_empty_cell = False
 
 empty_weight_matrix = [[b**0, b**1, b**2, b**3],
                        [b**7, b**6, b**5, b**4],
