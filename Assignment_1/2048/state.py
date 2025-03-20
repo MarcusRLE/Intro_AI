@@ -9,9 +9,6 @@ import time
 
 a = 3.5
 b = 1.9
-smoothness_weight = 1
-total_smooth_value = 0
-smooth_called = 0
 
 use_snake = True
 use_empty_cell = False
@@ -46,70 +43,23 @@ class State:
     def has_utility(self):
         return self.has_util_val
     
-
-    
-
-
-class Probability_State:
-    def __init__(self, state, probability, added_utility):
-        self.state = state
+class New_idx:
+    def __init__(self, i, j, cell_value, probability):
+        self.i = i
+        self.j = j
+        self.cell_value = cell_value
         self.probability = probability
-        self.added_utility = added_utility
-
-def set_a(a_value):
-    global a
-    a = a_value
-
-def set_b(b_value):
-    global b
-    b = b_value
-
-def set_smoothness_weight(smoothness_weight_value):
-    global smoothness_weight
-    smoothness_weight = smoothness_weight_value
-
-def average_smooth_value():
-    global total_smooth_value
-    global smooth_called
-    if smooth_called == 0:
-        return 0
-    return total_smooth_value / smooth_called
 
 # return a list of Action
 def actions(s: State) -> List[Action]:
     possible_actions = []
     for action in Action:
-        grid_copy = [row[:] for row in s.grid]
         if ut.can_move(s.grid, action):
             possible_actions.append(action)
     return possible_actions
 
 def result(s: State, a: Action) -> State:
-    new_state_grid = [row[:] for row in s.grid]
-    return State(ut.move_direction(grid=new_state_grid, direction=a))
-    
-def chance_actions(s: State) -> List[Probability_State]:
-    possible_states = []
-    current_state_util = 0
-    for i in range(4):
-        for j in range(4):
-            if s.grid[i][j] == 0:
-                # Create a shallow copy of the grid for efficiency
-                new_grid_2 = [row[:] for row in s.grid]
-                new_grid_4 = [row[:] for row in s.grid]
-                
-                new_grid_2[i][j] = 2
-                new_grid_4[i][j] = 4
-
-                possible_states.append(Probability_State(State(new_grid_2), 0.9, utility_by_idx(i, j, 2)))
-                possible_states.append(Probability_State(State(new_grid_4), 0.1, utility_by_idx(i, j, 4)))
-            else:
-                current_state_util += utility_by_idx(i, j, s.grid[i][j])
-    s.set_util_val(current_state_util)
-    return possible_states
-
-def utility_by_idx(i,j, cell_value) -> float:
-    return weight_matrix[i][j] * cell_value
+    return State(ut.move_direction(grid=s.grid.copy(), direction=a))
 
 def terminal_test(s: State) -> bool:
     # return True if the state is terminal
@@ -118,26 +68,6 @@ def terminal_test(s: State) -> bool:
             if s.grid[i][j] == 2048:
                 return True
     return False
-
-def snake_heuristic(s: State) -> float:
-    global weight_matrix
-    utility = 0
-    for i in range(4):
-        for j in range(4):
-            utility += weight_matrix[i][j] * s.grid[i][j]
-    return utility
-
-def empty_cells_heuristic(s: State) -> float:
-    global empty_weight_matrix
-    utility = 0
-    for i in range(4):
-        for j in range(4):
-            if s.grid[i][j] == 0:
-                utility += empty_weight_matrix[i][j]
-    return utility
-
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
 
 def smoothness_heuristic(s: State) -> float:
     smoothness = 0
@@ -161,7 +91,9 @@ def smoothness_heuristic(s: State) -> float:
 
 def utility(s: State) -> float:
     utility = 0
-    utility += snake_heuristic(s)
+    for i in range(4):
+        for j in range(4):
+            utility += utility_by_idx(i, j, s.grid[i][j], use_snake, use_empty_cell)
     #utility += empty_cells_heuristic(s)
     #utility *= smoothness_heuristic(s)
     return utility
