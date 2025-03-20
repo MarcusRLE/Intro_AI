@@ -59,43 +59,13 @@ def actions(s: State) -> List[Action]:
     return possible_actions
 
 def result(s: State, a: Action) -> State:
-    return State(ut.move_direction(grid=s.grid.copy(), direction=a))
-
-def terminal_test(s: State) -> bool:
-    # return True if the state is terminal
-    for i in range(4):
-        for j in range(4):
-            if s.grid[i][j] == 2048:
-                return True
-    return False
-
-def smoothness_heuristic(s: State) -> float:
-    smoothness = 0
-    for i in range(4):
-        for j in range(4):
-            if s.grid[i][j] != 0:
-                if i > 0 and s.grid[i - 1][j] != 0:
-                    smoothness -= abs(s.grid[i][j] - s.grid[i - 1][j])
-                if i < 3 and s.grid[i + 1][j] != 0:
-                    smoothness -= abs(s.grid[i][j] - s.grid[i + 1][j])
-                if j > 0 and s.grid[i][j - 1] != 0:
-                    smoothness -= abs(s.grid[i][j] - s.grid[i][j - 1])
-                if j < 3 and s.grid[i][j + 1] != 0:
-                    smoothness -= abs(s.grid[i][j] - s.grid[i][j + 1])
-    utility = smoothness_weight ** smoothness
-    global total_smooth_value
-    global smooth_called
-    total_smooth_value += utility
-    smooth_called += 1
-    return utility
+    return State(ut.move_direction(grid=s.grid, direction=a))
 
 def utility(s: State) -> float:
     utility = 0
     for i in range(4):
         for j in range(4):
             utility += utility_by_idx(i, j, s.grid[i][j], use_snake, use_empty_cell)
-    #utility += empty_cells_heuristic(s)
-    #utility *= smoothness_heuristic(s)
     return utility
 
 def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
@@ -151,23 +121,20 @@ def new_idx(s: State) -> list[New_idx]:
     return new_idx_list
 
 def best_action(s: State, depth: int) -> Action:
+    depth = depth - (depth % 2)
     best_action = None
     best_value = -float('inf')
     possible_actions = actions(s)
     actions_str = ""
     for a in possible_actions:
         actions_str += str(a) + ""
-        s_copy = copy.deepcopy(s)
-        value = expectimax(result(s_copy, a), depth, False)
-        actions_str += " with value: " + str(value) + " "
+        value = expectimax(result(s, a), depth, False)
         if value > best_value:
             best_value = value
             best_action = a
         if value == best_value:
             if random.randint(0, 1) == 0:
                 best_action = a
-    # print("Actions: ", actions_str)
-    # print("Best actions: ", best_action)
     return best_action
 
 def random_action() -> Action:

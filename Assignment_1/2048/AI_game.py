@@ -38,22 +38,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            print("Average smoothness value: ", s.average_smooth_value())
-        # if event.type == pygame.KEYDOWN:
-        #     print("Key pressed")
-        #     grid_copy = copy.deepcopy(grid_values)
-        #     action = s.best_action(s.State(grid_copy))
-        #     print("\nChosen action: ", action)
-        #     new_grid = ut.move_direction(grid=grid_values, direction=action)
-        #     if new_grid != grid_values:
-        #         grid_values = new_grid
-        #         add_new_value()
 
 
 
-    grid_copy = copy.deepcopy(grid_values)
-    action = s.best_action(s.State(grid_copy), depth)
-    # print("Action: ", action)
+    action = s.best_action(s.State(grid_values), depth)
     new_grid = ut.move_direction(grid=grid_values, direction=action)
     if new_grid != grid_values:
         grid_values = new_grid
