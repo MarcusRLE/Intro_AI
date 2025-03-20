@@ -75,7 +75,25 @@ def move_direction_bool_points(grid: list[list[int]], direction: Action):
 
 def can_move(grid: list[list[int]], direction: Action) -> bool:
     def can_merge_or_shift(line: list[int]) -> bool:
+        current_num = None
+        non_zero_found = False
         """Check if a row or column can be moved by shifting or merging."""
+        for i in range(4):
+            if line[i] != 0:
+                non_zero_found = True
+                if current_num is None:
+                    current_num = line[i]
+                else:
+                    if current_num == line[i]:
+                        # Can merge
+                        return True
+                    if current_num != line[i]:
+                        current_num = line[i]
+            else:
+                if non_zero_found:
+                    # Can shift
+                    return True
+        return False
         for i in range(3):
             if line[i] == line[i + 1] and line[i] != 0:
                 return True  # Merge is possible
@@ -83,19 +101,19 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
                 return True  # Shift is possible
         return False
     
-    if direction == Action.LEFT:
+    if direction == Action.RIGHT:
         for row in grid:
             if can_merge_or_shift(row):
                 return True
-    elif direction == Action.RIGHT:
+    elif direction == Action.LEFT:
         for row in grid:
             if can_merge_or_shift(row[::-1]):  # Check reversed row
                 return True
-    elif direction == Action.UP:
+    elif direction == Action.DOWN:
         for col in range(4):
             if can_merge_or_shift([grid[row][col] for row in range(4)]):
                 return True
-    elif direction == Action.DOWN:
+    elif direction == Action.UP:
         for col in range(4):
             if can_merge_or_shift([grid[row][col] for row in range(3, -1, -1)]):  # Check reversed column
                 return True
