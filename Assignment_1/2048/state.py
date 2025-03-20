@@ -13,6 +13,9 @@ smoothness_weight = 1
 total_smooth_value = 0
 smooth_called = 0
 
+use_snake = True
+use_empty_cell = False
+
 empty_weight_matrix = [[b**0, b**1, b**2, b**3],
                        [b**7, b**6, b**5, b**4],
                        [b**8, b**9, b**10, b**11],
@@ -182,12 +185,39 @@ def expectimax(s: State, depth: int, isMaxPlayer: bool) -> float:
     # if calculate eval based on probability
     else:
         value = 0
-        possibilities = chance_actions(s)
-        for a in possibilities:
-            a.state.set_util_val(s.get_util_val() + a.added_utility)
-            value += a.probability * expectimax(a.state, depth - 1, True)
-        return value / len(possibilities)
-    
+        new_idx_list = new_idx(s)
+        for a in new_idx_list:
+            i = a.i
+            j = a.j
+            old_cell_value = s.grid[i][j]
+            s.grid[i][j] = a.cell_value
+            s.add_util_val(utility_by_idx(i, j, a.cell_value, use_snake, use_empty_cell))
+            temp_value = expectimax(s, depth - 1, True)
+            value += a.probability * temp_value
+            s.grid[i][j] = old_cell_value
+        return value / len(new_idx_list)
+
+def utility_by_idx(i,j, cell_value, snake: bool, empty_cells: bool) -> float:
+    utility = 0
+    if empty_cells & cell_value == 0:
+        utility += empty_weight_matrix[i][j]
+    if snake:
+        utility += weight_matrix[i][j] * cell_value
+    return utility
+
+def new_idx(s: State) -> list[New_idx]:
+    new_idx_list = []
+    current_state_util = 0
+    for i in range(4):
+        for j in range(4):
+            if s.grid[i][j] == 0:
+                new_idx_list.append(New_idx(i, j, 2, 0.9))
+                new_idx_list.append(New_idx(i, j, 4, 0.1))
+            else:
+                current_state_util += utility_by_idx(i, j, s.grid[i][j], use_snake, use_empty_cell)
+    s.set_util_val(current_state_util)
+    return new_idx_list
+
 def best_action(s: State, depth: int) -> Action:
     best_action = None
     best_value = -float('inf')
