@@ -2,10 +2,10 @@ import random
 from enum import Enum
 
 class Action(Enum):
-    UP = "up"
-    DOWN = "down"
-    LEFT = "left"
-    RIGHT = "right"
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
 
 def compress(grid):
     """Moves all nonzero values to the left side without merging."""
@@ -119,3 +119,13 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
                 return True
     
     return False
+
+def add_new_value(grid):
+    random_i = random.randint(0, 3)
+    random_j = random.randint(0, 3)
+    random_value = random.randint(1, 10) == 1 and 4 or 2
+    while grid[random_i][random_j] != 0:
+        random_i = random.randint(0, 3)
+        random_j = random.randint(0, 3)
+    grid[random_i][random_j] = random_value
+
