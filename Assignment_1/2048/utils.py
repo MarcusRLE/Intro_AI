@@ -100,7 +100,7 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
             if line[i] == 0 and line[i + 1] != 0:
                 return True  # Shift is possible
         return False
-    
+
     if direction == Action.RIGHT:
         for row in grid:
             if can_merge_or_shift(row):
@@ -117,7 +117,6 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
         for col in range(4):
             if can_merge_or_shift([grid[row][col] for row in range(3, -1, -1)]):  # Check reversed column
                 return True
-    
     return False
 
 def add_new_value(grid):

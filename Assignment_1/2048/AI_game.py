@@ -3,14 +3,14 @@ import time
 from utils import *
 from state import *
 
-DEPTH = 3
-SCREEN_SIZE = (480, 480)
-GAME_STATE = State([[0, 0, 0, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 0, 0]])
-
 def main():
+    DEPTH = 3
+    SCREEN_SIZE = (480, 480)
+    GAME_STATE = State([[0, 0, 0, 0],
+                        [0, 0, 0, 0],
+                        [0, 0, 0, 0],
+                        [0, 0, 0, 0]])
+
     reached_2048 = False
     reached_4096 = False
 
@@ -34,7 +34,7 @@ def main():
                 # Turn profiling off
 
         action = best_action(GAME_STATE, DEPTH)
-        new_grid = ut.move_direction(grid=GAME_STATE.grid, direction=action)
+        new_grid = move_direction(grid=GAME_STATE.grid, direction=action)
         if new_grid != GAME_STATE.grid:
             GAME_STATE.grid = new_grid
             add_new_value(GAME_STATE.grid)
@@ -43,7 +43,7 @@ def main():
         if not game_over:
             game_over = True
             for action in Action:
-                if ut.can_move(GAME_STATE.grid, action):
+                if can_move(GAME_STATE.grid, action):
                     game_over = False
                     break
 
@@ -87,7 +87,7 @@ def main():
                 else:
                     pygame.draw.rect(SCREEN, "white", (x * 120 + 5, y * 120 + 5, 110, 110))
 
-                text = FONT.render(f"{GAME_STATE.grid[y][x]}", True, "black")
+                text = FONT.render(str(GAME_STATE.grid[y][x]), True, "black")
                 text_rect = text.get_rect(center=(x * 120 + 60, y * 120 + 60))
                 SCREEN.blit(text, text_rect)
 
