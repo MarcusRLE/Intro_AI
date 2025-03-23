@@ -4,7 +4,7 @@ from utils import *
 from state import *
 
 class Game:
-    def __init__(self, depth):
+    def __init__(self, depth, a, b, use_snake, use_empty_cell):
         self.depth = depth
 
         self.SCREEN_SIZE = (480, 480)
@@ -20,7 +20,7 @@ class Game:
         self.running = True
         self.game_over = False
 
-        self.ai = AI(a=3.5, b=1.9, use_snake=True, use_empty_cell=False)
+        self.ai = AI(a, b, use_snake, use_empty_cell)
 
         pygame.init()
         self.FONT = pygame.font.Font(None, 36)
@@ -105,6 +105,6 @@ class Game:
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-game = Game(depth=3)
+game = Game(depth=4, a=3.5, b=1.9, use_snake=True, use_empty_cell=False)
 game.run()
 
