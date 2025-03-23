@@ -7,6 +7,9 @@ class Action(Enum):
     LEFT = 2
     RIGHT = 3
 
+def random_action() -> Action:
+    return Action(random.randint(0, 3))
+
 def compress(grid):
     """Moves all nonzero values to the left side without merging."""
     has_2048 = False

@@ -20,6 +20,8 @@ class Game:
         self.running = True
         self.game_over = False
 
+        self.ai = AI()
+
         pygame.init()
         self.FONT = pygame.font.Font(None, 36)
         self.SCREEN = pygame.display.set_mode(self.SCREEN_SIZE)
@@ -36,7 +38,7 @@ class Game:
                     # print("Average smoothness value: ", average_smooth_value())
                     # Turn profiling off
 
-            action = best_action(self.GAME_STATE, self.depth)
+            action = self.ai.best_action(self.GAME_STATE, self.depth)
             new_grid = move_direction(grid=self.GAME_STATE.grid, direction=action)
             if new_grid != self.GAME_STATE.grid:
                 self.GAME_STATE.grid = new_grid
