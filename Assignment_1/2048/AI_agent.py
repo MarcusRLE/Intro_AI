@@ -5,7 +5,7 @@ from typing import List
 class State:
     def __init__(self, grid):
         self.grid = grid
-        self.util_val = 0.0
+        self.util_val = None
 
 class New_idx:
     def __init__(self, x, y, cell_value, probability):
@@ -35,17 +35,8 @@ class AI:
     # Parameters: s: State (the current state of the game), depth: int (the depth of the search tree)
     # Returns: Action (the best action to take)
     def get_best_action(self, s: State, depth: int):
-        possible_actions = self.get_possible_actions(s)
-        if len(possible_actions) == 0: return None
-        best_value = -float('inf')
-        best_action = possible_actions[0]
-        for a in possible_actions:
-            s_copy = copy.deepcopy(s)
-            res = self.result(s_copy, a)
-            value = self.expectimax(res, depth, False)
-            if value > best_value:
-                best_value = value
-                best_action = a
+        depth = depth - (1 - (depth % 2))
+        _, best_action = self.expectimax(s, depth, True)
         return best_action
 
     # Function to get the possible actions from a state.
@@ -58,34 +49,49 @@ class AI:
                 possible_actions.append(action)
         return possible_actions
 
-    def expectimax(self, s: State, depth: int, isMaxPlayer: bool) -> float:
-        # if the depth is 0 or the state is terminal, return the utility of the state
+
+    # Function to get the best action using expectimax algorithm
+    # Parameters: s: State (the current state of the game), depth: int (the depth of the search tree), isMaxPlayer: bool (whether the player is the maximizing player)
+    # Returns: float (the best value), Action (the best action)
+    def expectimax(self, s: State, depth: int, isMaxPlayer: bool):
+
+        # If depth is reached, return the utility value of the state
         if depth == 0:
-            if(s.util_val != None):
-                return s.util_val
-            return self.utility(s)
-        # if the player is the maximizing player
+            if s.util_val != None:
+                return s.util_val, None
+            return self.utility(s), None
+
         if isMaxPlayer:
             value = -float('inf')
+            best_action = None
             possible_actions = self.get_possible_actions(s)
-            for i in possible_actions:
-                res = self.result(s, i)
-                # s.children.append(res)
-                value = max(value, self.expectimax(res, depth - 1, False))
-            return value
-        # if calculate eval based on probability
+            for a in possible_actions:
+                res = self.result(s, a)
+                temp_value, _ = self.expectimax(res, depth - 1, False)
+                if temp_value > value:
+                    value = temp_value
+                    best_action = a
+            return value, best_action
         else:
-            # TODO: improve this?
             idx_list = self.get_idx_list(s)
-            if idx_list == []: return s.util_val
+            if idx_list == []: return s.util_val, None
             value = 0
             for i in idx_list:
                 old_cell_value = s.grid[i.y][i.x]
+
+                # Update the state by adding the new cell value to the cell and adding the utility value of the cell to the state
                 s.grid[i.y][i.x] = i.cell_value
                 s.util_val += self.utility_by_idx(i.x, i.y, i.cell_value)
-                value += i.probability * self.expectimax(s, depth - 1, True)
+
+                # Calculate the value of the state and add it to the total value
+                temp_value, _ = self.expectimax(s, depth - 1, True)
+                value += i.probability * temp_value
+
+                # Reset original state by removing the utility value of the cell from the state and setting the cell value to the original value
+                s.util_val -= self.utility_by_idx(i.x, i.y, i.cell_value)
                 s.grid[i.y][i.x] = old_cell_value
-            return value / len(idx_list)
+                
+            return value / len(idx_list), None
 
     # Heuristic function to calculate 'smoothness' of a state
     # Parameters: s: State (the state of the game)
@@ -124,9 +130,9 @@ class AI:
     def utility_by_idx(self, x, y, cell_value) -> float:
         utility = 0
         if self.EMPTY_CELL_HEU and cell_value == 0:
-            utility += self.EMPTY_WEIGHT_MATRIX[y][x]
+            utility += self.EMPTY_WEIGHT_MATRIX[x][y]
         if self.SNAKE_HEU:
-            utility += self.WEIGHT_MATRIX[y][x] * cell_value
+            utility += self.WEIGHT_MATRIX[x][y] * cell_value
         # if cell_value == 0:
         #     utility += 1
         return utility
@@ -143,7 +149,9 @@ class AI:
                     new_idx_list.append(New_idx(x, y, 2, 0.9))
                     new_idx_list.append(New_idx(x, y, 4, 0.1))
                 else:
+                    # Calculate the utility of the current state
                     current_state_util += self.utility_by_idx(x, y, s.grid[y][x])
+        # Set the utility value of the current state
         s.util_val = current_state_util
         return new_idx_list
 
