@@ -1,7 +1,7 @@
 import pygame
 import time
 from utils import *
-from state import *
+from AI_agent import *
 
 pygame.init()
 
@@ -39,7 +39,11 @@ class Game:
                     # Turn profiling off
 
             action = self.ai.get_best_action(self.GAME_STATE, self.depth)
-            assert(action != None)
+            # assert(action != None)
+            if action == None:
+                self.game_over = True
+                self.running = False
+                return self.points, self.reached_2048, self.reached_4096
             new_grid, has_2048, points = move_direction_bool_points(grid=self.GAME_STATE.grid, direction=action)
             self.reached_2048 = has_2048
             self.points += points
@@ -111,7 +115,7 @@ class Game:
             # self.CLOCK.tick(60)
 
 for _ in range(0, 10):
-    game = Game(depth=5, a=2, b=2, snake_heu=True, empty_cell_heu=True, smoothness_heu=True)
+    game = Game(depth=3, a=2, b=2, snake_heu=True, empty_cell_heu=True, smoothness_heu=True)
     highscore, reached_2048, reached_4096 = game.run()
     print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
 
