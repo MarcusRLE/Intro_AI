@@ -111,7 +111,7 @@ class Game:
             # self.CLOCK.tick(60)
 
 for _ in range(0, 10):
-    game = Game(depth=4, a=2, b=2, use_snake=True, use_empty_cell=True)
+    game = Game(depth=3, a=2, b=2, use_snake=True, use_empty_cell=True)
     succeeded = game.run()
     print("Succeeded:", succeeded)
 
