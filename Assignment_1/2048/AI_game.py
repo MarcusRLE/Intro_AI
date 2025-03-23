@@ -6,13 +6,13 @@ from state import *
 pygame.init()
 
 class Game:
-    def __init__(self, depth, a, b, use_snake, use_empty_cell):
+    def __init__(self, depth, a, b, snake_heu, empty_cell_heu, smoothness_heu):
 
         self.reached_2048 = False
         self.reached_4096 = False
         self.running = True
         self.game_over = False
-        self.ai = AI(a, b, use_snake, use_empty_cell)
+        self.ai = AI(a, b, snake_heu, empty_cell_heu, smoothness_heu)
         self.start_time = time.time()
         self.depth = depth
         self.GAME_STATE = State([[0, 0, 0, 0],
@@ -21,7 +21,7 @@ class Game:
                                  [0, 0, 0, 0]])
         add_new_value(self.GAME_STATE.grid)
 
-        print(f"depth: {depth}, a: {a}, b: {b}, use_snake: {use_snake}, use_empty_cell: {use_empty_cell}")
+        print(f"depth: {depth}, a: {a}, b: {b}, snake heu: {snake_heu}, empty cell heu: {empty_cell_heu}, smoothness heu: {smoothness_heu}")
 
         # pygame
         self.SCREEN_SIZE = (480, 480)
@@ -111,7 +111,7 @@ class Game:
             # self.CLOCK.tick(60)
 
 for _ in range(0, 10):
-    game = Game(depth=3, a=2, b=2, use_snake=True, use_empty_cell=True)
+    game = Game(depth=3, a=2, b=2, snake_heu=True, empty_cell_heu=True, smoothness_heu=True)
     succeeded = game.run()
     print("Succeeded:", succeeded)
 

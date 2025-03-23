@@ -5,7 +5,7 @@ from typing import List
 class State:
     def __init__(self, grid):
         self.grid = grid
-        self.util_val = None
+        self.util_val = 0.0
 
 class New_idx:
     def __init__(self, x, y, cell_value, probability):
@@ -15,7 +15,7 @@ class New_idx:
         self.probability = probability
 
 class AI:
-    def __init__(self, a, b, use_snake, use_empty_cell):
+    def __init__(self, a, b, snake_heu, empty_cell_heu, smoothness_heu):
         self.WEIGHT_MATRIX = [[a**15, a**14, a**13, a**12],
                               [a**8,  a**9,  a**10, a**11],
                               [a**7,  a**6,  a**5,  a**4],
@@ -26,8 +26,9 @@ class AI:
                                     [b**8,  b**9,  b**10, b**11],
                                     [b**15, b**14, b**13, b**12]]
 
-        self.USE_SNAKE = use_snake
-        self.USE_EMPTY_CELL = use_empty_cell
+        self.SNAKE_HEU = snake_heu
+        self.EMPTY_CELL_HEU = empty_cell_heu
+        self.SMOOTHNESS_HEU = smoothness_heu
 
     def get_best_action(self, s: State, depth: int):
         possible_actions = self.get_possible_actions(s)
@@ -108,28 +109,26 @@ class AI:
                         smoothness -= abs(s.grid[i][j] - s.grid[i][j - 1])
                     if j < 3 and s.grid[i][j + 1] != 0:
                         smoothness -= abs(s.grid[i][j] - s.grid[i][j + 1])
-        utility = smoothness_weight ** smoothness
-        global total_smooth_value
-        global smooth_called
-        total_smooth_value += utility
-        smooth_called += 1
-        return utility
+        return smoothness
 
     def utility(self, s: State) -> float:
         utility = 0
         for i in range(4):
             for j in range(4):
                 utility += self.utility_by_idx(i, j, s.grid[i][j])
-        #utility += empty_cells_heuristic(s)
-        #utility *= smoothness_heuristic(s)
+        #utility += self.empty_cells_heuristic(s)
+        if self.SMOOTHNESS_HEU:
+            utility += self.smoothness_heuristic(s)
         return utility
 
     def utility_by_idx(self, x, y, cell_value) -> float:
         utility = 0
-        if self.USE_EMPTY_CELL and cell_value == 0:
+        if self.EMPTY_CELL_HEU and cell_value == 0:
             utility += self.EMPTY_WEIGHT_MATRIX[y][x]
-        if self.USE_SNAKE:
+        if self.SNAKE_HEU:
             utility += self.WEIGHT_MATRIX[y][x] * cell_value
+        # if cell_value == 0:
+        #     utility += 1
         return utility
 
     def get_idx_list(self, s: State) -> list[New_idx]:
