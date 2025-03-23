@@ -12,6 +12,7 @@ class Game:
         self.reached_4096 = False
         self.running = True
         self.game_over = False
+        self.points = 0
         self.ai = AI(a, b, snake_heu, empty_cell_heu, smoothness_heu)
         self.start_time = time.time()
         self.depth = depth
@@ -39,7 +40,9 @@ class Game:
 
             action = self.ai.get_best_action(self.GAME_STATE, self.depth)
             assert(action != None)
-            new_grid = move_direction(grid=self.GAME_STATE.grid, direction=action)
+            new_grid, has_2048, points = move_direction_bool_points(grid=self.GAME_STATE.grid, direction=action)
+            self.reached_2048 = has_2048
+            self.points += points
             assert(new_grid != self.GAME_STATE.grid)
             self.GAME_STATE.grid = new_grid
             add_new_value(self.GAME_STATE.grid)
@@ -50,7 +53,6 @@ class Game:
                 for action in Action:
                     if can_move(self.GAME_STATE.grid, action):
                         self.game_over = False
-                        break
 
             self.SCREEN.fill("black")
             for y in range(4):
@@ -80,10 +82,8 @@ class Game:
                         pygame.draw.rect(self.SCREEN, "light green", (x * 120 + 5, y * 120 + 5, 110, 110))
                     elif self.GAME_STATE.grid[y][x] == 2048:
                         if(self.reached_2048 == False):
-                            self.running = False
                             self.reached_2048 = True
                             print("Time taken to reach 2048: ", time.time() - self.start_time)
-                            return True
                         pygame.draw.rect(self.SCREEN, "dark green", (x * 120 + 5, y * 120 + 5, 110, 110))
                     elif self.GAME_STATE.grid[y][x] == 4096:
                         if(self.reached_4096 == False):
@@ -105,15 +105,15 @@ class Game:
                 # self.SCREEN.blit(text, text_rect)
 
                 self.running = False
-                return False
+                return self.points, self.reached_2048, self.reached_4096
 
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
 for _ in range(0, 10):
     game = Game(depth=3, a=2, b=2, snake_heu=True, empty_cell_heu=True, smoothness_heu=True)
-    succeeded = game.run()
-    print("Succeeded:", succeeded)
+    highscore, reached_2048, reached_4096 = game.run()
+    print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
 
 pygame.quit()
 
