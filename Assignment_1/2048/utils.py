@@ -122,7 +122,15 @@ def can_move(grid: list[list[int]], direction: Action) -> bool:
                 return True
     return False
 
-def add_new_value(grid):
+def grid_has_empty_cell(grid):
+    for i in range(4):
+        for j in range(4):
+            if (grid[i][j] == 0):
+                return True
+    return False
+
+def add_new_value(grid: list[list[int]]):
+    if (not grid_has_empty_cell(grid)): return
     random_i = random.randint(0, 3)
     random_j = random.randint(0, 3)
     random_value = random.randint(1, 10) == 1 and 4 or 2

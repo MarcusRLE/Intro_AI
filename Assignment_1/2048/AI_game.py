@@ -3,32 +3,31 @@ import time
 from utils import *
 from state import *
 
+pygame.init()
+
 class Game:
     def __init__(self, depth, a, b, use_snake, use_empty_cell):
-        self.depth = depth
-
-        self.SCREEN_SIZE = (480, 480)
-        self.GAME_STATE = State([[0, 0, 0, 0],
-                                 [0, 0, 0, 0],
-                                 [0, 0, 0, 0],
-                                 [0, 0, 0, 0]])
-
-        add_new_value(self.GAME_STATE.grid)
 
         self.reached_2048 = False
         self.reached_4096 = False
         self.running = True
         self.game_over = False
-
         self.ai = AI(a, b, use_snake, use_empty_cell)
+        self.start_time = time.time()
+        self.depth = depth
+        self.GAME_STATE = State([[0, 0, 0, 0],
+                                 [0, 0, 0, 0],
+                                 [0, 0, 0, 0],
+                                 [0, 0, 0, 0]])
+        add_new_value(self.GAME_STATE.grid)
 
-        pygame.init()
+        print(f"depth: {depth}, a: {a}, b: {b}, use_snake: {use_snake}, use_empty_cell: {use_empty_cell}")
+
+        # pygame
+        self.SCREEN_SIZE = (480, 480)
         self.FONT = pygame.font.Font(None, 36)
         self.SCREEN = pygame.display.set_mode(self.SCREEN_SIZE)
-        self.SCREEN.fill("black")
         # self.CLOCK = pygame.time.Clock()
-        self.start_time = time.time()
-        print("Playing with search depth: ", depth)
 
     def run(self):
         while self.running:
@@ -52,6 +51,7 @@ class Game:
                         self.game_over = False
                         break
 
+            self.SCREEN.fill("black")
             for y in range(4):
                 for x in range(4):
                     if self.GAME_STATE.grid[y][x] == 0:
@@ -82,6 +82,7 @@ class Game:
                             self.running = False
                             self.reached_2048 = True
                             print("Time taken to reach 2048: ", time.time() - self.start_time)
+                            return True
                         pygame.draw.rect(self.SCREEN, "dark green", (x * 120 + 5, y * 120 + 5, 110, 110))
                     elif self.GAME_STATE.grid[y][x] == 4096:
                         if(self.reached_4096 == False):
@@ -96,15 +97,22 @@ class Game:
                     self.SCREEN.blit(text, text_rect)
 
             if self.game_over:
-                # show game over screen
-                text = self.FONT.render("Game Over", True, "white")
-                text_rect = text.get_rect(center=(240, 240))
-                pygame.draw.rect(self.SCREEN, "black", text_rect)
-                self.SCREEN.blit(text, text_rect)
+                # # show game over screen
+                # text = self.FONT.render("Game Over", True, "white")
+                # text_rect = text.get_rect(center=(240, 240))
+                # pygame.draw.rect(self.SCREEN, "black", text_rect)
+                # self.SCREEN.blit(text, text_rect)
+
+                self.running = False
+                return False
 
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-game = Game(depth=4, a=3.5, b=1.9, use_snake=True, use_empty_cell=False)
-game.run()
+for _ in range(1, 10):
+    game = Game(depth=3, a=3, b=2, use_snake=True, use_empty_cell=True)
+    succeeded = game.run()
+    print("Succeeded:", succeeded)
+
+pygame.quit()
 

@@ -3,7 +3,6 @@ from utils import *
 from typing import List
 
 class State:
-    # children = []
     def __init__(self, grid):
         self.grid = grid
         self.util_val = None
@@ -17,15 +16,15 @@ class New_idx:
 
 class AI:
     def __init__(self, a, b, use_snake, use_empty_cell):
-        self.EMPTY_WEIGHT_MATRIX = [[b**0,  b**1,  b**2,  b**3],
-                                    [b**7,  b**6,  b**5,  b**4],
-                                    [b**8,  b**9,  b**10, b**11],
-                                    [b**15, b**14, b**13, b**12]]
-
         self.WEIGHT_MATRIX = [[a**15, a**14, a**13, a**12],
                               [a**8,  a**9,  a**10, a**11],
                               [a**7,  a**6,  a**5,  a**4],
                               [a**0,  a**1,  a**2,  a**3]]
+
+        self.EMPTY_WEIGHT_MATRIX = [[b**0,  b**1,  b**2,  b**3],
+                                    [b**7,  b**6,  b**5,  b**4],
+                                    [b**8,  b**9,  b**10, b**11],
+                                    [b**15, b**14, b**13, b**12]]
 
         self.USE_SNAKE = use_snake
         self.USE_EMPTY_CELL = use_empty_cell
@@ -97,8 +96,10 @@ class AI:
 
         # if calculate eval based on probability
         else:
-            value = 0
+            # TODO: improve this?
             idx_list = self.get_idx_list(s)
+            if idx_list == []: return s.util_val
+            value = 0
             for i in idx_list:
                 old_cell_value = s.grid[i.y][i.x]
                 s.grid[i.y][i.x] = i.cell_value
