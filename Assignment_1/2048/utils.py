@@ -11,7 +11,6 @@ def random_action() -> Action:
     return Action(random.randint(0, 3))
 
 def compress(grid):
-    """Moves all nonzero values to the left side without merging."""
     has_2048 = False
     new_grid = [[0] * 4 for _ in range(4)]
     for i in range(4):
@@ -25,7 +24,6 @@ def compress(grid):
     return new_grid, has_2048
 
 def merge(grid):
-    """Merges adjacent cells if they are equal."""
     total_points = 0
     for i in range(4):
         for j in range(3):  # Stop at index 2 to prevent out-of-bounds
@@ -36,11 +34,9 @@ def merge(grid):
     return grid, total_points
 
 def reverse(grid):
-    """Reverses each row for moving right."""
     return [row[::-1] for row in grid]
 
 def transpose(grid):
-    """Transposes the matrix for vertical moves."""
     return [list(row) for row in zip(*grid)]
 
 def move_direction(grid: list[list[int]], direction: Action):

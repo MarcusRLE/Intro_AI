@@ -29,15 +29,64 @@ class AI:
         self.USE_SNAKE = use_snake
         self.USE_EMPTY_CELL = use_empty_cell
 
-    def actions(self, s: State) -> List[Action]:
+    def get_best_action(self, s: State, depth: int):
+        possible_actions = self.get_possible_actions(s)
+        if len(possible_actions) == 0: return None
+        best_value = -float('inf')
+        best_action = possible_actions[0]
+        # actions_str = ""
+        for a in possible_actions:
+            # actions_str += str(a) + ""
+            s_copy = copy.deepcopy(s)
+            res = self.result(s_copy, a)
+            # s.children.append(res)
+            value = self.expectimax(res, depth, False)
+            # actions_str += " with value: " + str(value) + " "
+            if value > best_value:
+                best_value = value
+                best_action = a
+            # if value == best_value:
+            #     if random.randint(0, 1) == 0:
+            #         best_action = a
+        # print("Actions: ", actions_str)
+        # print("Best actions: ", best_action)
+        return best_action
+
+    def get_possible_actions(self, s: State) -> List[Action]:
         possible_actions = []
         for action in Action:
             if can_move(s.grid, action):
                 possible_actions.append(action)
         return possible_actions
 
-    def result(self, s: State, a: Action) -> State:
-        return State(move_direction(grid=s.grid.copy(), direction=a))
+    def expectimax(self, s: State, depth: int, isMaxPlayer: bool) -> float:
+        # if the depth is 0 or the state is terminal, return the utility of the state
+        if depth == 0:
+            if(s.util_val != None):
+                return s.util_val
+            return self.utility(s)
+        # if the player is the maximizing player
+        if isMaxPlayer:
+            value = -float('inf')
+            possible_actions = self.get_possible_actions(s)
+            for i in possible_actions:
+                res = self.result(s, i)
+                # s.children.append(res)
+                value = max(value, self.expectimax(res, depth - 1, False))
+            return value
+        # if calculate eval based on probability
+        else:
+            # TODO: improve this?
+            idx_list = self.get_idx_list(s)
+            if idx_list == []: return s.util_val
+            value = 0
+            for i in idx_list:
+                old_cell_value = s.grid[i.y][i.x]
+                s.grid[i.y][i.x] = i.cell_value
+                s.util_val += self.utility_by_idx(i.x, i.y, i.cell_value)
+                value += i.probability * self.expectimax(s, depth - 1, True)
+                s.grid[i.y][i.x] = old_cell_value
+            return value / len(idx_list)
 
     def terminal_test(self, s: State) -> bool:
         for i in range(4):
@@ -75,39 +124,6 @@ class AI:
         #utility *= smoothness_heuristic(s)
         return utility
 
-    def expectimax(self, s: State, depth: int, isMaxPlayer: bool) -> float:
-        # return the best action
-
-        # if the depth is 0 or the state is terminal, return the utility of the state
-        if depth == 0:
-            if(s.util_val != None):
-                return s.util_val
-            return self.utility(s)
-
-        # if the player is the maximizing player
-        if isMaxPlayer:
-            value = -float('inf')
-            possible_actions = self.actions(s)
-            for i in possible_actions:
-                res = self.result(s, i)
-                # s.children.append(res)
-                value = max(value, self.expectimax(res, depth - 1, False))
-            return value
-
-        # if calculate eval based on probability
-        else:
-            # TODO: improve this?
-            idx_list = self.get_idx_list(s)
-            if idx_list == []: return s.util_val
-            value = 0
-            for i in idx_list:
-                old_cell_value = s.grid[i.y][i.x]
-                s.grid[i.y][i.x] = i.cell_value
-                s.util_val += self.utility_by_idx(i.x, i.y, i.cell_value)
-                value += i.probability * self.expectimax(s, depth - 1, True)
-                s.grid[i.y][i.x] = old_cell_value
-            return value / len(idx_list)
-
     def utility_by_idx(self, x, y, cell_value) -> float:
         utility = 0
         if self.USE_EMPTY_CELL and cell_value == 0:
@@ -129,26 +145,6 @@ class AI:
         s.util_val = current_state_util
         return new_idx_list
 
-    def best_action(self, s: State, depth: int) -> Action:
-        best_action = Action.UP
-        best_value = -float('inf')
-        # actions_str = ""
-        possible_actions = self.actions(s)
-        for a in possible_actions:
-            # actions_str += str(a) + ""
-            s_copy = copy.deepcopy(s)
-            res = self.result(s_copy, a)
-            # s.children.append(res)
-            value = self.expectimax(res, depth, False)
-            # actions_str += " with value: " + str(value) + " "
-            if value > best_value:
-                best_value = value
-                best_action = a
-            # if value == best_value:
-            #     if random.randint(0, 1) == 0:
-            #         best_action = a
-
-        # print("Actions: ", actions_str)
-        # print("Best actions: ", best_action)
-        return best_action
+    def result(self, s: State, a: Action) -> State:
+        return State(move_direction(grid=s.grid.copy(), direction=a))
 

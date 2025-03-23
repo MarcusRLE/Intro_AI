@@ -37,11 +37,12 @@ class Game:
                     # print("Average smoothness value: ", average_smooth_value())
                     # Turn profiling off
 
-            action = self.ai.best_action(self.GAME_STATE, self.depth)
+            action = self.ai.get_best_action(self.GAME_STATE, self.depth)
+            assert(action != None)
             new_grid = move_direction(grid=self.GAME_STATE.grid, direction=action)
-            if new_grid != self.GAME_STATE.grid:
-                self.GAME_STATE.grid = new_grid
-                add_new_value(self.GAME_STATE.grid)
+            assert(new_grid != self.GAME_STATE.grid)
+            self.GAME_STATE.grid = new_grid
+            add_new_value(self.GAME_STATE.grid)
 
             # check if game is over
             if not self.game_over:
@@ -109,8 +110,8 @@ class Game:
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-for _ in range(1, 10):
-    game = Game(depth=3, a=3, b=2, use_snake=True, use_empty_cell=True)
+for _ in range(0, 10):
+    game = Game(depth=4, a=2, b=2, use_snake=True, use_empty_cell=True)
     succeeded = game.run()
     print("Succeeded:", succeeded)
 
