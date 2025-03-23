@@ -35,7 +35,7 @@ class AI:
     # Parameters: s: State (the current state of the game), depth: int (the depth of the search tree)
     # Returns: Action (the best action to take)
     def get_best_action(self, s: State, depth: int):
-        depth = depth - (1 - (depth % 2))
+        depth = depth - (1 - (depth % 2)) # Makes sure that the depth is always uneven
         _, best_action = self.expectimax(s, depth, True)
         return best_action
 
