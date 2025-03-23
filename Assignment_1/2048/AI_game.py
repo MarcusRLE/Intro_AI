@@ -20,7 +20,7 @@ class Game:
         self.running = True
         self.game_over = False
 
-        self.ai = AI()
+        self.ai = AI(a=3.5, b=1.9, use_snake=True, use_empty_cell=False)
 
         pygame.init()
         self.FONT = pygame.font.Font(None, 36)
