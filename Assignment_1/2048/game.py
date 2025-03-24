@@ -11,9 +11,9 @@ def start_screen(screen):
     font = pygame.font.Font(None, 36)
 
     input_boxes = {
-        "depth": InputBox(200, 50, 100, 36),
-        "a": InputBox(200, 100, 100, 36),
-        "b": InputBox(200, 150, 100, 36),
+        "depth": InputBox(300, 50, 100, 36),
+        "Snake weight": InputBox(300, 100, 100, 36),
+        "Empty Cell weight": InputBox(300, 150, 100, 36),
     }
 
     toggles = {
@@ -22,7 +22,7 @@ def start_screen(screen):
         "smooth": ToggleButton(150, 280, 180, 40, "Smoothness"),
     }
 
-    start_button = pygame.Rect(190, 360, 100, 40)
+    start_button = pygame.Rect(190, 410, 100, 40)
 
     running = True
     while running:
@@ -38,8 +38,8 @@ def start_screen(screen):
             if event.type == pygame.MOUSEBUTTONDOWN and start_button.collidepoint(event.pos):
                 return {
                     "depth": input_boxes["depth"].get_value(),
-                    "a": input_boxes["a"].get_value(),
-                    "b": input_boxes["b"].get_value(),
+                    "Snake weight": input_boxes["Snake weight"].get_value(),
+                    "Empty Cell weight": input_boxes["Empty Cell weight"].get_value(),
                     "snake": toggles["snake"].get_value(),
                     "empty": toggles["empty"].get_value(),
                     "smooth": toggles["smooth"].get_value(),
@@ -47,16 +47,22 @@ def start_screen(screen):
 
         for label, box in input_boxes.items():
             label_text = font.render(label.capitalize() + ":", True, "white")
-            screen.blit(label_text, (100, box.rect.y + 5))
+            screen.blit(label_text, (70, box.rect.y + 5))
             box.draw(screen)
 
         # Draw 'Heuristics' text
         heuristics_text = font.render("Heuristics:", True, "white")
-        screen.blit(heuristics_text, (50, 200))
+        heuristics_y = 200
+        screen.blit(heuristics_text, (50, heuristics_y))
 
+        # Spacing config
+        toggle_spacing = 60
+        toggle_x = 50
+        toggle_y_start = heuristics_y + 30
 
-
-        for toggle in toggles.values():
+        for i, toggle in enumerate(toggles.values()):
+            toggle.rect.x = toggle_x
+            toggle.rect.y = toggle_y_start + i * toggle_spacing
             toggle.draw(screen)
 
         pygame.draw.rect(screen, "blue", start_button)
@@ -167,27 +173,44 @@ class Game:
                 text_rect = text.get_rect(center=(240, 240))
                 pygame.draw.rect(self.SCREEN, "black", text_rect)
                 self.SCREEN.blit(text, text_rect)
+                text_replay = self.FONT.render("Press R to replay", True, "white")
+                text_replay_rect = text_replay.get_rect(center=(240, 280))
+                pygame.draw.rect(self.SCREEN, "black", text_replay_rect)
+                self.SCREEN.blit(text_replay, text_replay_rect)
+                text_quit = self.FONT.render("Press Q to quit", True, "white")
+                text_quit_rect = text_quit.get_rect(center=(240, 320))
+                pygame.draw.rect(self.SCREEN, "black", text_quit_rect)
+                self.SCREEN.blit(text_quit, text_quit_rect)
 
+                if pygame.key.get_pressed()[pygame.K_r]:
+                    return True
+                if pygame.key.get_pressed()[pygame.K_q]:
+                    return False
                 # self.running = False
                 # return self.points, self.reached_2048, self.reached_4096
 
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-SCREEN = pygame.display.set_mode((480, 480))
-pygame.display.set_caption("2048 AI Settings")
+def run_game():
+    SCREEN = pygame.display.set_mode((480, 480))
+    pygame.display.set_caption("2048 AI Settings")
 
-settings = start_screen(SCREEN)
+    settings = start_screen(SCREEN)
 
-game = Game(
-    depth=settings["depth"],
-    a=settings["a"],
-    b=settings["b"],
-    snake_heu=settings["snake"],
-    empty_cell_heu=settings["empty"],
-    smoothness_heu=settings["smooth"]
-)
-game.run()
+    game = Game(
+        depth=settings["depth"],
+        a=settings["Snake weight"],
+        b=settings["Empty Cell weight"],
+        snake_heu=settings["snake"],
+        empty_cell_heu=settings["empty"],
+        smoothness_heu=settings["smooth"]
+    )
+    replay = game.run()
+    if replay:
+        run_game()
+    else:
+        pygame.quit()
 
-pygame.quit()
+run_game()
 
