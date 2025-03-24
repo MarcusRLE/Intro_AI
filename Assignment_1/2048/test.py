@@ -2,7 +2,7 @@ from enum import Enum
 import random
 import pygame
 import copy
-import state as s
+import game as s
 import time
 from utils import Action
 import utils as ut

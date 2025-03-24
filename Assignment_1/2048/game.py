@@ -1,5 +1,6 @@
 import pygame
 import time
+import tkinter as tk
 from utils import *
 from AI_agent import *
 
@@ -114,10 +115,45 @@ class Game:
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-for _ in range(0, 10):
-    game = Game(depth=4, a=2, b=2, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
-    highscore, reached_2048, reached_4096 = game.run()
-    print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
+def start_game():
+    try:
+        depth = int(entry_depth.get())
+        a = int(entry_a.get())
+        b = int(entry_b.get())
 
+        # Close the Tkinter window
+        root.destroy()
+
+        # Start the game with user input values
+        game = Game(depth=depth, a=a, b=b, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
+        highscore, reached_2048, reached_4096 = game.run()
+        print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
+    
+    except ValueError:
+        label_error.config(text="Error: Please enter valid integers!")
+
+
+# Create Tkinter UI
+root = tk.Tk()
+root.title("Game Settings")
+
+tk.Label(root, text="Depth:").grid(row=0, column=0)
+entry_depth = tk.Entry(root)
+entry_depth.grid(row=0, column=1)
+
+tk.Label(root, text="A:").grid(row=1, column=0)
+entry_a = tk.Entry(root)
+entry_a.grid(row=1, column=1)
+
+tk.Label(root, text="B:").grid(row=2, column=0)
+entry_b = tk.Entry(root)
+entry_b.grid(row=2, column=1)
+
+label_error = tk.Label(root, text="", fg="red")
+label_error.grid(row=3, columnspan=2)
+
+tk.Button(root, text="Start Game", command=start_game).grid(row=4, columnspan=2)
+
+root.mainloop()
 pygame.quit()
 
