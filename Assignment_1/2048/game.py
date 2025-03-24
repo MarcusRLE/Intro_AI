@@ -22,7 +22,7 @@ def start_screen(screen):
         "smooth": ToggleButton(150, 280, 180, 40, "Smoothness"),
     }
 
-    start_button = pygame.Rect(190, 360, 100, 40)
+    start_button = pygame.Rect(190, 410, 100, 40)
 
     running = True
     while running:
@@ -52,11 +52,17 @@ def start_screen(screen):
 
         # Draw 'Heuristics' text
         heuristics_text = font.render("Heuristics:", True, "white")
-        screen.blit(heuristics_text, (50, 200))
+        heuristics_y = 200
+        screen.blit(heuristics_text, (50, heuristics_y))
 
+        # Spacing config
+        toggle_spacing = 60
+        toggle_x = 50
+        toggle_y_start = heuristics_y + 30
 
-
-        for toggle in toggles.values():
+        for i, toggle in enumerate(toggles.values()):
+            toggle.rect.x = toggle_x
+            toggle.rect.y = toggle_y_start + i * toggle_spacing
             toggle.draw(screen)
 
         pygame.draw.rect(screen, "blue", start_button)
