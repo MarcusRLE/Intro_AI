@@ -8,3 +8,6 @@ To run the program, execute the game.py file:
 ```
 python game.py
 ```
+
+Word of advice:
+Run game at depth 8 or more at your own risk. Computer might crash unless quantum computing is used
