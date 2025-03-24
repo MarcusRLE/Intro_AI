@@ -6,6 +6,98 @@ from AI_agent import *
 
 pygame.init()
 
+# Screen setup
+WIDTH, HEIGHT = 500, 400
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Game Settings")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+BLUE = (0, 0, 255)
+
+# Font
+FONT = pygame.font.Font(None, 36)
+
+# Input boxes
+input_boxes = {
+    "depth": pygame.Rect(200, 50, 100, 30),
+    "a": pygame.Rect(200, 100, 100, 30),
+    "b": pygame.Rect(200, 150, 100, 30),
+}
+
+# Default input values
+input_texts = {
+    "depth": "",
+    "a": "",
+    "b": "",
+}
+
+active_box = None
+
+
+def draw_ui():
+    """Draws the input screen UI."""
+    SCREEN.fill(WHITE)
+
+    # Labels for input fields
+    labels = ["Depth:", "A:", "B:"]
+    y_positions = [50, 100, 150]
+
+    for i, label in enumerate(labels):
+        text = FONT.render(label, True, BLACK)
+        SCREEN.blit(text, (50, y_positions[i]))
+
+    # Draw input boxes
+    for key, rect in input_boxes.items():
+        pygame.draw.rect(SCREEN, BLUE if active_box == key else BLACK, rect, 2)
+        text_surface = FONT.render(input_texts[key], True, BLACK)
+        SCREEN.blit(text_surface, (rect.x + 5, rect.y + 5))
+
+    # Draw start button
+    pygame.draw.rect(SCREEN, GRAY, (150, 250, 200, 50))
+    start_text = FONT.render("Start Game", True, BLACK)
+    SCREEN.blit(start_text, (180, 260))
+
+    pygame.display.flip()
+
+
+def run_input_screen():
+    """Handles user input in Pygame for depth, a, b values."""
+    global active_box
+    running = True
+    while running:
+        draw_ui()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return None  # Quit if window is closed
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Check if "Start Game" button is clicked
+                if pygame.Rect(150, 250, 200, 50).collidepoint(event.pos):
+                    return input_texts  # Start game with input values
+
+                # Check if an input box is clicked
+                for key, rect in input_boxes.items():
+                    if rect.collidepoint(event.pos):
+                        active_box = key
+                        break
+                else:
+                    active_box = None
+
+            if event.type == pygame.KEYDOWN:
+                if active_box:
+                    if event.key == pygame.K_BACKSPACE:
+                        input_texts[active_box] = input_texts[active_box][:-1]
+                    elif event.key in range(pygame.K_0, pygame.K_9 + 1):  # Allow only numbers
+                        input_texts[active_box] += event.unicode
+
+    return None
+
+
+
 class Game:
     def __init__(self, depth, a, b, snake_heu, empty_cell_heu, smoothness_heu):
 
@@ -115,45 +207,22 @@ class Game:
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-def start_game():
+user_inputs = run_input_screen()
+
+if user_inputs:
     try:
-        depth = int(entry_depth.get())
-        a = int(entry_a.get())
-        b = int(entry_b.get())
+        # Convert inputs to integers
+        depth = int(user_inputs["depth"])
+        a = int(user_inputs["a"])
+        b = int(user_inputs["b"])
 
-        # Close the Tkinter window
-        root.destroy()
+        # Run the game 10 times with user inputs
+        for _ in range(10):
+            game = Game(depth=depth, a=a, b=b, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
+            highscore, reached_2048, reached_4096 = game.run()
+            print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
 
-        # Start the game with user input values
-        game = Game(depth=depth, a=a, b=b, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
-        highscore, reached_2048, reached_4096 = game.run()
-        print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
-    
+        pygame.quit()
+
     except ValueError:
-        label_error.config(text="Error: Please enter valid integers!")
-
-
-# Create Tkinter UI
-root = tk.Tk()
-root.title("Game Settings")
-
-tk.Label(root, text="Depth:").grid(row=0, column=0)
-entry_depth = tk.Entry(root)
-entry_depth.grid(row=0, column=1)
-
-tk.Label(root, text="A:").grid(row=1, column=0)
-entry_a = tk.Entry(root)
-entry_a.grid(row=1, column=1)
-
-tk.Label(root, text="B:").grid(row=2, column=0)
-entry_b = tk.Entry(root)
-entry_b.grid(row=2, column=1)
-
-label_error = tk.Label(root, text="", fg="red")
-label_error.grid(row=3, columnspan=2)
-
-tk.Button(root, text="Start Game", command=start_game).grid(row=4, columnspan=2)
-
-root.mainloop()
-pygame.quit()
-
+        print("Invalid input! Please enter numbers.")
