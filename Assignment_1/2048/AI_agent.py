@@ -63,8 +63,10 @@ class AI:
 
         if isMaxPlayer:
             value = -float('inf')
-            best_action = None
             possible_actions = self.get_possible_actions(s)
+            if (possible_actions == []):
+                return value, None
+            best_action = possible_actions[0]
             for a in possible_actions:
                 res = self.result(s, a)
                 temp_value, _ = self.expectimax(res, depth - 1, False)

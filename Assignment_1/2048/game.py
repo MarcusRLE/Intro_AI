@@ -153,12 +153,12 @@ class Game:
                     elif self.GAME_STATE.grid[y][x] == 2048:
                         if(self.reached_2048 == False):
                             self.reached_2048 = True
-                            print("Time taken to reach 2048: ", time.time() - self.start_time)
+                            # print("Time taken to reach 2048: ", time.time() - self.start_time)
                         pygame.draw.rect(self.SCREEN, "dark green", (x * 120 + 5, y * 120 + 5, 110, 110))
                     elif self.GAME_STATE.grid[y][x] == 4096:
                         if(self.reached_4096 == False):
                             self.reached_4096 = True
-                            print("Time taken to reach 4096: ", time.time() - self.start_time)
+                            # print("Time taken to reach 4096: ", time.time() - self.start_time)
                         pygame.draw.rect(self.SCREEN, "white", (x * 120 + 5, y * 120 + 5, 110, 110))
                     else:
                         pygame.draw.rect(self.SCREEN, "white", (x * 120 + 5, y * 120 + 5, 110, 110))
