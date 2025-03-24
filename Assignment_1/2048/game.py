@@ -2,8 +2,70 @@ import pygame
 import time
 from utils import *
 from AI_agent import *
+from input import InputBox, ToggleButton
 
 pygame.init()
+
+def start_screen(screen):
+    clock = pygame.time.Clock()
+    font = pygame.font.Font(None, 36)
+
+    input_boxes = {
+        "depth": InputBox(200, 50, 100, 36),
+        "a": InputBox(200, 100, 100, 36),
+        "b": InputBox(200, 150, 100, 36),
+    }
+
+    toggles = {
+        "snake": ToggleButton(50, 220, 180, 40, "Snake"),
+        "empty": ToggleButton(250, 220, 180, 40, "Empty Cell"),
+        "smooth": ToggleButton(150, 280, 180, 40, "Smoothness"),
+    }
+
+    start_button = pygame.Rect(190, 360, 100, 40)
+
+    running = True
+    while running:
+        screen.fill("black")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            for box in input_boxes.values():
+                box.handle_event(event)
+            for toggle in toggles.values():
+                toggle.handle_event(event)
+            if event.type == pygame.MOUSEBUTTONDOWN and start_button.collidepoint(event.pos):
+                return {
+                    "depth": input_boxes["depth"].get_value(),
+                    "a": input_boxes["a"].get_value(),
+                    "b": input_boxes["b"].get_value(),
+                    "snake": toggles["snake"].get_value(),
+                    "empty": toggles["empty"].get_value(),
+                    "smooth": toggles["smooth"].get_value(),
+                }
+
+        for label, box in input_boxes.items():
+            label_text = font.render(label.capitalize() + ":", True, "white")
+            screen.blit(label_text, (100, box.rect.y + 5))
+            box.draw(screen)
+
+        # Draw 'Heuristics' text
+        heuristics_text = font.render("Heuristics:", True, "white")
+        screen.blit(heuristics_text, (50, 200))
+
+        # Add space between 'Heuristics' and toggles
+        
+
+        for toggle in toggles.values():
+            toggle.draw(screen)
+
+        pygame.draw.rect(screen, "blue", start_button)
+        start_text = font.render("START", True, "white")
+        screen.blit(start_text, (start_button.x + 13, start_button.y + 7))
+
+        pygame.display.flip()
+        clock.tick(30)
 
 class Game:
     def __init__(self, depth, a, b, snake_heu, empty_cell_heu, smoothness_heu):
@@ -114,10 +176,22 @@ class Game:
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-for _ in range(0, 10):
-    game = Game(depth=4, a=2, b=2, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
-    highscore, reached_2048, reached_4096 = game.run()
-    print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
+SCREEN = pygame.display.set_mode((480, 480))
+pygame.display.set_caption("2048 AI Settings")
+
+settings = start_screen(SCREEN)
+
+game = Game(
+    depth=settings["depth"],
+    a=settings["a"],
+    b=settings["b"],
+    snake_heu=settings["snake"],
+    empty_cell_heu=settings["empty"],
+    smoothness_heu=settings["smooth"]
+)
+
+highscore, reached_2048, reached_4096 = game.run()
+print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
 
 pygame.quit()
 
