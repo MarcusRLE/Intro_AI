@@ -3,7 +3,9 @@ import numpy as np
 
 x_values = np.array(range(1, 11))
 y_values = np.array(range(1, 11))
-z_values = np.array([
+
+X, Y = np.meshgrid(x_values, y_values)
+Z = np.array([
     [2096.8, 2048.8, 1563.2, 2130.4, 2284, 2695.2, 2777.6, 1570.4, 1379.2, 2221.6],
     [33182.4, 25039.2, 26476.8, 16618.4, 36318.4, 22936.8, 33852.8, 47521.6, 26018.4, 36501.6],
     [45212.8, 44274.4, 50996, 24717.6, 22811.2, 21158.4, 31979.2, 24909.6, 26875.2, 30113.6],
@@ -16,12 +18,10 @@ z_values = np.array([
     [37009.6, 31806.4, 30338.4, 34038.4, 26752.8, 32204.8, 34406.4, 51092, 30500, 46732.8],
 ])
 
-X, Y = np.meshgrid(x_values, y_values)
-
 fig = plt.figure(figsize=(10, 7))
 ax = fig.add_subplot(111, projection='3d')
 
-ax.plot_surface(X, Y, z_values, cmap='viridis', edgecolor='k')
+ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='k')
 
 ax.set_xlabel("b value")
 ax.set_ylabel("a value")
