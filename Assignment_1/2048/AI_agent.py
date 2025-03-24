@@ -81,14 +81,14 @@ class AI:
 
                 # Update the state by adding the new cell value to the cell and adding the utility value of the cell to the state
                 s.grid[i.y][i.x] = i.cell_value
-                s.util_val += self.utility_by_idx(i.x, i.y, i.cell_value)
+                s.util_val += self.utility_by_idx(i.y, i.x, i.cell_value)
 
                 # Calculate the value of the state and add it to the total value
                 temp_value, _ = self.expectimax(s, depth - 1, True)
                 value += i.probability * temp_value
 
                 # Reset original state by removing the utility value of the cell from the state and setting the cell value to the original value
-                s.util_val -= self.utility_by_idx(i.x, i.y, i.cell_value)
+                s.util_val -= self.utility_by_idx(i.y, i.x, i.cell_value)
                 s.grid[i.y][i.x] = old_cell_value
                 
             return value / len(idx_list), None
@@ -115,6 +115,7 @@ class AI:
     # Parameters: s: State (the state of the game)
     # Returns: float (the utility value of the state)
     def utility(self, s: State) -> float:
+        print("Calculating utility")
         utility = 0
         for i in range(4):
             for j in range(4):
@@ -127,12 +128,12 @@ class AI:
     # Function to calculate the utility of a cell based on the cell value and the position of the cell
     # Parameters: x: int (the x-coordinate of the cell), y: int (the y-coordinate of the cell), cell_value: int (the value of the cell)
     # Returns: float (the utility value of the cell)
-    def utility_by_idx(self, x, y, cell_value) -> float:
+    def utility_by_idx(self, y, x, cell_value) -> float:
         utility = 0
         if self.EMPTY_CELL_HEU and cell_value == 0:
-            utility += self.EMPTY_WEIGHT_MATRIX[x][y]
+            utility += self.EMPTY_WEIGHT_MATRIX[y][x]
         if self.SNAKE_HEU:
-            utility += self.WEIGHT_MATRIX[x][y] * cell_value
+            utility += self.WEIGHT_MATRIX[y][x] * cell_value
         # if cell_value == 0:
         #     utility += 1
         return utility
@@ -150,7 +151,7 @@ class AI:
                     new_idx_list.append(New_idx(x, y, 4, 0.1))
                 else:
                     # Calculate the utility of the current state
-                    current_state_util += self.utility_by_idx(x, y, s.grid[y][x])
+                    current_state_util += self.utility_by_idx(y, x, s.grid[y][x])
         # Set the utility value of the current state
         s.util_val = current_state_util
         return new_idx_list
