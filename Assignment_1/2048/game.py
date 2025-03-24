@@ -10,7 +10,7 @@ class Game:
 
         self.reached_2048 = False
         self.reached_4096 = False
-        self.running = True
+        self.running = False
         self.game_over = False
         self.points = 0
         self.ai = AI(a, b, snake_heu, empty_cell_heu, smoothness_heu)
@@ -24,13 +24,53 @@ class Game:
 
         print(f"depth: {depth}, a: {a}, b: {b}, snake heu: {snake_heu}, empty cell heu: {empty_cell_heu}, smoothness heu: {smoothness_heu}")
 
-        # pygame
+    def settings_screen(self):
         self.SCREEN_SIZE = (480, 480)
         self.FONT = pygame.font.Font(None, 36)
         self.SCREEN = pygame.display.set_mode(self.SCREEN_SIZE)
-        # self.CLOCK = pygame.time.Clock()
 
-    def run(self):
+        SNAKE_HEU_TEXT = self.FONT.render("Snake Heuristic", True, "white")
+        SNAKE_HEU_RECT = SNAKE_HEU_TEXT.get_rect(center=(240, 240))
+
+        EMPTY_HEU_TEXT = self.FONT.render("Empty Cell Heuristic", True, "white")
+        EMPTY_HEU_RECT = EMPTY_HEU_TEXT.get_rect(center=(240, 280))
+
+        SMOOTH_HEU_TEXT = self.FONT.render("Empty Cell Heuristic", True, "white")
+        SMOOTH_HEU_RECT = SMOOTH_HEU_TEXT.get_rect(center=(240, 320))
+
+        START_BUTTON_TEXT = self.FONT.render("Start Game", True, "white")
+        START_BUTTON_RECT = START_BUTTON_TEXT.get_rect(center=(240, 360))
+
+        done_with_settings = False
+
+        while not done_with_settings:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                    # print("Average smoothness value: ", average_smooth_value())
+                    # Turn profiling off
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if (START_BUTTON_RECT.collidepoint(event.pos)):
+                        self.run(True)
+
+            self.SCREEN.fill("black")
+
+            pygame.draw.rect(self.SCREEN, "black", SNAKE_HEU_RECT)
+            pygame.draw.rect(self.SCREEN, "black", EMPTY_HEU_RECT)
+            pygame.draw.rect(self.SCREEN, "black", SMOOTH_HEU_RECT)
+            pygame.draw.rect(self.SCREEN, "grey", START_BUTTON_RECT)
+
+            self.SCREEN.blit(SNAKE_HEU_TEXT, SNAKE_HEU_RECT)
+            self.SCREEN.blit(EMPTY_HEU_TEXT, EMPTY_HEU_RECT)
+            self.SCREEN.blit(SMOOTH_HEU_TEXT, SMOOTH_HEU_RECT)
+            self.SCREEN.blit(START_BUTTON_TEXT, START_BUTTON_RECT)
+
+            pygame.display.flip()
+
+
+    def run(self, gui):
+        self.running = True
+
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -39,15 +79,13 @@ class Game:
                     # Turn profiling off
 
             action = self.ai.get_best_action(self.GAME_STATE, self.depth)
-            # assert(action != None)
             if action == None:
                 self.game_over = True
-                self.running = False
-                return self.points, self.reached_2048, self.reached_4096
+                # self.running = False
+                # return self.points, self.reached_2048, self.reached_4096
             new_grid, has_2048, points = move_direction_bool_points(grid=self.GAME_STATE.grid, direction=action)
             self.reached_2048 = has_2048
             self.points += points
-            assert(new_grid != self.GAME_STATE.grid)
             self.GAME_STATE.grid = new_grid
             add_new_value(self.GAME_STATE.grid)
 
@@ -57,6 +95,9 @@ class Game:
                 for action in Action:
                     if can_move(self.GAME_STATE.grid, action):
                         self.game_over = False
+
+            if not gui:
+                continue
 
             self.SCREEN.fill("black")
             for y in range(4):
@@ -102,22 +143,18 @@ class Game:
                     self.SCREEN.blit(text, text_rect)
 
             if self.game_over:
-                # # show game over screen
-                # text = self.FONT.render("Game Over", True, "white")
-                # text_rect = text.get_rect(center=(240, 240))
-                # pygame.draw.rect(self.SCREEN, "black", text_rect)
-                # self.SCREEN.blit(text, text_rect)
-
-                self.running = False
-                return self.points, self.reached_2048, self.reached_4096
+                # show game over screen
+                text = self.FONT.render(f"""Game Over, Highscore: {self.points}""", True, "white")
+                text_rect = text.get_rect(center=(240, 240))
+                pygame.draw.rect(self.SCREEN, "black", text_rect)
+                self.SCREEN.blit(text, text_rect)
 
             pygame.display.flip()
             # self.CLOCK.tick(60)
 
-for _ in range(0, 10):
-    game = Game(depth=4, a=2, b=2, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
-    highscore, reached_2048, reached_4096 = game.run()
-    print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
+game = Game(depth=4, a=0, b=0, snake_heu=True, empty_cell_heu=True, smoothness_heu=False)
+game.settings_screen()
+# game.run(True)
 
 pygame.quit()
 
