@@ -103,12 +103,11 @@ class Game:
             # assert(action != None)
             if action == None:
                 self.game_over = True
-                self.running = False
-                return self.points, self.reached_2048, self.reached_4096
+                # self.running = False
+                # return self.points, self.reached_2048, self.reached_4096
             new_grid, has_2048, points = move_direction_bool_points(grid=self.GAME_STATE.grid, direction=action)
             self.reached_2048 = has_2048
             self.points += points
-            assert(new_grid != self.GAME_STATE.grid)
             self.GAME_STATE.grid = new_grid
             add_new_value(self.GAME_STATE.grid)
 
@@ -163,14 +162,14 @@ class Game:
                     self.SCREEN.blit(text, text_rect)
 
             if self.game_over:
-                # # show game over screen
-                # text = self.FONT.render("Game Over", True, "white")
-                # text_rect = text.get_rect(center=(240, 240))
-                # pygame.draw.rect(self.SCREEN, "black", text_rect)
-                # self.SCREEN.blit(text, text_rect)
+                # show game over screen
+                text = self.FONT.render(f"Game Over, Highscore: {self.points}", True, "white")
+                text_rect = text.get_rect(center=(240, 240))
+                pygame.draw.rect(self.SCREEN, "black", text_rect)
+                self.SCREEN.blit(text, text_rect)
 
-                self.running = False
-                return self.points, self.reached_2048, self.reached_4096
+                # self.running = False
+                # return self.points, self.reached_2048, self.reached_4096
 
             pygame.display.flip()
             # self.CLOCK.tick(60)
@@ -188,9 +187,7 @@ game = Game(
     empty_cell_heu=settings["empty"],
     smoothness_heu=settings["smooth"]
 )
-
-highscore, reached_2048, reached_4096 = game.run()
-print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
+game.run()
 
 pygame.quit()
 
