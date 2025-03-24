@@ -115,7 +115,7 @@ class Game:
             # self.CLOCK.tick(60)
 
 for _ in range(0, 10):
-    game = Game(depth=5, a=2, b=2, snake_heu=True, empty_cell_heu=True, smoothness_heu=True)
+    game = Game(depth=4, a=2, b=2, snake_heu=True, empty_cell_heu=False, smoothness_heu=False)
     highscore, reached_2048, reached_4096 = game.run()
     print(f"highscore: {highscore}, reached 2048: {reached_2048}, reached 4096: {reached_4096}")
 
