@@ -54,8 +54,7 @@ def start_screen(screen):
         heuristics_text = font.render("Heuristics:", True, "white")
         screen.blit(heuristics_text, (50, 200))
 
-        # Add space between 'Heuristics' and toggles
-        
+
 
         for toggle in toggles.values():
             toggle.draw(screen)
