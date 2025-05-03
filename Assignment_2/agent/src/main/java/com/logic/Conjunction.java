@@ -15,7 +15,7 @@ public class Conjunction implements Expression {
     public String toString(boolean withParentheses) {
         StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
         for (int i = 0; i < this.expressions.size(); i++) {
-            result.append(this.expressions.get(i).toString(withParentheses));
+            result.append(this.expressions.get(i).toString(true));
             if (i < this.expressions.size() - 1) {
                 result.append(" ∧ ");
             } else {
