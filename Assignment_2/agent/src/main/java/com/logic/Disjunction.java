@@ -1,73 +1,122 @@
 package com.logic;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Disjunction implements Expression {
-    protected Expression left;
-    protected Expression right;
+    protected List<Expression> expressions;
 
-    public Disjunction(Expression left, Expression right) {
-        this.left = left;
-        this.right = right;
+    public Disjunction(List<Expression> expressions) {
+        List<Expression> newExpressions = new ArrayList<>(expressions);
+
+        for (Expression expression : expressions) {
+            if (expression instanceof Disjunction) {
+                newExpressions.remove(expression);
+                newExpressions.addAll(((Disjunction) expression).expressions);
+            }
+        }
+        this.expressions = newExpressions;
+    }
+
+    @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public void sort() {
+
     }
 
     @Override
     public Expression CNF() {
-        if(this.left.isEqual(this.right)){
-            return this.left;
-        }
-
-        this.left = left.CNF();
-        this.right = right.CNF();
-        if (left instanceof Conjuction) {
-            Conjuction conjuction = (Conjuction) left;
-            return new Conjuction(new Disjunction(right, conjuction.left), new Disjunction(right, conjuction.right));
-        } else if (right instanceof Conjuction) {
-            Conjuction conjuction = (Conjuction) right;
-            return new Conjuction(new Disjunction(left, conjuction.left), new Disjunction(left, conjuction.right));
-        } else return this;
-    }
-
-    @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if(callIteration >= 2){
-            return logicalConclusions;
-        }
-
-        if(this.left.isEqual(this.right)){
-            logicalConclusions.add(this.left);
-            logicalConclusions = this.left.logicalConclusions(other, logicalConclusions, callIteration + 1);
-            return logicalConclusions;
-        }
-
-        if(this.left.isEqual(new Negation(other))){
-            logicalConclusions.add(this.right);
-        } else if(this.right.isEqual(new Negation(other))){
-            logicalConclusions.add(this.left);
-        } 
-
-        if(other instanceof Disjunction){
-            Disjunction disjunction = (Disjunction) other;
-            if(this.left.isEqual(new Negation(disjunction.left))){
-                logicalConclusions.add(new Disjunction(this.right, disjunction.right));
-            } else if(this.right.isEqual(new Negation(disjunction.right))){
-                logicalConclusions.add(new Disjunction(this.left, disjunction.left));
-            } else if(this.left.isEqual(new Negation(disjunction.right))){
-                logicalConclusions.add(new Disjunction(this.right, disjunction.left));
-            } else if(this.right.isEqual(new Negation(disjunction.left))){
-                logicalConclusions.add(new Disjunction(this.left, disjunction.right));
+        List<Expression> unique = new ArrayList<>();
+        for (Expression exp : expressions) {
+            if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
+                unique.add(exp);
             }
         }
 
-        return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+        if (unique.size() == 1) {
+            return unique.get(0);
+        }
+
+        List <Expression> cnfMapped = unique.stream().map(Expression::CNFrecursive).collect(Collectors.toList());
+        Optional<Expression> reduced = cnfMapped.stream().reduce((a, b) -> {
+            if (a instanceof Conjunction) return nestedConj((Conjunction) a, b);
+            else if (b instanceof Conjunction) return nestedConj((Conjunction) b, a);
+            else return new Disjunction(Arrays.asList(a, b));
+        });
+
+        cnfMapped = reduced.map(Collections::singletonList)
+                .orElse(Collections.emptyList());
+
+        if (cnfMapped.size() == 1) {
+            return cnfMapped.get(0);
+        } else  {
+            return new Disjunction(cnfMapped);
+        }
+    }
+
+    private Expression nestedConj(Conjunction conj, Expression other){
+        List<Expression> conjExp = new ArrayList<>();
+        for (Expression exp : conj.expressions){
+            conjExp.add(new Disjunction(Arrays.asList(exp, other)));
+        }
+        return new Conjunction(conjExp);
+    }
+
+    @Override
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
+
+
+        List<Expression> unique = new ArrayList<>();
+        for (Expression exp : expressions) {
+            if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
+                unique.add(exp);
+            }
+        }
+
+        if (unique.size() == 1) {
+            return unique.get(0).resolution(other);
+        }
+
+        unique.removeIf(exp -> exp.isEqual(new Negation(other)));
+
+
+        if(other instanceof Disjunction){
+            for (Expression thisExp : unique){
+                for (Expression otherExp : ((Disjunction) other).expressions){
+                    if (thisExp.isEqual(new Negation(otherExp))){
+                        List<Expression> thisExps = unique.stream().filter(e -> e.isEqual(thisExp)).collect(Collectors.toList());
+                        List<Expression> otherExps = unique.stream().filter(e -> e.isEqual(otherExp) || e.isEqual(thisExp)).collect(Collectors.toList());
+                        thisExps.addAll(otherExps);
+                        conclusions.addAll(thisExps);
+                    }
+                }
+            }
+        }
+
+        return conclusions;
     }
 
     @Override
     public String toString(boolean withParentheses) {
-        return (withParentheses ? "(" : "") 
-            + left.toString(!(left instanceof Disjunction)) 
-            + " ∨ " 
-            + right.toString(!(right instanceof Disjunction)) 
-            + (withParentheses ? ")" : "");
+        StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
+        for (int i = 0; i < this.expressions.size(); i++) {
+            result.append(this.expressions.get(i).toString(true));
+            if (i < this.expressions.size() - 1) {
+                result.append(" ∨ ");
+            } else {
+                result.append(withParentheses ? ")" : "");
+            }
+        }
+        return result.toString();
     }
 } 

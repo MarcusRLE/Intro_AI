@@ -1,5 +1,7 @@
 package com.logic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Implication implements Expression {
@@ -12,10 +14,27 @@ public class Implication implements Expression {
     }
 
     @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public void sort() {
+
+    }
+
+    @Override
     public Expression CNF() {
         this.left = left.CNF();
         this.right = right.CNF();
-        return new Disjunction(new Negation(left), right);
+        Expression cnf = new Disjunction(Arrays.asList(new Negation(left), right));
+
+        return cnf.CNF();
     }
 
     @Override
@@ -28,16 +47,13 @@ public class Implication implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if (callIteration >= 2) {
-            return logicalConclusions;
-        }
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){
-            logicalConclusions.add(this.right);
+            conclusions.add(this.right);
         } else if(this.right.isEqual(new Negation(other))){
-            logicalConclusions.add(new Negation(this.left));
+            conclusions.add(new Negation(this.left));
         }
-        logicalConclusions = other.logicalConclusions(this, logicalConclusions, callIteration + 1);
-        return logicalConclusions;
+        return conclusions;
     }
 } 

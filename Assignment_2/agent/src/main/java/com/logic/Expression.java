@@ -1,5 +1,7 @@
 package com.logic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public interface Expression {
@@ -15,20 +17,36 @@ public interface Expression {
         }
     }
 
+    boolean implies(Expression exp);
+
+    boolean hasContradiction(Expression exp);
+
+    void sort();
+
     Expression CNF();
 
     default boolean isEqual(Expression other){
         other = other.CNF();
         Expression own = this.CNF();
 
-        if(own instanceof Conjuction && other instanceof Conjuction){
-            return ((Conjuction)own).left.isEqual(((Conjuction)other).left) && ((Conjuction)own).right.isEqual(((Conjuction)other).right)
-                || ((Conjuction)own).left.isEqual(((Conjuction)other).right) && ((Conjuction)own).right.isEqual(((Conjuction)other).left);
+        if (own instanceof Conjunction && other instanceof Conjunction) {
+            List<Expression> expressionsCopy = new ArrayList<>(((Conjunction) own).expressions);
+
+            for (Expression expression : ((Conjunction) other).expressions) {
+                expressionsCopy.removeIf(e -> e.isEqual(expression));
+            }
+
+            return expressionsCopy.isEmpty();
+        } else if (own instanceof Disjunction && other instanceof Disjunction) {
+            List<Expression> expressionsCopy = new ArrayList<>(((Disjunction) own).expressions);
+
+            for (Expression expression : ((Disjunction) other).expressions) {
+                expressionsCopy.removeIf(e -> e.isEqual(expression));
+            }
+
+            return expressionsCopy.isEmpty();
         }
-        else if(own instanceof Disjunction && other instanceof Disjunction){
-            return ((Disjunction)own).left.isEqual(((Disjunction)other).left) && ((Disjunction)own).right.isEqual(((Disjunction)other).right)
-                || ((Disjunction)own).left.isEqual(((Disjunction)other).right) && ((Disjunction)own).right.isEqual(((Disjunction)other).left);
-        }
+
         else if(own instanceof Negation && other instanceof Negation){
             return ((Negation)own).expression.isEqual(((Negation)other).expression);
         }
@@ -44,7 +62,7 @@ public interface Expression {
     }
 
 
-    List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration);
+    List<Expression> resolution(Expression other);
 
     String toString(boolean withParentheses);
 }

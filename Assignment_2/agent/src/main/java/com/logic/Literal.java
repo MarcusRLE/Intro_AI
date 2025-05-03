@@ -1,5 +1,6 @@
 package com.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Literal implements Expression {
@@ -7,6 +8,21 @@ public class Literal implements Expression {
 
     public Literal(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public void sort() {
+
     }
 
     @Override
@@ -20,10 +36,8 @@ public class Literal implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if(callIteration >= 2){
-            return logicalConclusions;
-        }
-        return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
+        return conclusions;
     }
 } 
