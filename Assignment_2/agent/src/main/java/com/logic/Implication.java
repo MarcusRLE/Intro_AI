@@ -13,6 +13,16 @@ public class Implication implements Expression {
     }
 
     @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
+    }
+
+    @Override
     public void sort() {
 
     }

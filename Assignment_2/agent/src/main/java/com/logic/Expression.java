@@ -17,6 +17,10 @@ public interface Expression {
         }
     }
 
+    boolean implies(Expression exp);
+
+    boolean hasContradiction(Expression exp);
+
     void sort();
 
     Expression CNF();

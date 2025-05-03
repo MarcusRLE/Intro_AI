@@ -10,6 +10,14 @@ public class BeliefSet {
         this.beliefs = new ArrayList<>();
     }
 
+    public BeliefSet contraction(){
+        BeliefSet contractedBeliefSet = new BeliefSet();
+
+        // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()" funkitonen fra Expression interface
+
+        return contractedBeliefSet;
+    }
+
     public void convertToCNF(){
         // Copy the beliefs to a new list
         List<Expression> oldBeliefs = new ArrayList<>(beliefs);
@@ -38,15 +46,6 @@ public class BeliefSet {
         if (convertToCNF) {
             belief = belief.CNF();
         }
-//        if(belief instanceof Conjunction){
-//            if(!this.contains(((Conjunction) belief).left)){
-//                beliefs.add(((Conjunction) belief).left);
-//            }
-//            if(!this.contains(((Conjunction) belief).right)){
-//                beliefs.add(((Conjunction) belief).right);
-//            }
-//        }
-        
         if (!this.contains(belief)) {
             beliefs.add(belief);   
         }
