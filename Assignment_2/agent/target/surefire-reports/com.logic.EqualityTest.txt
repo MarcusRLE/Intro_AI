@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: com.logic.EqualityTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0 s <<< FAILURE! - in com.logic.EqualityTest
+testInequality(com.logic.EqualityTest)  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: Values should not be equal expected:<5> but was:<10>
+	at com.logic.EqualityTest.testInequality(EqualityTest.java:22)
+
+test1(com.logic.EqualityTest)  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: -A V B should be equivalent with A => B
+	at com.logic.EqualityTest.test1(EqualityTest.java:15)
+
