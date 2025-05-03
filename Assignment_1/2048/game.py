@@ -200,8 +200,8 @@ def run_game():
 
     game = Game(
         depth=settings["depth"],
-        a=settings["Snake weight"],
-        b=settings["Empty Cell weight"],
+        a=2.5,
+        b=2.5,
         snake_heu=settings["snake"],
         empty_cell_heu=settings["empty"],
         smoothness_heu=settings["smooth"]
