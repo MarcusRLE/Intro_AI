@@ -21,7 +21,9 @@ public class Implication implements Expression {
     public Expression CNF() {
         this.left = left.CNF();
         this.right = right.CNF();
-        return new Disjunction(Arrays.asList(new Negation(left), right));
+        Expression cnf = new Disjunction(Arrays.asList(new Negation(left), right));
+
+        return cnf.CNF();
     }
 
     @Override
