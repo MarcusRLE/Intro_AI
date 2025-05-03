@@ -25,9 +25,9 @@ public class Negation implements Expression {
             Expression right = new Negation(disjunction.right);
             right = right.CNF();
             // Apply De Morgan's Law
-            return new Conjuction(left, right);
-        } else if (expression instanceof Conjuction) {
-            Conjuction conjunction = (Conjuction) expression;
+            return new Conjunction(left, right);
+        } else if (expression instanceof Conjunction) {
+            Conjunction conjunction = (Conjunction) expression;
             Expression left = new Negation(conjunction.left);
             left = left.CNF();
             Expression right = new Negation(conjunction.right);

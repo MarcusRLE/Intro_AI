@@ -38,12 +38,12 @@ public class BeliefSet {
         if (convertToCNF) {
             belief = belief.CNF();
         }
-        if(belief instanceof Conjuction){
-            if(!this.contains(((Conjuction) belief).left)){
-                beliefs.add(((Conjuction) belief).left);
+        if(belief instanceof Conjunction){
+            if(!this.contains(((Conjunction) belief).left)){
+                beliefs.add(((Conjunction) belief).left);
             }
-            if(!this.contains(((Conjuction) belief).right)){
-                beliefs.add(((Conjuction) belief).right);
+            if(!this.contains(((Conjunction) belief).right)){
+                beliefs.add(((Conjunction) belief).right);
             }
         } 
         
