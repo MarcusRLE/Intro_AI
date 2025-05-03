@@ -38,14 +38,14 @@ public class BeliefSet {
         if (convertToCNF) {
             belief = belief.CNF();
         }
-        if(belief instanceof Conjunction){
-            if(!this.contains(((Conjunction) belief).left)){
-                beliefs.add(((Conjunction) belief).left);
-            }
-            if(!this.contains(((Conjunction) belief).right)){
-                beliefs.add(((Conjunction) belief).right);
-            }
-        } 
+//        if(belief instanceof Conjunction){
+//            if(!this.contains(((Conjunction) belief).left)){
+//                beliefs.add(((Conjunction) belief).left);
+//            }
+//            if(!this.contains(((Conjunction) belief).right)){
+//                beliefs.add(((Conjunction) belief).right);
+//            }
+//        }
         
         if (!this.contains(belief)) {
             beliefs.add(belief);   

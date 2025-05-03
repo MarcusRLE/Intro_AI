@@ -1,5 +1,7 @@
 package com.logic;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public interface Expression {
@@ -23,14 +25,24 @@ public interface Expression {
         other = other.CNF();
         Expression own = this.CNF();
 
-        if(own instanceof Conjunction && other instanceof Conjunction){
-            return ((Conjunction)own).left.isEqual(((Conjunction)other).left) && ((Conjunction)own).right.isEqual(((Conjunction)other).right)
-                || ((Conjunction)own).left.isEqual(((Conjunction)other).right) && ((Conjunction)own).right.isEqual(((Conjunction)other).left);
+        if (own instanceof Conjunction && other instanceof Conjunction) {
+            List<Expression> expressionsCopy = new ArrayList<>(((Conjunction) own).expressions);
+
+            for (Expression expression : ((Conjunction) other).expressions) {
+                expressionsCopy.removeIf(e -> e.isEqual(expression));
+            }
+
+            return expressionsCopy.isEmpty();
+        } else if (own instanceof Disjunction && other instanceof Disjunction) {
+            List<Expression> expressionsCopy = new ArrayList<>(((Disjunction) own).expressions);
+
+            for (Expression expression : ((Disjunction) other).expressions) {
+                expressionsCopy.removeIf(e -> e.isEqual(expression));
+            }
+
+            return expressionsCopy.isEmpty();
         }
-        else if(own instanceof Disjunction && other instanceof Disjunction){
-            return ((Disjunction)own).left.isEqual(((Disjunction)other).left) && ((Disjunction)own).right.isEqual(((Disjunction)other).right)
-                || ((Disjunction)own).left.isEqual(((Disjunction)other).right) && ((Disjunction)own).right.isEqual(((Disjunction)other).left);
-        }
+
         else if(own instanceof Negation && other instanceof Negation){
             return ((Negation)own).expression.isEqual(((Negation)other).expression);
         }

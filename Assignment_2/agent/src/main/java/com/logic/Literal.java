@@ -10,6 +10,11 @@ public class Literal implements Expression {
     }
 
     @Override
+    public void sort() {
+
+    }
+
+    @Override
     public Expression CNF() {
         return this;
     }

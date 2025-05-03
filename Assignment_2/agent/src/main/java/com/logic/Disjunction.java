@@ -7,7 +7,15 @@ public class Disjunction implements Expression {
     protected List<Expression> expressions;
 
     public Disjunction(List<Expression> expressions) {
-        this.expressions = expressions;
+        List<Expression> newExpressions = new ArrayList<>(expressions);
+
+        for (Expression expression : expressions) {
+            if (expression instanceof Disjunction) {
+                newExpressions.remove(expression);
+                newExpressions.addAll(((Disjunction) expression).expressions);
+            }
+        }
+        this.expressions = newExpressions;
     }
 
     @Override

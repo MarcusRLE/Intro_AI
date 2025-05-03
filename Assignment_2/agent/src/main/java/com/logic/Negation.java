@@ -1,5 +1,6 @@
 package com.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Negation implements Expression {
@@ -7,6 +8,11 @@ public class Negation implements Expression {
 
     public Negation(Expression expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public void sort() {
+
     }
 
     @Override
@@ -20,20 +26,24 @@ public class Negation implements Expression {
         this.expression = expression.CNF();
         if (expression instanceof Disjunction) {
             Disjunction disjunction = (Disjunction) expression;
-            Expression left = new Negation(disjunction.left);
-            left = left.CNF();
-            Expression right = new Negation(disjunction.right);
-            right = right.CNF();
+            List<Expression> newExpressions = new ArrayList<>();
+            for (Expression expression : disjunction.expressions) {
+                Expression newExpression = new Negation(expression);
+                newExpression = newExpression.CNF();
+                newExpressions.add(newExpression);
+            }
             // Apply De Morgan's Law
-            return new Conjunction(left, right);
+            return new Conjunction(newExpressions);
         } else if (expression instanceof Conjunction) {
             Conjunction conjunction = (Conjunction) expression;
-            Expression left = new Negation(conjunction.left);
-            left = left.CNF();
-            Expression right = new Negation(conjunction.right);
-            right = right.CNF();
+            List<Expression> newExpressions = new ArrayList<>();
+            for (Expression expression : conjunction.expressions) {
+                Expression newExpression = new Negation(expression);
+                newExpression = newExpression.CNF();
+                newExpressions.add(newExpression);
+            }
             // Apply De Morgan's Law
-            return new Disjunction(left, right);
+            return new Disjunction(newExpressions);
         } else return this;
     }
 

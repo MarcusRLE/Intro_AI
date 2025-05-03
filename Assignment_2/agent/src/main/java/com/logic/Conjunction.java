@@ -31,13 +31,24 @@ public class Conjunction implements Expression {
             return logicalConclusions;
         }
 
-        if(this.left.isEqual(this.right)){
-            logicalConclusions.add(this.left);
-            logicalConclusions = this.left.logicalConclusions(other, logicalConclusions, callIteration + 1);
-            return logicalConclusions;
+        List<Expression> copy = new ArrayList<>(expressions);
+        boolean isNewExpression = false;
+        for (Expression exp : copy){
+            if(other.isEqual(new Negation(exp))){
+                copy.remove(exp);
+                isNewExpression = true;
+            }
+        }
+        if(isNewExpression){
+            logicalConclusions.add(new Conjunction(copy));
         }
 
         return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+    }
+
+    @Override
+    public void sort() {
+
     }
 
     @Override

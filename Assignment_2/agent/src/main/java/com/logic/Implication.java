@@ -1,5 +1,6 @@
 package com.logic;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Implication implements Expression {
@@ -12,10 +13,15 @@ public class Implication implements Expression {
     }
 
     @Override
+    public void sort() {
+
+    }
+
+    @Override
     public Expression CNF() {
         this.left = left.CNF();
         this.right = right.CNF();
-        return new Disjunction(new Negation(left), right);
+        return new Disjunction(Arrays.asList(new Negation(left), right));
     }
 
     @Override
