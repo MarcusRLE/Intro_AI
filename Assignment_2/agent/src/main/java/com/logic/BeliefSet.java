@@ -66,7 +66,7 @@ public class BeliefSet {
     public BeliefSet logicalConclusion(Expression exp) {
         BeliefSet conclusions = new BeliefSet();
         for (Expression belief : beliefs) {
-            List<Expression> currentConclusions = belief.logicalConclusions(exp, new ArrayList<>(), 0);
+            List<Expression> currentConclusions = belief.resolution(exp);
             for (Expression conclusion: currentConclusions) {
                 conclusions.addBelief(conclusion, false);
             }

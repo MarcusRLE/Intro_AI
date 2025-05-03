@@ -1,5 +1,6 @@
 package com.logic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,16 +47,13 @@ public class Implication implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if (callIteration >= 2) {
-            return logicalConclusions;
-        }
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){
-            logicalConclusions.add(this.right);
+            conclusions.add(this.right);
         } else if(this.right.isEqual(new Negation(other))){
-            logicalConclusions.add(new Negation(this.left));
+            conclusions.add(new Negation(this.left));
         }
-        logicalConclusions = other.logicalConclusions(this, logicalConclusions, callIteration + 1);
-        return logicalConclusions;
+        return conclusions;
     }
 } 

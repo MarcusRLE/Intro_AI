@@ -72,10 +72,8 @@ public class Disjunction implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if(callIteration >= 2){
-            return logicalConclusions;
-        }
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
 
 
         List<Expression> unique = new ArrayList<>();
@@ -86,9 +84,7 @@ public class Disjunction implements Expression {
         }
 
         if (unique.size() == 1) {
-            logicalConclusions.add(unique.get(0));
-            logicalConclusions = this.logicalConclusions(other, logicalConclusions, callIteration + 1);
-            return logicalConclusions;
+            return unique.get(0).resolution(other);
         }
 
         unique.removeIf(exp -> exp.isEqual(new Negation(other)));
@@ -101,13 +97,13 @@ public class Disjunction implements Expression {
                         List<Expression> thisExps = unique.stream().filter(e -> e.isEqual(thisExp)).collect(Collectors.toList());
                         List<Expression> otherExps = unique.stream().filter(e -> e.isEqual(otherExp) || e.isEqual(thisExp)).collect(Collectors.toList());
                         thisExps.addAll(otherExps);
-                        logicalConclusions.addAll(thisExps);
+                        conclusions.addAll(thisExps);
                     }
                 }
             }
         }
 
-        return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+        return conclusions;
     }
 
     @Override
