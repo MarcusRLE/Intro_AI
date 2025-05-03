@@ -18,7 +18,6 @@ public class EqualityTest {
         Expression implication = new Implication(
                 new Literal("A"),
                 new Literal("B"));
-
         assertTrue(util.falseEquality(disjunction, implication), implication.isEqual(disjunction));
     }
 
