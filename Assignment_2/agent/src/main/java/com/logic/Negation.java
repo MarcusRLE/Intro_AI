@@ -12,7 +12,7 @@ public class Negation implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return false;
+        return !expression.implies(exp);
     }
 
     @Override

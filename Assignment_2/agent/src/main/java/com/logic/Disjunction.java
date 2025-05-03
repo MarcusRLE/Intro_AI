@@ -20,6 +20,11 @@ public class Disjunction implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
+        for(Expression expr: expressions){
+            if(expr.implies(exp)){
+                return true;
+            }
+        }
         return false;
     }
 

@@ -46,7 +46,14 @@ public class Conjunction implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return false;
+        for (Expression expression : expressions) {
+            if (!expression.implies(exp)) {
+                return false;
+            }
+        }
+
+
+        return true;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class Literal implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return false;
+        return this.equals(exp);
     }
 
     @Override
