@@ -11,6 +11,16 @@ public class Negation implements Expression {
     }
 
     @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
+    }
+
+    @Override
     public void sort() {
 
     }
@@ -48,12 +58,10 @@ public class Negation implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if(callIteration >= 2){
-            return logicalConclusions;
-        }
-        return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+    public List<Expression> resolution(Expression other) {
+        return List.of();
     }
+
 
     @Override
     public String toString(boolean withParentheses) {

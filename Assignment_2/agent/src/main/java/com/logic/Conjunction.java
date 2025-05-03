@@ -26,10 +26,8 @@ public class Conjunction implements Expression {
     }
 
     @Override
-    public List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration) {
-        if(callIteration >= 2){
-            return logicalConclusions;
-        }
+    public List<Expression> resolution(Expression other) {
+        List<Expression> conclusions = new ArrayList<>();
 
         List<Expression> copy = new ArrayList<>(expressions);
         boolean isNewExpression = false;
@@ -40,10 +38,20 @@ public class Conjunction implements Expression {
             }
         }
         if(isNewExpression){
-            logicalConclusions.add(new Conjunction(copy));
+            conclusions.add(new Conjunction(copy));
         }
 
-        return other.logicalConclusions(this, logicalConclusions, callIteration + 1);
+        return conclusions;
+    }
+
+    @Override
+    public boolean implies(Expression exp) {
+        return false;
+    }
+
+    @Override
+    public boolean hasContradiction(Expression exp) {
+        return false;
     }
 
     @Override

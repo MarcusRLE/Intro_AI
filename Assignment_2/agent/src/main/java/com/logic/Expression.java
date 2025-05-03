@@ -17,6 +17,10 @@ public interface Expression {
         }
     }
 
+    boolean implies(Expression exp);
+
+    boolean hasContradiction(Expression exp);
+
     void sort();
 
     Expression CNF();
@@ -58,7 +62,7 @@ public interface Expression {
     }
 
 
-    List<Expression> logicalConclusions(Expression other, List<Expression> logicalConclusions, int callIteration);
+    List<Expression> resolution(Expression other);
 
     String toString(boolean withParentheses);
 }
