@@ -11,6 +11,17 @@ public class Literal implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        // Shouldn't happen
+        throw new UnsupportedOperationException("Should never be called");
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        return name == null || name.isEmpty();
+    }
+
+    @Override
     public boolean implies(Expression exp) {
         return equals(exp);
     }
@@ -32,6 +43,9 @@ public class Literal implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
+        if (name == null) {
+            return "[ EMPTY ]";
+        }
         return name;
     }
 
@@ -65,4 +79,8 @@ public class Literal implements Expression {
         Literal literal = (Literal) o;
         return name.equals(literal.name);
     }
-} 
+  
+    public void setName(String name){
+        this.name = name;
+    }
+}
