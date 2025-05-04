@@ -3,6 +3,7 @@ package com.logic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BeliefSet {
     private List<Expression> beliefs;
@@ -11,24 +12,24 @@ public class BeliefSet {
         this.beliefs = new ArrayList<>();
     }
 
-    public BeliefSet contraction(){
+    public BeliefSet contraction() {
         BeliefSet contractedBeliefSet = new BeliefSet();
 
-
-        // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()" funkitonen fra Expression interface
-        for (Expression belief : this.beliefs){
+        // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()"
+        // funkitonen fra Expression interface
+        for (Expression belief : this.beliefs) {
             BeliefSet temBeliefSet = new BeliefSet();
-            for (Expression otherBelief : beliefs){
-                if (!belief.implies(otherBelief)){
+            for (Expression otherBelief : beliefs) {
+                if (!belief.implies(otherBelief)) {
                     temBeliefSet.addBelief(otherBelief, false);
                 }
             }
             boolean isConsistent = true;
-            for(Expression otherBelief : temBeliefSet.getBeliefs()){
+            for (Expression otherBelief : temBeliefSet.getBeliefs()) {
                 if (otherBelief.implies(belief)) {
-                    isConsistent=false;
+                    isConsistent = false;
                     break;
-                    
+
                 }
             }
             if (isConsistent) {
@@ -37,13 +38,10 @@ public class BeliefSet {
 
         }
 
-
-
-
         return contractedBeliefSet;
     }
 
-    public void convertToCNF(){
+    public void convertToCNF() {
         // Copy the beliefs to a new list
         List<Expression> oldBeliefs = new ArrayList<>(beliefs);
         // Clear the current beliefs
@@ -67,7 +65,6 @@ public class BeliefSet {
         return false;
     }
 
-    
     public void addBelief(Expression belief, boolean convertToCNF) {
         if (convertToCNF) {
             belief = belief.CNF();
@@ -78,17 +75,19 @@ public class BeliefSet {
                 List<Expression> logicalEntailments = new ArrayList<>(beliefs);
                 logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
                 beliefs.addAll(logicalEntailments);
+                beliefs = beliefs.stream().distinct().collect(Collectors.toList());
             } catch (Contradiction e) {
                 // Handle error
+                System.err.println(
+                        "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + getBeliefs());
             }
         }
     }
 
-
-    public void addBeliefsWithConclusion(Expression exp){
+    public void addBeliefsWithConclusion(Expression exp) {
         try {
             BeliefSet conclusions = this.logicalConclusion(exp);
-            for (Expression conclusion : conclusions.getBeliefs()){
+            for (Expression conclusion : conclusions.getBeliefs()) {
                 beliefs.add(conclusion);
             }
         } catch (Contradiction e) {
@@ -104,23 +103,23 @@ public class BeliefSet {
         BeliefSet conclusions = new BeliefSet();
         for (Expression belief : beliefs) {
             List<Expression> currentConclusions = belief.resolution(exp);
-            for (Expression conclusion: currentConclusions) {
+            for (Expression conclusion : currentConclusions) {
                 conclusions.addBelief(conclusion, false);
             }
         }
 
-        if(conclusions.beliefs.isEmpty()){
+        if (conclusions.beliefs.isEmpty()) {
             conclusions.addBelief(exp, false);
             return conclusions;
         } else {
             BeliefSet nextConclusions = new BeliefSet();
-            for (Expression conclusion : conclusions.beliefs){
+            for (Expression conclusion : conclusions.beliefs) {
                 BeliefSet currentConclusions = this.logicalConclusion(conclusion);
-                for (Expression currentConclusion: currentConclusions.beliefs){
+                for (Expression currentConclusion : currentConclusions.beliefs) {
                     nextConclusions.addBelief(currentConclusion, false);
                 }
             }
-            for (Expression conclusion : nextConclusions.beliefs){
+            for (Expression conclusion : nextConclusions.beliefs) {
                 conclusions.addBelief(conclusion, false);
             }
         }
@@ -128,7 +127,8 @@ public class BeliefSet {
         return conclusions;
     }
 
-    List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments) throws Contradiction {
+    List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
+            throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
 
         try {
@@ -137,7 +137,7 @@ public class BeliefSet {
                     conclusions.addAll(current.resolution(newBelief));
                 }
             }
-        } catch(Contradiction c) {
+        } catch (Contradiction c) {
             throw c;
         }
 
@@ -167,4 +167,4 @@ public class BeliefSet {
         result += "}";
         return result;
     }
-} 
+}

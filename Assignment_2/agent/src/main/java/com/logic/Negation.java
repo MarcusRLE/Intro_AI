@@ -73,8 +73,20 @@ public class Negation implements Expression {
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
-        return List.of();
+    public List<Expression> resolution(Expression other) throws Contradiction {
+        List<Expression> conclusions = new ArrayList<>();
+        if (other instanceof Conjunction) {
+            for (Expression exp: ((Conjunction)other).expressions) {
+                if ((new Negation(exp)).isEqual(this)) {
+                    throw new Contradiction("Contradiction");
+                }
+            }
+        } else {
+           if ((new Negation(other)).isEqual(this)) {
+                throw new Contradiction("Contradiction");
+            }
+        }
+        return conclusions;
     }
 
 
