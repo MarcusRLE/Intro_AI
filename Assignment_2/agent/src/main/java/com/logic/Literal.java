@@ -12,7 +12,7 @@ public class Literal implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return false;
+        return equals(exp);
     }
 
     @Override
@@ -39,5 +39,12 @@ public class Literal implements Expression {
     public List<Expression> resolution(Expression other) {
         List<Expression> conclusions = new ArrayList<>();
         return conclusions;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Literal literal = (Literal) o;
+        return name.equals(literal.name);
     }
 } 

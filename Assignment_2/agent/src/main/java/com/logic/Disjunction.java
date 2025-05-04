@@ -20,7 +20,21 @@ public class Disjunction implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
+        for(Expression expr: expressions){
+            if(expr.implies(exp)){
+                return true;
+            }
+        }
         return false;
+    }
+    @Override
+    public boolean isEqual(Expression other){
+        if(!(other instanceof Disjunction)){
+            return false;
+        }
+        Disjunction otherDisj = (Disjunction) other;
+        return this.expressions.containsAll(otherDisj.expressions) && otherDisj.expressions.containsAll(this.expressions);
+
     }
 
     @Override

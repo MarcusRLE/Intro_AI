@@ -12,8 +12,23 @@ public class Negation implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
+        if (!this.expression.implies(exp)) {
+            return true;
+            
+        }
+        if (this.expression instanceof Conjunction) {
+            Conjunction conjunction = (Conjunction) this.expression;
+            for (Expression expression : conjunction.expressions) {
+                if (!expression.implies(exp)) {
+                    return true;
+                }
+            }
+            
+        }
+
         return false;
     }
+
 
     @Override
     public boolean hasContradiction(Expression exp) {
