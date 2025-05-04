@@ -1,5 +1,7 @@
 package com.logic;
 
+import java.util.stream.Collectors;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,13 +49,24 @@ public class Implication implements Expression {
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){
             conclusions.add(this.right);
         } else if(this.right.isEqual(new Negation(other))){
             conclusions.add(new Negation(this.left));
         }
-        return conclusions;
+        if (other instanceof Conjunction) {
+            for (Expression exp: ((Conjunction)other).expressions) {
+                if (exp.isEqual(this.left)) {
+                    conclusions.add(this.right);
+                }
+            }
+        } else {
+            if (other.isEqual(this.left)) {
+                conclusions.add(this.right);
+            }
+        }
+        return conclusions.stream().distinct().collect(Collectors.toList());
     }
 } 
