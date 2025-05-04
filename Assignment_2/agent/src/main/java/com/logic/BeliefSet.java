@@ -77,9 +77,13 @@ public class BeliefSet {
     }
 
     public void addBeliefsWithConclusion(Expression exp){
-        BeliefSet conclusions = this.logicalConclusion(exp);
-        for (Expression conclusion : conclusions.getBeliefs()){
-            beliefs.add(conclusion);
+        try {
+            BeliefSet conclusions = this.logicalConclusion(exp);
+            for (Expression conclusion : conclusions.getBeliefs()){
+                beliefs.add(conclusion);
+            }
+        } catch (Contradiction e) {
+            System.out.println(e);
         }
     }
 
@@ -87,7 +91,7 @@ public class BeliefSet {
         beliefs.remove(belief);
     }
 
-    public BeliefSet logicalConclusion(Expression exp) {
+    public BeliefSet logicalConclusion(Expression exp) throws Contradiction {
         BeliefSet conclusions = new BeliefSet();
         for (Expression belief : beliefs) {
             List<Expression> currentConclusions = belief.resolution(exp);
@@ -113,6 +117,30 @@ public class BeliefSet {
         }
 
         return conclusions;
+    }
+
+    List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments) throws Contradiction {
+        List<Expression> conclusions = new ArrayList<>();
+
+        try {
+            for (Expression newBelief : newBeliefs) {
+                for (Expression current : currentEntailments) {
+                    conclusions.addAll(current.resolution(newBelief));
+                }
+            }
+        } catch(Contradiction c) {
+            throw c;
+        }
+
+        for (Expression newBelief : newBeliefs) {
+            currentEntailments.add(newBelief);
+        }
+
+        if (!conclusions.isEmpty()) {
+            currentEntailments = logicalEntailment(conclusions, currentEntailments);
+        }
+
+        return currentEntailments;
     }
 
     public List<Expression> getBeliefs() {
