@@ -13,27 +13,36 @@ public class BeliefSetTest {
     public void test1() {
         BeliefSet beliefSet = new BeliefSet();
 
+        System.err.println("\n\n\noutput:");
+        
         Expression newBelief = new Disjunction(
             List.of(new Literal("A"), new Literal("B"))
         );
-        List<Expression> expected = List.of(newBelief);
+        ArrayList<Expression> expected = new ArrayList<>(List.of(newBelief));
+        beliefSet.addBelief(newBelief, false);
+        // for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
+        // for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
+        Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
-        List<Expression> logicalEntailments = new ArrayList<>();
+        newBelief = new Literal("A");
+        beliefSet.addBelief(newBelief, false);
+        expected.add(newBelief);
+        Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
-        try {
-            logicalEntailments = beliefSet.logicalEntailment(Arrays.asList(newBelief), logicalEntailments);
-            for (Expression exp : logicalEntailments) { System.out.println("from test1 in BeliefSetTest: " + exp.toString(false)); }
-            Assert.assertTrue("List not same content", util.sameContent(expected, logicalEntailments));
-        } catch (Contradiction c) { Assert.assertTrue(false); }
+        newBelief = new Negation(new Literal("A"));
+        beliefSet.addBelief(newBelief, false);
+        Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
-        // newBelief = new Literal("A");
-        // expected = List.of(newBelief);
-        //
-        // try {
-        //     logicalEntailments = beliefSet.logicalEntailment(Arrays.asList(newBelief), logicalEntailments);
-        //     System.out.println("test");
-        //     for (Expression exp : logicalEntailments) { System.out.println("from test1 in BeliefSetTest: " + exp.toString(false)); }
-        //     Assert.assertTrue("List not same content", util.sameContent(expected, logicalEntailments));
-        // } catch (Contradiction c) { Assert.assertTrue(false); }
+        // newBelief = new Implication(
+        //         new Literal("B"),
+        //         new Literal("C")
+        // );
+        // beliefSet.addBelief(newBelief, false);
+        // expected.add(newBelief);
+        // expected.add(new Literal("B"));
+        // for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (expected): " + exp.toString(false));};
+        // for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (beliefset): " + exp.toString(false));};
+        // Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
+
     }
 }
