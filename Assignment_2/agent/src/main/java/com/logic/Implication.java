@@ -15,7 +15,7 @@ public class Implication implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return this.right.implies(exp) || this.equals(exp);
+        return this.right.implies(exp) || this.left.equals(exp) || this.equals(exp);
     }
 
     @Override

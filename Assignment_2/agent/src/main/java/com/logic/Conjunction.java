@@ -48,12 +48,12 @@ public class Conjunction implements Expression {
     public boolean implies(Expression exp) {
         for (Expression expression : expressions) {
             if (!expression.implies(exp)) {
-                return false;
+                return true;
             }
         }
 
 
-        return true;
+        return false;
     }
 
     @Override
@@ -65,6 +65,7 @@ public class Conjunction implements Expression {
     public void sort() {
 
     }
+  
 
     @Override
     public Expression CNF() {
