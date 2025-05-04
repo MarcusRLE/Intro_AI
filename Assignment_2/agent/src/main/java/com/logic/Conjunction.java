@@ -37,6 +37,7 @@ public class Conjunction implements Expression {
                 // copy.remove(exp);
                 // isNewExpression = true;
             }
+            conclusions.addAll(exp.resolution(other));
         }
         // if(isNewExpression){
         //     conclusions.add(new Conjunction(copy));

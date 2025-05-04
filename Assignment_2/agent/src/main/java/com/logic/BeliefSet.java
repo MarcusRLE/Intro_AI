@@ -95,6 +95,30 @@ public class BeliefSet {
         return conclusions;
     }
 
+    List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments) throws Contradiction {
+        List<Expression> conclusions = new ArrayList<>();
+
+        try {
+            for (Expression newBelief : newBeliefs) {
+                for (Expression current : currentEntailments) {
+                    conclusions.addAll(current.resolution(newBelief));
+                }
+            }
+        } catch(Contradiction c) {
+            throw c;
+        }
+
+        for (Expression newBelief : newBeliefs) {
+            currentEntailments.add(newBelief);
+        }
+
+        if (!conclusions.isEmpty()) {
+            currentEntailments = logicalEntailment(conclusions, currentEntailments);
+        }
+
+        return currentEntailments;
+    }
+
     public List<Expression> getBeliefs() {
         return beliefs;
     }
