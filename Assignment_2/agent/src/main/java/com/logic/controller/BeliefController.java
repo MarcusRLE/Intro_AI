@@ -123,7 +123,7 @@ public class BeliefController {
     }
 
     public boolean hasContradiction(Expression exp){
-        List<Expression> expressions = new ArrayList<>();
+        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
         try {
             beliefs.logicalEntailment(List.of(exp), expressions);
         } catch (Contradiction contradiction) {
@@ -133,7 +133,7 @@ public class BeliefController {
     }
 
     public List<Expression> logicalConclusion(Expression exp) {
-        List<Expression> expressions = new ArrayList<>();
+        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
         try {
             expressions = beliefs.logicalEntailment(List.of(exp), expressions);
         } catch (Contradiction c) {

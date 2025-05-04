@@ -46,9 +46,10 @@ public class BeliefActionView {
 
         System.out.println(
                 "[1] Add new belief\n" +
-                        "[2] Check for contradiction\n" +
-                        "[3] See logical conclusions from new belief\n" +
-                        "[4] Exit"
+                        "[2] Discard belief\n" +
+                        "[3] Check for contradiction\n" +
+                        "[4] See logical conclusions from new belief\n" +
+                        "[5] Exit"
         );
 
         int chosenAction = getNumberInput(1,4);
@@ -56,21 +57,24 @@ public class BeliefActionView {
         switch (chosenAction) {
             case 1:
                 beliefController.addNewBelief(newBelief);
-                break;
+                return;
             case 2:
+                return;
+            case 3:
                 boolean hasContradiction = beliefController.hasContradiction(newBelief);
                 String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction() + "}" : "No contradiction detected";
                 System.out.println(msg);
                 break;
-            case 3:
+            case 4:
                 BeliefSet conclusions = new BeliefSet(beliefController.logicalConclusion(newBelief));
                 String set = conclusions.toString();
                 System.out.println(set);
                 break;
-            case 4:
+            case 5:
                 beliefController.setExitProgram(true);
-                break;
+                return;
         }
+        newBeliefAction();
     }
 
     public int getNumberInput(int min, int max) {

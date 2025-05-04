@@ -143,7 +143,7 @@ public class BeliefSet {
                 } catch (Contradiction c) {
                     conclusions.add(newBelief);
                     c.setContradictingConclusion(newBelief);
-                    c.setConclusions(conclusions);
+                    c.setConclusions(currentEntailments);
                     throw c;
                 }
             }
