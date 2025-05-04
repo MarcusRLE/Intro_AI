@@ -98,8 +98,8 @@ public class BeliefBuilderView {
     public char getCharInput(Scanner scanner) {
         String input = scanner.nextLine();
         if (input.length() == 1) {
-            char ch = input.charAt(0);
-            if (ch >= 'A' && ch <= 'Z') {
+            char ch = input.toUpperCase().charAt(0);
+            if (ch >= 'A' && ch <= 'z') {
                 return ch;
             }
         }

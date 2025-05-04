@@ -16,6 +16,7 @@ public class BeliefController {
     boolean currentTermIsLiteral;
     boolean buildingNewBelief;
     boolean exitProgram = false;
+    boolean hasContradiction = false;
 
     public BeliefController() {
         beliefs = new BeliefSet();
@@ -126,7 +127,8 @@ public class BeliefController {
         List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
         try {
             beliefs.logicalEntailment(List.of(exp), expressions);
-        } catch (Contradiction contradiction) {
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
             return true;
         }
         return false;

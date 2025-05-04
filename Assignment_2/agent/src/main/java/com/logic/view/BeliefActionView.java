@@ -52,7 +52,7 @@ public class BeliefActionView {
                         "[5] Exit"
         );
 
-        int chosenAction = getNumberInput(1,4);
+        int chosenAction = getNumberInput(1,5);
         Expression newBelief = beliefController.getCurrentNewBelief();
         switch (chosenAction) {
             case 1:
@@ -62,7 +62,7 @@ public class BeliefActionView {
                 return;
             case 3:
                 boolean hasContradiction = beliefController.hasContradiction(newBelief);
-                String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction() + "}" : "No contradiction detected";
+                String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
                 System.out.println(msg);
                 break;
             case 4:

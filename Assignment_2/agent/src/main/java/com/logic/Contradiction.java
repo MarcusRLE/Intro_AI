@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Contradiction extends Exception {
     List<Expression> conclusions;
-    Expression ContradictingConclusion;
+    Expression contradiction;
     Contradiction(String errorMessage) {
         super(errorMessage);
     }
@@ -17,11 +17,11 @@ public class Contradiction extends Exception {
         return conclusions;
     }
 
-    public void setContradictingConclusion(Expression ContradictingConclusion) {
-        this.ContradictingConclusion = ContradictingConclusion;
+    public void setContradictingConclusion(Expression contradictingConclusion) {
+        this.contradiction = contradictingConclusion;
     }
 
     public Expression getContradictingConclusion() {
-        return ContradictingConclusion;
+        return contradiction;
     }
 }
