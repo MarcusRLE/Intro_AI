@@ -25,9 +25,6 @@ public class BeliefBuilderView {
             buildTerm(scanner);
 
         }
-
-        System.out.println("New belief Complete");
-        System.out.println(beliefController.getCurrentNewBelief().toString(false));
     }
 
     public void buildTerm(Scanner scanner) {

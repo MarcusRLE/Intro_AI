@@ -13,10 +13,14 @@ public class BeliefController {
     boolean currentHasMultipleTerms;
     boolean currentNewBeliefComplete;
     boolean currentTermIsLiteral;
-
+    boolean buildingNewBelief;
 
     public BeliefController() {
         beliefs = new BeliefSet();
+    }
+
+    public void addNewBelief(Expression newBelief) {
+        beliefs.addBelief(newBelief, false);
     }
 
     public void setCurrentNewBelief(BeliefType belief) {
@@ -37,6 +41,7 @@ public class BeliefController {
                 currentNewBelief = new Implication(null, null);
                 break;
         }
+        buildingNewBelief = true;
         currentTerm = currentNewBelief;
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
         currentTermIsLiteral = currentTerm instanceof Literal;
@@ -83,7 +88,8 @@ public class BeliefController {
     }
 
     public boolean isComplete(){
-        return !currentNewBelief.hasEmptyTerm();
+        buildingNewBelief = currentNewBelief.hasEmptyTerm();
+        return !buildingNewBelief;
     }
 
     public boolean currentHasMultipleTerms(){
@@ -100,5 +106,9 @@ public class BeliefController {
 
     public boolean currentTermIsLiteral(){
         return currentTermIsLiteral;
+    }
+
+    public BeliefSet getBeliefs() {
+        return beliefs;
     }
 }
