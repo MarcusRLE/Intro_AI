@@ -14,6 +14,27 @@ public class Implication implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        if(left == null){
+            left = nextTerm;
+        } else if (left.hasEmptyTerm()){
+            left.setNextTerm(nextTerm);
+        } else if (right == null){
+            right = nextTerm;
+        } else if (right.hasEmptyTerm()){
+            right.setNextTerm(nextTerm);
+        }
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        if(left == null || right == null) {
+            return true;
+        }
+        return left.hasEmptyTerm() || right.hasEmptyTerm();
+    }
+
+    @Override
     public boolean implies(Expression exp) {
         return false;
     }

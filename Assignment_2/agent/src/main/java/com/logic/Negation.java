@@ -11,6 +11,28 @@ public class Negation implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        if(expression == null){
+            expression = nextTerm;
+        } else {
+            if(expression.hasEmptyTerm()){
+                expression.setNextTerm(nextTerm);
+            } else {
+                // Shouldn't happen
+            }
+        }
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        if(expression == null){
+            return true;
+        } else {
+            return expression.hasEmptyTerm();
+        }
+    }
+
+    @Override
     public boolean implies(Expression exp) {
         return false;
     }

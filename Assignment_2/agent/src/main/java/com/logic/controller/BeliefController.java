@@ -37,8 +37,9 @@ public class BeliefController {
                 currentNewBelief = new Implication(null, null);
                 break;
         }
-        setCurrentTerm(belief);
-        currentNewBeliefComplete = false;
+        currentTerm = currentNewBelief;
+        currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
+        currentTermIsLiteral = currentTerm instanceof Literal;
     }
 
     public void setCurrentTerm(BeliefType belief) {
@@ -59,8 +60,8 @@ public class BeliefController {
                 currentTerm = new Implication(null, null);
                 break;
         }
-        currentHasMultipleTerms = currentNewBelief instanceof MultipleTermed;
-        currentTermIsLiteral = currentNewBelief instanceof Literal;
+        currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
+        currentTermIsLiteral = currentTerm instanceof Literal;
     }
 
     public void setSizeOfBelief(int size){
@@ -73,10 +74,16 @@ public class BeliefController {
         }
     }
 
+
     public void setLiteralTerm(String name) {
         if(currentTermIsLiteral){
             ((Literal) currentTerm).setName(name);
+            currentTermIsLiteral = false;
         }
+    }
+
+    public boolean isComplete(){
+        return !currentNewBelief.hasEmptyTerm();
     }
 
     public boolean currentHasMultipleTerms(){
@@ -87,8 +94,8 @@ public class BeliefController {
         return currentNewBelief;
     }
 
-    public void defineNextTerm(){
-
+    public void defineNextTerm() {
+        currentNewBelief.setNextTerm(currentTerm);
     }
 
     public boolean currentTermIsLiteral(){

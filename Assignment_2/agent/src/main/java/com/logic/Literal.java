@@ -11,6 +11,17 @@ public class Literal implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        // Shouldn't happen
+        throw new UnsupportedOperationException("Should never be called");
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        return name == null || name.isEmpty();
+    }
+
+    @Override
     public boolean implies(Expression exp) {
         return false;
     }

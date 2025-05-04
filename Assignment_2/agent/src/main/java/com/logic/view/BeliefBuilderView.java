@@ -18,24 +18,39 @@ public class BeliefBuilderView {
         Scanner scanner = new Scanner(System.in);
         BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
         beliefController.setCurrentNewBelief(chosenBelief);
+        if(beliefController.currentHasMultipleTerms()){
+            beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
+        }
+        while (!beliefController.isComplete()){
+            buildTerm(scanner);
+
+        }
+
+        System.out.println("New belief Complete");
+        System.out.println(beliefController.getCurrentNewBelief().toString(false));
     }
 
     public void buildTerm(Scanner scanner) {
         if (beliefController.currentTermIsLiteral()) {
             System.out.println("Enter name of Literal term (one letter)");
             String name = "" + getCharInput(scanner);
-        }
-        System.out.println("Create next term");
-
-        BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
-        if(beliefController.currentHasMultipleTerms()){
-            beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
+            beliefController.setLiteralTerm(name);
+        } else {
+            printCurrentNewBelief();
+            System.out.println("Create next term");
+            BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
+            beliefController.setCurrentTerm(chosenBelief);
+            if(beliefController.currentHasMultipleTerms()){
+                beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
+            }
+            beliefController.defineNextTerm();
         }
     }
 
     public void printCurrentNewBelief(){
         System.out.println("Current newBelief");
         System.out.println(beliefController.getCurrentNewBelief().toString(false));
+        System.out.println("---------------------------------------");
     }
 
     public int getBeliefType(Scanner scanner) {
@@ -43,7 +58,7 @@ public class BeliefBuilderView {
         for (BeliefType beliefType : BeliefType.values()) {
             msg.append("\n[").append(beliefType.getCode()).append("] ").append(beliefType.name());
         }
-        System.out.println(msg.toString());
+        System.out.println(msg);
         return getTypeInput(scanner);
     }
 
