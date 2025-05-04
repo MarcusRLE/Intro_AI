@@ -23,8 +23,8 @@ public class AmgTest {
         // Contract the belief
         BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
 
-        // Convert to CNF
-        contractedBeliefSet.convertToCNF();
+        // Get CN
+        contractedBeliefSet.CN();
 
         // Assert that the belief set does not contain the contracted belief
         Assert.assertFalse("Belief set should not contain the contracted belief", contractedBeliefSet.contains(beliefToContract));
@@ -119,16 +119,16 @@ public class AmgTest {
         // Belief to be contracted not in the CNF belief set
         Expression beliefToContract = new Literal("P");
 
-        // Convert to CNF
-        BeliefSet cnfBeliefSet = new BeliefSet();
-        cnfBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
-        cnfBeliefSet.convertToCNF();
+        // Convert to CN
+        BeliefSet cnBeliefSet = new BeliefSet();
+        cnBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
+        cnBeliefSet.CN();
 
         // Contract the belief
         BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
 
-        // Assert that the CNF belief set does not contain the belief to be contracted
-        Assert.assertFalse("CNF belief set should not contain the belief to be contracted", cnfBeliefSet.contains(beliefToContract));
+        // Assert that the CN belief set does not contain the belief to be contracted
+        Assert.assertFalse("CNF belief set should not contain the belief to be contracted", cnBeliefSet.contains(beliefToContract));
 
         // Assert that the belief set contains the same beliefs after contraction
         Assert.assertTrue("The belief set  should contain the same beliefs after contraction", util.sameContent(beliefSet.getBeliefs(),contractedBeliefSet.getBeliefs()));
@@ -155,24 +155,76 @@ public class AmgTest {
         expandedBeliefSet.addBelief(beliefToRevise, false);
 
         // Assert that the belief set does not contain the negated belief to be revised
-        Assert.assertFalse("CNF belief set should not contain the belief to be contracted", beliefSet.contains(beliefToRevise));
+        Assert.assertFalse("belief set should not contain the belief to be revision", beliefSet.contains(new Negation(beliefToRevise)));
 
         // Assert that the revised belief set contains the same beliefs as the expanded belief set
-        Assert.assertTrue("The belief set  should contain the same beliefs after contraction", util.sameContent(revisedBeliefSet.getBeliefs(),expandedBeliefSet.getBeliefs()));
+        Assert.assertTrue("The belief set should contain the same beliefs after revision", util.sameContent(revisedBeliefSet.getBeliefs(),expandedBeliefSet.getBeliefs()));
     }
 
     @Test
     public void RevisionConsistency() {
+        // Set up the initial belief set
+        BeliefSet beliefSet = new BeliefSet();
+        beliefSet.addBelief(new Literal("A"), false);
+        beliefSet.addBelief(new Literal("B"), false);
+        beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
 
+        // Belief to be revised
+        Expression beliefToRevise = new Literal("P");
+
+        // Revise the belief using Levi identity
+        BeliefSet revisedBeliefSet = beliefSet.contraction(new Negation(beliefToRevise));
+        revisedBeliefSet.addBelief(beliefToRevise, false);
+
+        // Assert that the revised belief is consistent
+        Assert.assertTrue("Revised belief should be consistent", beliefToRevise.isConsistent());
+
+        // Assert that the revised belief set is consistent
+        Assert.assertTrue("Revised belief set should be consistent", revisedBeliefSet.isConsistent());
     }
 
     @Test
     public void ContractionExtensionality() {
+        // Set up the initial belief sets
+        BeliefSet beliefSet1 = new BeliefSet();
+        beliefSet1.addBelief(new Literal("A"), false);
+        beliefSet1.addBelief(new Literal("B"), false);
+        beliefSet1.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
+        BeliefSet beliefSet2 = new BeliefSet();
+        beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
+
+        // Belief to be contracted
+        Expression beliefToContract = new Literal("P");
+
+        // Contract the belief
+        BeliefSet firstContractedBeliefSet = beliefSet1.contraction(beliefToContract);
+        BeliefSet secondContractedBeliefSet = beliefSet2.contraction(beliefToContract);
+
+        // Assert that the contracted belief sets contains the same beliefs
+        Assert.assertTrue("The belief set should contain the same beliefs after contraction", util.sameContent(firstContractedBeliefSet.getBeliefs(),secondContractedBeliefSet.getBeliefs()));
 
     }
 
     @Test
     public void RevisionExtensionality() {
+        // Set up the initial belief sets
+        BeliefSet beliefSet1 = new BeliefSet();
+        beliefSet1.addBelief(new Literal("A"), false);
+        beliefSet1.addBelief(new Literal("B"), false);
+        beliefSet1.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
+        BeliefSet beliefSet2 = new BeliefSet();
+        beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
 
+        // Belief to be revised
+        Expression beliefToRevise = new Literal("P");
+
+        // Revise the belief using Levi identity
+        BeliefSet firstRevisedBeliefSet = beliefSet1.contraction(new Negation(beliefToRevise));
+        firstRevisedBeliefSet.addBelief(beliefToRevise, false);
+        BeliefSet secondRevisedBeliefSet = beliefSet2.contraction(new Negation(beliefToRevise));
+        secondRevisedBeliefSet.addBelief(beliefToRevise, false);
+
+        // Assert that the revised belief sets contains the same beliefs
+        Assert.assertTrue("The belief set should contain the same beliefs after revision", util.sameContent(firstRevisedBeliefSet.getBeliefs(),secondRevisedBeliefSet.getBeliefs()));
     }
 }
