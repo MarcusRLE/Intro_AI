@@ -127,4 +127,40 @@ public class ResolutionTest {
         }
         Assert.assertTrue("Contradiction not caught", true);
     }
+
+    @Test
+    public void test6(){
+        List<Expression> expected = List.of(
+                new Conjunction(
+                        Arrays.asList(
+                                new Negation(new Literal("A")),
+                                new Literal("B")
+                        )
+                )
+        );
+
+        Expression disjunction = new Disjunction(
+                Arrays.asList(
+                        new Conjunction(
+                                Arrays.asList(
+                                        new Negation(new Literal("A")),
+                                        new Literal("B")
+                                )
+                        ),
+                        new Negation(new Literal("C"))
+                )
+        );
+
+        Expression literal = new Literal("C");
+
+        try {
+            List<Expression> resolutions = disjunction.resolution(literal);
+            // for (Expression exp : expected) { System.out.println("from test6: " + exp.toString(false)); }
+            // for (Expression exp : resolutions) { System.out.println("from test6: " + exp.toString(false)); }
+            // if (resolutions.isEmpty()) { System.out.println("from test6: res is empty"); }
+            Assert.assertTrue("List not same content", util.sameContent(expected, resolutions));
+        } catch (Contradiction e) {
+            Assert.assertTrue(false);
+        }
+    }
 }

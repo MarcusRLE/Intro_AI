@@ -31,7 +31,6 @@ public class Conjunction implements Expression {
 
         List<Expression> copy = new ArrayList<>(expressions);
         boolean isNewExpression = false;
-        System.out.println("from con res: " + copy.size());
         for (Expression exp : copy){
             if(other.isEqual(new Negation(exp))){
                 throw new Contradiction("Contradiction: " + exp.toString(false) + "contradicts " + this.toString(false));
