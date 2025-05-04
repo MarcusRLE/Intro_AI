@@ -1,6 +1,7 @@
 package com.logic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BeliefSet {
@@ -74,13 +75,11 @@ public class BeliefSet {
 
         if (!this.contains(belief)) {
             try {
-                List<Expression> logicalEntailments = logicalEntailment(
-                    Arrays.asList(belief),
-                    new ArrayList<>(beliefs)
-                );
+                List<Expression> logicalEntailments = new ArrayList<>(beliefs);
+                logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
                 beliefs.addAll(logicalEntailments);
             } catch (Contradiction e) {
-                // Handle
+                // Handle error
             }
         }
     }
