@@ -21,7 +21,7 @@ public class BeliefSet {
             BeliefSet temBeliefSet = new BeliefSet();
             for (Expression otherBelief : beliefs) {
                 if (!belief.implies(otherBelief)) {
-                    temBeliefSet.addBelief(otherBelief, false);
+                    temBeliefSet.addBelief(otherBelief, true);
                 }
             }
             boolean isConsistent = true;
@@ -33,7 +33,7 @@ public class BeliefSet {
                 }
             }
             if (isConsistent) {
-                contractedBeliefSet.addBelief(belief, false);
+                contractedBeliefSet.addBelief(belief, true);
             }
 
         }
@@ -48,7 +48,7 @@ public class BeliefSet {
         beliefs.clear();
         for (Expression belief : oldBeliefs) {
             belief = belief.CNF();
-            addBelief(belief, false);
+            addBelief(belief, true);
         }
     }
 
@@ -73,7 +73,13 @@ public class BeliefSet {
         if (!this.contains(belief)) {
             try {
                 List<Expression> logicalEntailments = new ArrayList<>(beliefs);
-                logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
+                List<Expression> addBeliefs;
+                if (belief instanceof Conjunction) {
+                    addBeliefs = ((Conjunction)belief).expressions;
+                } else {
+                    addBeliefs = Arrays.asList(belief);
+                }
+                logicalEntailments = logicalEntailment(addBeliefs, logicalEntailments);
                 beliefs.addAll(logicalEntailments);
                 beliefs = beliefs.stream().distinct().collect(Collectors.toList());
             } catch (Contradiction e) {
@@ -104,23 +110,23 @@ public class BeliefSet {
         for (Expression belief : beliefs) {
             List<Expression> currentConclusions = belief.resolution(exp);
             for (Expression conclusion : currentConclusions) {
-                conclusions.addBelief(conclusion, false);
+                conclusions.addBelief(conclusion, true);
             }
         }
 
         if (conclusions.beliefs.isEmpty()) {
-            conclusions.addBelief(exp, false);
+            conclusions.addBelief(exp, true);
             return conclusions;
         } else {
             BeliefSet nextConclusions = new BeliefSet();
             for (Expression conclusion : conclusions.beliefs) {
                 BeliefSet currentConclusions = this.logicalConclusion(conclusion);
                 for (Expression currentConclusion : currentConclusions.beliefs) {
-                    nextConclusions.addBelief(currentConclusion, false);
+                    nextConclusions.addBelief(currentConclusion, true);
                 }
             }
             for (Expression conclusion : nextConclusions.beliefs) {
-                conclusions.addBelief(conclusion, false);
+                conclusions.addBelief(conclusion, true);
             }
         }
 
