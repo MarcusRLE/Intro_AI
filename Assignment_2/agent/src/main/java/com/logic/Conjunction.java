@@ -26,20 +26,22 @@ public class Conjunction implements Expression {
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
 
         List<Expression> copy = new ArrayList<>(expressions);
         boolean isNewExpression = false;
+        System.out.println("from con res: " + copy.size());
         for (Expression exp : copy){
             if(other.isEqual(new Negation(exp))){
-                copy.remove(exp);
-                isNewExpression = true;
+                throw new Contradiction("Contradiction: " + exp.toString(false) + "contradicts " + this.toString(false));
+                // copy.remove(exp);
+                // isNewExpression = true;
             }
         }
-        if(isNewExpression){
-            conclusions.add(new Conjunction(copy));
-        }
+        // if(isNewExpression){
+        //     conclusions.add(new Conjunction(copy));
+        // }
 
         return conclusions;
     }

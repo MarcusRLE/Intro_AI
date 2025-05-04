@@ -18,16 +18,21 @@ public class util {
             return false;
         }
 
-        boolean sameContent = false;
-        List<Expression> list2Copy = new ArrayList<>(list2);
+        List<Expression> list2copy = new ArrayList<>(list2);
         for (Expression exp1 : list1) {
-            sameContent = false;
-            if(list2Copy.contains(exp1)) {
-                list2Copy.remove(exp1);
-                sameContent = true;
+            boolean found = false;
+            for (int i = 0; i < list2copy.size(); i++) {
+                if (exp1.isEqual(list2copy.get(i))) {
+                    list2copy.remove(i);
+                    found = true;
+                }
+            }
+            if (!found) {
+                return false;
             }
         }
 
-        return sameContent;
+        return list2copy.isEmpty();
     }
+
 }

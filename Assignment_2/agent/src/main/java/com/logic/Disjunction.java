@@ -75,7 +75,6 @@ public class Disjunction implements Expression {
     public List<Expression> resolution(Expression other) {
         List<Expression> conclusions = new ArrayList<>();
 
-
         List<Expression> unique = new ArrayList<>();
         for (Expression exp : expressions) {
             if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
@@ -83,12 +82,11 @@ public class Disjunction implements Expression {
             }
         }
 
-        if (unique.size() == 1) {
-            return unique.get(0).resolution(other);
-        }
+        if (unique.size() == 1) { return unique; }
 
         unique.removeIf(exp -> exp.isEqual(new Negation(other)));
 
+        if (unique.size() == 1) { return unique; }
 
         if(other instanceof Disjunction){
             for (Expression thisExp : unique){
@@ -100,6 +98,17 @@ public class Disjunction implements Expression {
                         conclusions.addAll(thisExps);
                     }
                 }
+            }
+        } else if (other instanceof Conjunction) {
+            // for (Expression thisExp : unique) {
+                for (Expression otherExp : ((Conjunction) other).expressions) {
+                    unique.removeIf(exp -> exp.isEqual(new Negation(otherExp)));
+                }
+            // }
+            if (unique.size() == 1) {
+                conclusions.addAll(unique);
+                conclusions.addAll(((Conjunction) other).expressions);
+                return conclusions;
             }
         }
 

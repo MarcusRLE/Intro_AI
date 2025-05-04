@@ -53,9 +53,13 @@ public class BeliefSet {
     }
 
     public void addBeliefsWithConclusion(Expression exp){
-        BeliefSet conclusions = this.logicalConclusion(exp);
-        for (Expression conclusion : conclusions.getBeliefs()){
-            beliefs.add(conclusion);
+        try {
+            BeliefSet conclusions = this.logicalConclusion(exp);
+            for (Expression conclusion : conclusions.getBeliefs()){
+                beliefs.add(conclusion);
+            }
+        } catch (Contradiction e) {
+            System.out.println(e);
         }
     }
 
@@ -63,7 +67,7 @@ public class BeliefSet {
         beliefs.remove(belief);
     }
 
-    public BeliefSet logicalConclusion(Expression exp) {
+    public BeliefSet logicalConclusion(Expression exp) throws Contradiction {
         BeliefSet conclusions = new BeliefSet();
         for (Expression belief : beliefs) {
             List<Expression> currentConclusions = belief.resolution(exp);

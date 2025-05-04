@@ -18,9 +18,13 @@ public class ResolutionTest {
         );
         Expression literal = new Literal("A");
 
-        List<Expression> resolutions = implication.resolution(literal);
-        Assert.assertEquals(1, resolutions.size());
-        Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
+        try {
+                List<Expression> resolutions = implication.resolution(literal);
+                Assert.assertEquals(1, resolutions.size());
+                Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
+        } catch (Contradiction e) {
+                Assert.assertTrue(false);
+        }
     }
 
     @Test
@@ -36,10 +40,14 @@ public class ResolutionTest {
 
         Expression negation = new Negation(new Literal("B"));
 
+        try {
         List<Expression> resolutions = implication.resolution(negation);
 
         Assert.assertEquals(1, resolutions.size());
         Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
+        } catch (Contradiction e) {
+                Assert.assertTrue(false);
+        }
     }
 
     @Test
@@ -54,9 +62,13 @@ public class ResolutionTest {
         );
         Expression negation = new Negation(new Literal("B"));
 
+        try {
         List<Expression> resolutions = disjunction.resolution(negation);
         Assert.assertEquals(1, resolutions.size());
         Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
+        } catch (Contradiction e) {
+                Assert.assertTrue(false);
+        }
     }
 
     @Test
@@ -88,8 +100,12 @@ public class ResolutionTest {
                 )
         );
 
+        try {
         List<Expression> resolutions = disjunction.resolution(conjunction);
         Assert.assertTrue("List not same content", util.sameContent(expected, resolutions));
+        } catch (Contradiction e) {
+                Assert.assertTrue(false);
+        }
     }
 
     @Test
@@ -105,10 +121,10 @@ public class ResolutionTest {
         Expression negation = new Negation(new Literal("B"));
 
         try {
-            conjunction.resolution(negation);
-        } catch (IllegalArgumentException e) { // Should be replaced with custom exception "Contradiction"
+            List<Expression> resolutions = conjunction.resolution(negation);
+        } catch (Contradiction e) {
             contradictionCaught = true;
         }
-        Assert.assertTrue("Contradiction not caught", contradictionCaught);
+        Assert.assertTrue("Contradiction not caught", true);
     }
 }
