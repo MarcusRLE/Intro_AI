@@ -61,7 +61,6 @@ public interface Expression {
         }
     }
 
-
     List<Expression> resolution(Expression other);
 
     String toString(boolean withParentheses);

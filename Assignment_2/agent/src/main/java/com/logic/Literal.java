@@ -32,6 +32,9 @@ public class Literal implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
+        if (name == null) {
+            return "[ EMPTY ]";
+        }
         return name;
     }
 
@@ -39,5 +42,9 @@ public class Literal implements Expression {
     public List<Expression> resolution(Expression other) {
         List<Expression> conclusions = new ArrayList<>();
         return conclusions;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 } 

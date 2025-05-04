@@ -39,11 +39,11 @@ public class Implication implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
-        if (withParentheses) {
-            return "(" + left.toString(true) + " => " + right.toString(true) + ")";
-        } else {
-            return left.toString(true) + " => " + right.toString(true);
-        }
+        String result = withParentheses ? "(" : "";
+        result += this.left != null ? this.left.toString(withParentheses) : "[ EMPTY ]";
+        result += " => ";
+        result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
+        return result;
     }
 
     @Override

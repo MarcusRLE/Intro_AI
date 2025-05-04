@@ -65,10 +65,11 @@ public class Negation implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
+        String exprStr = expression != null ? expression.toString(withParentheses) : "[ EMPTY ]";
         if (expression instanceof Literal) {
-            return "¬" + expression.toString(false);
+            return "¬" + exprStr;
         } else {
-            return "¬(" + expression.toString(false) + ")";
+            return "¬(" + exprStr + ")";
         }
     }
 } 
