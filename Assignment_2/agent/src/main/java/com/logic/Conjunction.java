@@ -26,26 +26,35 @@ public class Conjunction extends MultipleTermed implements Expression {
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
 
         List<Expression> copy = new ArrayList<>(expressions);
         boolean isNewExpression = false;
         for (Expression exp : copy){
             if(other.isEqual(new Negation(exp))){
-                copy.remove(exp);
-                isNewExpression = true;
+                throw new Contradiction("Contradiction: " + exp.toString(false) + "contradicts " + this.toString(false));
+                // copy.remove(exp);
+                // isNewExpression = true;
             }
+            conclusions.addAll(exp.resolution(other));
         }
-        if(isNewExpression){
-            conclusions.add(new Conjunction(copy));
-        }
+        // if(isNewExpression){
+        //     conclusions.add(new Conjunction(copy));
+        // }
 
         return conclusions;
     }
 
     @Override
     public boolean implies(Expression exp) {
+        for (Expression expression : expressions) {
+            if (!expression.implies(exp)) {
+                return true;
+            }
+        }
+
+
         return false;
     }
 
@@ -58,6 +67,7 @@ public class Conjunction extends MultipleTermed implements Expression {
     public void sort() {
 
     }
+  
 
     @Override
     public Expression CNF() {

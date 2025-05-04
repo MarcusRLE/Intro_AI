@@ -23,7 +23,7 @@ public class Literal implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return false;
+        return equals(exp);
     }
 
     @Override
@@ -54,8 +54,15 @@ public class Literal implements Expression {
         List<Expression> conclusions = new ArrayList<>();
         return conclusions;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Literal literal = (Literal) o;
+        return name.equals(literal.name);
+    }
 
     public void setName(String name){
         this.name = name;
     }
-} 
+}
