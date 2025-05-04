@@ -27,15 +27,6 @@ public class Disjunction implements Expression {
         }
         return false;
     }
-    @Override
-    public boolean isEqual(Expression other){
-        if(!(other instanceof Disjunction)){
-            return false;
-        }
-        Disjunction otherDisj = (Disjunction) other;
-        return this.expressions.containsAll(otherDisj.expressions) && otherDisj.expressions.containsAll(this.expressions);
-
-    }
 
     @Override
     public boolean hasContradiction(Expression exp) {
