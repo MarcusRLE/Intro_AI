@@ -12,6 +12,10 @@ public class BeliefSet {
         this.beliefs = new ArrayList<>();
     }
 
+    public BeliefSet(List<Expression> beliefs) {
+        this.beliefs = beliefs;
+    }
+
     public BeliefSet contraction() {
         BeliefSet contractedBeliefSet = new BeliefSet();
 
@@ -127,18 +131,22 @@ public class BeliefSet {
         return conclusions;
     }
 
-    List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
+    public List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
             throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
 
-        try {
-            for (Expression newBelief : newBeliefs) {
-                for (Expression current : currentEntailments) {
+
+        for (Expression newBelief : newBeliefs) {
+            for (Expression current : currentEntailments) {
+                try {
                     conclusions.addAll(current.resolution(newBelief));
+                } catch (Contradiction c) {
+                    conclusions.add(newBelief);
+                    c.setContradictingConclusion(newBelief);
+                    c.setConclusions(conclusions);
+                    throw c;
                 }
             }
-        } catch (Contradiction c) {
-            throw c;
         }
 
         for (Expression newBelief : newBeliefs) {

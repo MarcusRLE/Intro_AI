@@ -1,8 +1,10 @@
 package com.logic.view;
 
+import com.logic.BeliefSet;
 import com.logic.Expression;
 import com.logic.controller.BeliefController;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class BeliefActionView {
@@ -19,35 +21,54 @@ public class BeliefActionView {
     public void chooseAction() {
         System.out.println("\nPlease choose an action:");
         System.out.println("[1] Build new belief\n" +
-                "[2] See belief set");
-        int chosenAction = getNumberInput(1,2);
+                "[2] See belief set\n" +
+                "[3] Exit");
+        int chosenAction = getNumberInput(1,3);
 
         switch (chosenAction) {
             case 1:
-                buildNewBelief();
+                beliefBuilderView.buildNewBelief();
+                newBeliefAction();
                 break;
             case 2:
                 System.out.println(beliefController.getBeliefs().toString());
+                break;
+            case 3:
+                beliefController.setExitProgram(true);
                 break;
             default:
                 break;
         }
     }
 
-    public void buildNewBelief() {
-        beliefBuilderView.buildNewBelief();
-        System.out.println("New belief Complete");
+    public void newBeliefAction() {
         System.out.println(beliefController.getCurrentNewBelief().toString(false));
 
         System.out.println(
-                "[1] Add new belief"
+                "[1] Add new belief\n" +
+                        "[2] Check for contradiction\n" +
+                        "[3] See logical conclusions from new belief\n" +
+                        "[4] Exit"
         );
 
-        int chosenAction = getNumberInput(1,1);
+        int chosenAction = getNumberInput(1,4);
+        Expression newBelief = beliefController.getCurrentNewBelief();
         switch (chosenAction) {
             case 1:
-                Expression newBelief = beliefController.getCurrentNewBelief();
                 beliefController.addNewBelief(newBelief);
+                break;
+            case 2:
+                boolean hasContradiction = beliefController.hasContradiction(newBelief);
+                String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction() + "}" : "No contradiction detected";
+                System.out.println(msg);
+                break;
+            case 3:
+                BeliefSet conclusions = new BeliefSet(beliefController.logicalConclusion(newBelief));
+                String set = conclusions.toString();
+                System.out.println(set);
+                break;
+            case 4:
+                beliefController.setExitProgram(true);
                 break;
         }
     }

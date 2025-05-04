@@ -15,7 +15,7 @@ public class App {
         BeliefController beliefController = new BeliefController();
         BeliefActionView viewAction = new BeliefActionView(beliefController);
 
-        while(true) {
+        while(!beliefController.getExitProgram()) {
             viewAction.chooseAction();
         }
 

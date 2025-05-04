@@ -10,10 +10,12 @@ public class BeliefController {
     BeliefSet beliefs;
     Expression currentNewBelief;
     Expression currentTerm;
+    Expression contradiction;
     boolean currentHasMultipleTerms;
     boolean currentNewBeliefComplete;
     boolean currentTermIsLiteral;
     boolean buildingNewBelief;
+    boolean exitProgram = false;
 
     public BeliefController() {
         beliefs = new BeliefSet();
@@ -110,5 +112,38 @@ public class BeliefController {
 
     public BeliefSet getBeliefs() {
         return beliefs;
+    }
+
+    public boolean getExitProgram() {
+        return exitProgram;
+    }
+
+    public void setExitProgram(boolean exitProgram) {
+        this.exitProgram = exitProgram;
+    }
+
+    public boolean hasContradiction(Expression exp){
+        List<Expression> expressions = new ArrayList<>();
+        try {
+            beliefs.logicalEntailment(List.of(exp), expressions);
+        } catch (Contradiction contradiction) {
+            return true;
+        }
+        return false;
+    }
+
+    public List<Expression> logicalConclusion(Expression exp) {
+        List<Expression> expressions = new ArrayList<>();
+        try {
+            expressions = beliefs.logicalEntailment(List.of(exp), expressions);
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
+            return c.getConclusions();
+        }
+        return expressions;
+    }
+
+    public Expression getContradiction() {
+        return contradiction;
     }
 }
