@@ -50,8 +50,19 @@ public class Literal implements Expression {
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
+        if (other instanceof Conjunction) {
+            for (Expression exp: ((Conjunction)other).expressions) {
+                if ((new Negation(exp)).isEqual(this)) {
+                    throw new Contradiction("Contradiction");
+                }
+            }
+        } else {
+           if ((new Negation(other)).isEqual(this)) {
+                throw new Contradiction("Contradiction");
+            }
+        }
         return conclusions;
     }
     @Override
@@ -61,7 +72,7 @@ public class Literal implements Expression {
         Literal literal = (Literal) o;
         return name.equals(literal.name);
     }
-
+  
     public void setName(String name){
         this.name = name;
     }
