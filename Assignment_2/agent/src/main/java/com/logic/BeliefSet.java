@@ -66,15 +66,25 @@ public class BeliefSet {
         return false;
     }
 
+    
     public void addBelief(Expression belief, boolean convertToCNF) {
         if (convertToCNF) {
             belief = belief.CNF();
         }
+
         if (!this.contains(belief)) {
-            beliefs.add(belief);   
+            try {
+                List<Expression> logicalEntailments = logicalEntailment(
+                    Arrays.asList(belief),
+                    new ArrayList<>(beliefs)
+                );
+                beliefs.addAll(logicalEntailments);
+            } catch (Contradiction e) {
+                // Handle
+            }
         }
-        // ERROR HANDLING FOR CONTRADICTION
     }
+
 
     public void addBeliefsWithConclusion(Expression exp){
         try {
