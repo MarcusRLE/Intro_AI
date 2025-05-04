@@ -58,6 +58,13 @@ public class Literal implements Expression {
                     throw new Contradiction("Contradiction");
                 }
             }
+        } else if (other instanceof Implication) {
+            Implication implication = ((Implication)other);
+            if(implication.left.isEqual(this)){
+                conclusions.add(implication.right);
+            } else if(implication.right.isEqual(new Negation(this))){
+                conclusions.add(new Negation(implication.left));
+            }
         } else {
            if ((new Negation(other)).isEqual(this)) {
                 throw new Contradiction("Contradiction");
