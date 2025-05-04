@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Conjunction implements Expression {
-    protected List<Expression> expressions;
+public class Conjunction extends MultipleTermed implements Expression {
 
     public Conjunction(List<Expression> expressions) {
         this.expressions = expressions;
@@ -15,7 +14,8 @@ public class Conjunction implements Expression {
     public String toString(boolean withParentheses) {
         StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
         for (int i = 0; i < this.expressions.size(); i++) {
-            result.append(this.expressions.get(i).toString(true));
+            Expression exp = this.expressions.get(i);
+            result.append(exp != null ? exp.toString(true) : "[ EMPTY ]");
             if (i < this.expressions.size() - 1) {
                 result.append(" ∧ ");
             } else {

@@ -1,5 +1,7 @@
 package com.logic;
 
+import java.util.stream.Collectors;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +13,27 @@ public class Implication implements Expression {
     public Implication(Expression left, Expression right) {
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public void setNextTerm(Expression nextTerm) {
+        if(left == null){
+            left = nextTerm;
+        } else if (left.hasEmptyTerm()){
+            left.setNextTerm(nextTerm);
+        } else if (right == null){
+            right = nextTerm;
+        } else if (right.hasEmptyTerm()){
+            right.setNextTerm(nextTerm);
+        }
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        if(left == null || right == null) {
+            return true;
+        }
+        return left.hasEmptyTerm() || right.hasEmptyTerm();
     }
 
     @Override
@@ -39,21 +62,32 @@ public class Implication implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
-        if (withParentheses) {
-            return "(" + left.toString(true) + " => " + right.toString(true) + ")";
-        } else {
-            return left.toString(true) + " => " + right.toString(true);
-        }
+        String result = withParentheses ? "(" : "";
+        result += this.left != null ? this.left.toString(withParentheses) : "[ EMPTY ]";
+        result += " => ";
+        result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
+        return result;
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){
             conclusions.add(this.right);
         } else if(this.right.isEqual(new Negation(other))){
             conclusions.add(new Negation(this.left));
         }
-        return conclusions;
+        if (other instanceof Conjunction) {
+            for (Expression exp: ((Conjunction)other).expressions) {
+                if (exp.isEqual(this.left)) {
+                    conclusions.add(this.right);
+                }
+            }
+        } else {
+            if (other.isEqual(this.left)) {
+                conclusions.add(this.right);
+            }
+        }
+        return conclusions.stream().distinct().collect(Collectors.toList());
     }
 } 

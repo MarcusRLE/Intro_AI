@@ -11,6 +11,17 @@ public class Literal implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        // Shouldn't happen
+        throw new UnsupportedOperationException("Should never be called");
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        return name == null || name.isEmpty();
+    }
+
+    @Override
     public boolean implies(Expression exp) {
         return equals(exp);
     }
@@ -32,12 +43,33 @@ public class Literal implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
+        if (name == null) {
+            return "[ EMPTY ]";
+        }
         return name;
     }
 
     @Override
-    public List<Expression> resolution(Expression other) {
+    public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
+        if (other instanceof Conjunction) {
+            for (Expression exp: ((Conjunction)other).expressions) {
+                if ((new Negation(exp)).isEqual(this)) {
+                    throw new Contradiction("Contradiction");
+                }
+            }
+        } else if (other instanceof Implication) {
+            Implication implication = ((Implication)other);
+            if(implication.left.isEqual(this)){
+                conclusions.add(implication.right);
+            } else if(implication.right.isEqual(new Negation(this))){
+                conclusions.add(new Negation(implication.left));
+            }
+        } else {
+           if ((new Negation(other)).isEqual(this)) {
+                throw new Contradiction("Contradiction");
+            }
+        }
         return conclusions;
     }
     @Override
@@ -47,4 +79,8 @@ public class Literal implements Expression {
         Literal literal = (Literal) o;
         return name.equals(literal.name);
     }
-} 
+  
+    public void setName(String name){
+        this.name = name;
+    }
+}
