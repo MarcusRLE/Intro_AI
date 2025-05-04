@@ -11,9 +11,46 @@ public class Negation implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        if(expression == null){
+            expression = nextTerm;
+        } else {
+            if(expression.hasEmptyTerm()){
+                expression.setNextTerm(nextTerm);
+            } else {
+                // Shouldn't happen
+            }
+        }
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        if(expression == null){
+            return true;
+        } else {
+            return expression.hasEmptyTerm();
+        }
+    }
+
+    @Override
     public boolean implies(Expression exp) {
+        if (!this.expression.implies(exp)) {
+            return true;
+            
+        }
+        if (this.expression instanceof Conjunction) {
+            Conjunction conjunction = (Conjunction) this.expression;
+            for (Expression expression : conjunction.expressions) {
+                if (!expression.implies(exp)) {
+                    return true;
+                }
+            }
+            
+        }
+
         return false;
     }
+
 
     @Override
     public boolean hasContradiction(Expression exp) {
@@ -65,10 +102,11 @@ public class Negation implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
+        String exprStr = expression != null ? expression.toString(withParentheses) : "[ EMPTY ]";
         if (expression instanceof Literal) {
-            return "¬" + expression.toString(false);
+            return "¬" + exprStr;
         } else {
-            return "¬(" + expression.toString(false) + ")";
+            return "¬(" + exprStr + ")";
         }
     }
 } 

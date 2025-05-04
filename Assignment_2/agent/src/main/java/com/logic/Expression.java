@@ -17,6 +17,10 @@ public interface Expression {
         }
     }
 
+    void setNextTerm(Expression nextTerm);
+
+    boolean hasEmptyTerm();
+
     boolean implies(Expression exp);
 
     boolean hasContradiction(Expression exp);
@@ -62,7 +66,7 @@ public interface Expression {
     }
 
 
-    List<Expression> resolution(Expression other);
+    List<Expression> resolution(Expression other) throws Contradiction;
 
     String toString(boolean withParentheses);
 }

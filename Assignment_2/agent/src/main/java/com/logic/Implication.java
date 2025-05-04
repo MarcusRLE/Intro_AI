@@ -14,8 +14,29 @@ public class Implication implements Expression {
     }
 
     @Override
+    public void setNextTerm(Expression nextTerm) {
+        if(left == null){
+            left = nextTerm;
+        } else if (left.hasEmptyTerm()){
+            left.setNextTerm(nextTerm);
+        } else if (right == null){
+            right = nextTerm;
+        } else if (right.hasEmptyTerm()){
+            right.setNextTerm(nextTerm);
+        }
+    }
+
+    @Override
+    public boolean hasEmptyTerm() {
+        if(left == null || right == null) {
+            return true;
+        }
+        return left.hasEmptyTerm() || right.hasEmptyTerm();
+    }
+
+    @Override
     public boolean implies(Expression exp) {
-        return false;
+        return this.right.implies(exp) || this.left.equals(exp) || this.equals(exp);
     }
 
     @Override
@@ -39,11 +60,11 @@ public class Implication implements Expression {
 
     @Override
     public String toString(boolean withParentheses) {
-        if (withParentheses) {
-            return "(" + left.toString(true) + " => " + right.toString(true) + ")";
-        } else {
-            return left.toString(true) + " => " + right.toString(true);
-        }
+        String result = withParentheses ? "(" : "";
+        result += this.left != null ? this.left.toString(withParentheses) : "[ EMPTY ]";
+        result += " => ";
+        result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
+        return result;
     }
 
     @Override

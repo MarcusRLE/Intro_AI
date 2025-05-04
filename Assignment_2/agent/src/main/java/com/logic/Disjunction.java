@@ -3,10 +3,13 @@ package com.logic;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Disjunction implements Expression {
-    protected List<Expression> expressions;
+public class Disjunction extends MultipleTermed {
 
     public Disjunction(List<Expression> expressions) {
+        if(expressions == null){
+            this.expressions = null;
+            return;
+        }
         List<Expression> newExpressions = new ArrayList<>(expressions);
 
         for (Expression expression : expressions) {
@@ -20,6 +23,11 @@ public class Disjunction implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
+        for(Expression expr: expressions){
+            if(expr.implies(exp)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -75,7 +83,6 @@ public class Disjunction implements Expression {
     public List<Expression> resolution(Expression other) {
         List<Expression> conclusions = new ArrayList<>();
 
-
         List<Expression> unique = new ArrayList<>();
         for (Expression exp : expressions) {
             if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
@@ -83,12 +90,11 @@ public class Disjunction implements Expression {
             }
         }
 
-        if (unique.size() == 1) {
-            return unique.get(0).resolution(other);
-        }
+        if (unique.size() == 1) { return unique; }
 
         unique.removeIf(exp -> exp.isEqual(new Negation(other)));
 
+        if (unique.size() == 1) { return unique; }
 
         if(other instanceof Disjunction){
             for (Expression thisExp : unique){
@@ -101,6 +107,17 @@ public class Disjunction implements Expression {
                     }
                 }
             }
+        } else if (other instanceof Conjunction) {
+            // for (Expression thisExp : unique) {
+                for (Expression otherExp : ((Conjunction) other).expressions) {
+                    unique.removeIf(exp -> exp.isEqual(new Negation(otherExp)));
+                }
+            // }
+            if (unique.size() == 1) {
+                conclusions.addAll(unique);
+                conclusions.addAll(((Conjunction) other).expressions);
+                return conclusions;
+            }
         }
 
         return conclusions;
@@ -110,7 +127,8 @@ public class Disjunction implements Expression {
     public String toString(boolean withParentheses) {
         StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
         for (int i = 0; i < this.expressions.size(); i++) {
-            result.append(this.expressions.get(i).toString(true));
+            Expression exp = this.expressions.get(i);
+            result.append(exp != null ? exp.toString(true) : "[ EMPTY ]");
             if (i < this.expressions.size() - 1) {
                 result.append(" ∨ ");
             } else {
