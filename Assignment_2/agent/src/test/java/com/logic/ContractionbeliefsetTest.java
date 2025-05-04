@@ -13,15 +13,15 @@ public class ContractionbeliefsetTest {
         BeliefSet beliefSet = new BeliefSet();
         Expression literalA = new Literal("A");
         Expression literalB = new Literal("B");
-
+    
         beliefSet.addBelief(literalA, false);
         beliefSet.addBelief(literalB, false);
-
-        BeliefSet conBeliefSet = beliefSet.contraction();
-
-        Assert.assertTrue(conBeliefSet.getBeliefs().contains(literalA));
+    
+        BeliefSet conBeliefSet = beliefSet.contraction(literalA);
+    
+        Assert.assertFalse(conBeliefSet.getBeliefs().contains(literalA));
         Assert.assertTrue(conBeliefSet.getBeliefs().contains(literalB));
-        Assert.assertEquals(2, conBeliefSet.getBeliefs().size());
+        Assert.assertEquals(1, conBeliefSet.getBeliefs().size());
 
     }
     @Test
@@ -30,14 +30,17 @@ public class ContractionbeliefsetTest {
         Expression literalA = new Literal("A");
         Expression literalB = new Literal("B");
         Expression implication = new Implication(literalA, literalB);
-
+    
         beliefSet.addBelief(literalA, false);
-        beliefSet.addBelief(literalB, false);
+        beliefSet.addBelief(implication, false);
+    
+        BeliefSet contractd = beliefSet.contraction(literalA);
 
-        BeliefSet contractd = beliefSet.contraction();
-
-        Assert.assertTrue(contractd.getBeliefs().contains(literalA));
+        
+    
+        Assert.assertFalse(contractd.getBeliefs().contains(literalA));
         Assert.assertFalse(contractd.getBeliefs().contains(implication));
+        Assert.assertTrue(contractd.getBeliefs().isEmpty());
         
     }
     @Test
@@ -49,10 +52,11 @@ public class ContractionbeliefsetTest {
         beliefSet.addBelief(literalA, false);
         beliefSet.addBelief(negation, false);
 
-        BeliefSet contractd = beliefSet.contraction();
-        Assert.assertTrue(contractd.getBeliefs().isEmpty());
+        BeliefSet contractd = beliefSet.contraction(literalA);
 
-    }
+        Assert.assertTrue(contractd.getBeliefs().isEmpty());
+}
+
 
     @Test
     public void test4(){
@@ -60,10 +64,11 @@ public class ContractionbeliefsetTest {
         Expression literalA = new Literal("A");
         Expression literalB = new Literal("B");
         Expression conjunction = new Conjunction(Arrays.asList(literalA, literalB));
-
-        beliefSet.addBelief(literalA, false);
-
-        BeliefSet contractd = beliefSet.contraction();
+    
+        beliefSet.addBelief(conjunction, false);
+    
+        BeliefSet contractd = beliefSet.contraction(literalA);
+    
         Assert.assertTrue(contractd.getBeliefs().contains(conjunction));
         Assert.assertEquals(1, contractd.getBeliefs().size());
 
@@ -76,12 +81,13 @@ public class ContractionbeliefsetTest {
         Expression literalB = new Literal("B");
         Expression disjunction = new Disjunction(Arrays.asList(literalA, literalB));
 
-        beliefSet.addBelief(literalA, false);
+        beliefSet.addBelief(disjunction, false);
 
-        BeliefSet contractd = beliefSet.contraction();
-
+        BeliefSet contractd = beliefSet.contraction(literalA);
+    
+        // Expect disjunction to remain, as it does not imply literalA
         Assert.assertTrue(contractd.getBeliefs().contains(disjunction));
-        Assert.assertEquals(1, beliefSet.getBeliefs().size());
+        Assert.assertEquals(1, contractd.getBeliefs().size());
 
     }
 
@@ -91,15 +97,16 @@ public class ContractionbeliefsetTest {
         Expression literalA = new Literal("A");
         Expression literalB = new Literal("B");
         Expression literalC = new Literal("C");
-        Expression conjuntion  = new Conjunction(Arrays.asList(literalA, literalB));
-        Expression disjunction = new Disjunction(Arrays.asList(conjuntion, literalC));
-
-        beliefSet.addBelief(conjuntion, false);
+        Expression conjunction = new Conjunction(Arrays.asList(literalA, literalB));
+        Expression disjunction = new Disjunction(Arrays.asList(conjunction, literalC));
+    
+        beliefSet.addBelief(conjunction, false);
         beliefSet.addBelief(disjunction, false);
-
-
-        BeliefSet contractd = beliefSet.contraction();
-        Assert.assertTrue(contractd.getBeliefs().contains(conjuntion));
+    
+        BeliefSet contractd = beliefSet.contraction(literalA);
+    
+        // Expect both conjunction and disjunction to remain
+        Assert.assertTrue(contractd.getBeliefs().contains(conjunction));
         Assert.assertTrue(contractd.getBeliefs().contains(disjunction));
         Assert.assertEquals(2, contractd.getBeliefs().size());
 

@@ -16,29 +16,19 @@ public class BeliefSet {
         this.beliefs = beliefs;
     }
 
-    public BeliefSet contraction() {
+    public BeliefSet contraction(Expression exp) {
         BeliefSet contractedBeliefSet = new BeliefSet();
 
         // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()"
         // funkitonen fra Expression interface
         for (Expression belief : this.beliefs) {
-            BeliefSet temBeliefSet = new BeliefSet();
-            for (Expression otherBelief : beliefs) {
-                if (!belief.implies(otherBelief)) {
-                    temBeliefSet.addBelief(otherBelief, false);
-                }
+            if (belief.implies(exp)) {
+               contractedBeliefSet.removeBelief(belief);
             }
-            boolean isConsistent = true;
-            for (Expression otherBelief : temBeliefSet.getBeliefs()) {
-                if (otherBelief.implies(belief)) {
-                    isConsistent = false;
-                    break;
 
-                }
-            }
-            if (isConsistent) {
-                contractedBeliefSet.addBelief(belief, false);
-            }
+            contractedBeliefSet.addBelief(belief, false);
+            
+
 
         }
 
