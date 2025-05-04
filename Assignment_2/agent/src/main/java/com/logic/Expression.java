@@ -17,6 +17,10 @@ public interface Expression {
         }
     }
 
+    void setNextTerm(Expression nextTerm);
+
+    boolean hasEmptyTerm();
+
     boolean implies(Expression exp);
 
     boolean hasContradiction(Expression exp);
