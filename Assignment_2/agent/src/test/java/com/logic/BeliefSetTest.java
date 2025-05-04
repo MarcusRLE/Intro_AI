@@ -36,12 +36,19 @@ public class BeliefSetTest {
         beliefSet.addBelief(newBelief, false);
         expected.add(newBelief);
         expected.add(new Literal("C"));
-        for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (expected): " + exp.toString(false));};
-        for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (beliefset): " + exp.toString(false));};
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
+    }
 
-        // for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
-        // for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
+    @Test
+    public void test2() {
+        BeliefSet beliefSet = new BeliefSet();
 
+        ArrayList<Expression> expected = new ArrayList<>(List.of());
+        beliefSet.addBelief(new Implication(new Literal("A"),new Literal("B")), false);
+        beliefSet.addBelief(new Conjunction(List.of(new Literal("A"),new Literal("B"))), false);
+        // Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
+
+        for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
+        for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
     }
 }

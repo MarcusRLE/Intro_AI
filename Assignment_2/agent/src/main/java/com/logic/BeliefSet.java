@@ -79,7 +79,7 @@ public class BeliefSet {
             } catch (Contradiction e) {
                 // Handle error
                 System.err.println(
-                        "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + getBeliefs());
+                        "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
             }
         }
     }
