@@ -78,7 +78,7 @@ public class Conjunction extends MultipleTermed implements Expression {
 
     @Override
     Expression selfCopyWithList(List<Expression> expressions) {
-        Expression copy = new Disjunction(expressions);
+        Expression copy = new Conjunction(expressions);
         copy.setWeight(this.weight);
         return copy;
     }
