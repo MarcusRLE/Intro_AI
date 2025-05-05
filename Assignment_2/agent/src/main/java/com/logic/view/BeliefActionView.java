@@ -92,28 +92,26 @@ public class BeliefActionView {
         Expression newBelief = beliefController.getCurrentNewBelief();
 
         return List.of(
-                new UserAction("Add new belief", true, () -> {
+                new UserAction("Add with revision", true, () -> {
                     try {
-                        beliefController.addNewBelief(newBelief);
+                        beliefController.addWithRevision(newBelief);
                     } catch (Contradiction c) {
                         System.out.println("Contradiction found when revising new belief");
                     }
                 }),
+                new UserAction("Add with expansion", true, () -> {
+                    beliefController.addWithExpansion(newBelief);
+                }),
+                new UserAction("Contract with new belief", true, () -> {
+                    beliefController.contract(newBelief);
+                }),
                 new UserAction("Discard belief", true, () -> {
                     // Do nothing
-                }),
-                new UserAction("See CNF of new belief", false, () -> {
-                    System.out.println(newBelief.copy().CNF().toString(false));
                 }),
                 new UserAction("Check for contradictions",false, () -> {
                     boolean hasContradiction = beliefController.hasContradiction(newBelief);
                     String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
                     System.out.println(msg);
-                }),
-                new UserAction("See logical conclusions from new belief", false, () -> {
-                    BeliefSet conclusions = new BeliefSetImpl(beliefController.logicalConclusion(newBelief));
-                    String set = conclusions.toString();
-                    System.out.println(set);
                 }),
                 new UserAction("Exit", true, () -> {
                     beliefController.setExitProgram(true);

@@ -10,12 +10,12 @@ public class Biconditional extends BinaryTermed{
 
     @Override
     public boolean implies(Expression exp) {
-        throw new UnsupportedOperationException("Unimplemented method");
+        return this.CNF().implies(exp);
     }
 
     @Override
     public boolean hasContradiction(Expression exp) {
-        throw new UnsupportedOperationException("Unimplemented method");
+        return this.CNF().hasContradiction(exp);
     }
 
     @Override

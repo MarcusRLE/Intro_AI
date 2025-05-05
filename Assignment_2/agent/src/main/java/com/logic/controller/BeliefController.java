@@ -21,15 +21,36 @@ public class BeliefController {
         beliefs = new BeliefSetImpl();
     }
 
-    public void addNewBelief(Expression exp) throws Contradiction {
+    public void addWithRevision(Expression exp) throws Contradiction {
+        boolean hasContradiction = false;
         try {
+            beliefs.logicalEntailmentFromOneBelief(exp);
+        } catch (Contradiction contradiction) {
+            hasContradiction = true;
+        }
+
+        if(hasContradiction){
             beliefs.revision(exp);
+        } else {
             beliefs.expansion(exp);
+        }
+
+        try {
             beliefs.setBeliefs(beliefs.CN());
         } catch (Contradiction c) {
             throw c;
         }
     }
+
+    public void addWithExpansion(Expression exp) {
+        beliefs.expansion(exp);
+    }
+
+    public void contract(Expression exp) {
+        beliefs.setBeliefs(beliefs.contraction(exp));
+    }
+
+    public void checkLogicalEntailment() throws Contradiction {}
 
     public void setCurrentNewBelief(BeliefType belief) {
         currentNewBelief = belief.getNullExp().copy();

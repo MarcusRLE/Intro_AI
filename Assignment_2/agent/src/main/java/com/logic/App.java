@@ -11,6 +11,5 @@ public class App {
         while(!beliefController.getExitProgram()) {
             viewAction.chooseAction();
         }
-
     }
 }
