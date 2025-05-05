@@ -35,7 +35,7 @@ public class Literal implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return equals(exp);
+        return this.isEqual(exp);
     }
 
     @Override

@@ -46,21 +46,14 @@ public class Negation implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        if (!this.expression.implies(exp)) {
+        if(this.isEqual(exp)){
             return true;
-            
         }
-        if (this.expression instanceof Conjunction) {
-            Conjunction conjunction = (Conjunction) this.expression;
-            for (Expression expression : conjunction.expressions) {
-                if (!expression.implies(exp)) {
-                    return true;
-                }
-            }
-            
+        Expression expressionToCnf = expression.CNF();
+        if(expressionToCnf instanceof Literal){
+            return false;
         }
-
-        return false;
+        return !expression.implies(exp);
     }
 
 

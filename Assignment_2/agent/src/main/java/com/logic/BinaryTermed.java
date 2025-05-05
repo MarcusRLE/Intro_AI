@@ -68,4 +68,12 @@ abstract class BinaryTermed implements Expression{
         return this.CNF().resolution(other);
     }
 
+    @Override
+    public boolean implies(Expression exp) {
+        if(this.isEqual(exp)) {
+            return true;
+        }
+        return this.right.implies(exp) || this.left.equals(exp);
+    }
+
 }

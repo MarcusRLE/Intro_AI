@@ -57,4 +57,17 @@ public abstract class MultipleTermed implements Expression {
     public boolean isConsistent() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public boolean implies(Expression exp) {
+        if(this.isEqual(exp)){
+            return true;
+        }
+        for(Expression expr: expressions){
+            if(expr.implies(exp)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
