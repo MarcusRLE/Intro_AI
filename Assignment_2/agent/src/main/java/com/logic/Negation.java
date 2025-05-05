@@ -5,9 +5,21 @@ import java.util.List;
 
 public class Negation implements Expression {
     protected Expression expression;
+    int weight;
 
     public Negation(Expression expression) {
         this.expression = expression;
+        this.weight = randomWeight();
+    }
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     @Override
@@ -34,21 +46,14 @@ public class Negation implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        if (!this.expression.implies(exp)) {
+        if(this.isEqual(exp)){
             return true;
-            
         }
-        if (this.expression instanceof Conjunction) {
-            Conjunction conjunction = (Conjunction) this.expression;
-            for (Expression expression : conjunction.expressions) {
-                if (!expression.implies(exp)) {
-                    return true;
-                }
-            }
-            
+        Expression expressionToCnf = expression.CNF();
+        if(expressionToCnf instanceof Literal){
+            return false;
         }
-
-        return false;
+        return !expression.implies(exp);
     }
 
 
@@ -120,5 +125,18 @@ public class Negation implements Expression {
         } else {
             return "¬(" + exprStr + ")";
         }
+    }
+
+    @Override
+    public boolean isConsistent() {
+        return expression.isConsistent();
+    }
+
+    @Override
+    public Expression copy() {
+        Expression innerCopy = expression == null ? null : expression.copy();
+        Expression copy = new Negation(innerCopy);
+        copy.setWeight(weight);
+        return copy;
     }
 } 

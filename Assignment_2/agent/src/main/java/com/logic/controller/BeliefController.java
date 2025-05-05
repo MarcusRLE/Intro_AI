@@ -10,56 +10,64 @@ public class BeliefController {
     BeliefSet beliefs;
     Expression currentNewBelief;
     Expression currentTerm;
+    Expression contradiction;
     boolean currentHasMultipleTerms;
-    boolean currentNewBeliefComplete;
     boolean currentTermIsLiteral;
-
+    boolean buildingNewBelief;
+    boolean exitProgram = false;
+    boolean abortBuilder = false;
 
     public BeliefController() {
-        beliefs = new BeliefSet();
+        beliefs = new BeliefSetImpl();
+    }
+
+    public void addWithRevision(Expression exp) throws Contradiction {
+        boolean hasContradiction = false;
+        try {
+            beliefs.logicalEntailmentFromOneBelief(exp);
+        } catch (Contradiction contradiction) {
+            hasContradiction = true;
+        }
+
+        if(hasContradiction){
+            beliefs.revision(exp);
+        } else {
+            beliefs.expansion(exp);
+        }
+
+        try {
+            beliefs.setBeliefs(beliefs.CN());
+        } catch (Contradiction c) {
+            throw c;
+        }
+    }
+
+    public void addWithExpansion(Expression exp) {
+        beliefs.expansion(exp);
+    }
+
+    public void contract(Expression exp) {
+        beliefs.setBeliefs(beliefs.contraction(exp));
+    }
+
+    public List<Expression> checkLogicalEntailment() throws Contradiction {
+        return beliefs.CN();
+    }
+
+    public void clearBeliefState() {
+        beliefs = new BeliefSetImpl();
     }
 
     public void setCurrentNewBelief(BeliefType belief) {
-        switch (belief) {
-            case LITERAL:
-                currentNewBelief = new Literal(null);
-                break;
-            case NEGATION:
-                currentNewBelief = new Negation(null);
-                break;
-            case CONJUNCTION:
-                currentNewBelief = new Conjunction(null);
-                break;
-            case DISJUNCTION:
-                currentNewBelief = new Disjunction(null);
-                break;
-            case IMPLICATION:
-                currentNewBelief = new Implication(null, null);
-                break;
-        }
+        currentNewBelief = belief.getNullExp().copy();
+        buildingNewBelief = true;
         currentTerm = currentNewBelief;
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
         currentTermIsLiteral = currentTerm instanceof Literal;
     }
 
     public void setCurrentTerm(BeliefType belief) {
-        switch (belief) {
-            case LITERAL:
-                currentTerm = new Literal(null);
-                break;
-            case NEGATION:
-                currentTerm = new Negation(null);
-                break;
-            case CONJUNCTION:
-                currentTerm = new Conjunction(null);
-                break;
-            case DISJUNCTION:
-                currentTerm = new Disjunction(null);
-                break;
-            case IMPLICATION:
-                currentTerm = new Implication(null, null);
-                break;
-        }
+        currentTerm = belief.getNullExp().copy();
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
         currentTermIsLiteral = currentTerm instanceof Literal;
     }
@@ -83,7 +91,8 @@ public class BeliefController {
     }
 
     public boolean isComplete(){
-        return !currentNewBelief.hasEmptyTerm();
+        buildingNewBelief = currentNewBelief.hasEmptyTerm();
+        return !buildingNewBelief;
     }
 
     public boolean currentHasMultipleTerms(){
@@ -100,5 +109,52 @@ public class BeliefController {
 
     public boolean currentTermIsLiteral(){
         return currentTermIsLiteral;
+    }
+
+    public BeliefSet getBeliefs() {
+        return beliefs;
+    }
+
+    public boolean getExitProgram() {
+        return exitProgram;
+    }
+
+    public void setExitProgram(boolean exitProgram) {
+        this.exitProgram = exitProgram;
+    }
+
+    public boolean hasContradiction(Expression exp){
+        BeliefSet copy = new BeliefSetImpl(beliefs.getBeliefs());
+        try {
+            copy.expansion(exp);
+            copy.CN();
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
+            return true;
+        }
+        return false;
+    }
+
+    public List<Expression> logicalConclusion(Expression exp) {
+        List<Expression> conclusions;
+        try {
+            conclusions = beliefs.logicalEntailmentFromOneBelief(exp);
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
+            return c.getConclusions();
+        }
+        return conclusions;
+    }
+
+    public Expression getContradiction() {
+        return contradiction;
+    }
+
+    public void setAbortBuilder(boolean abortBuilder) {
+        this.abortBuilder = abortBuilder;
+    }
+
+    public boolean getAbortBuilder() {
+        return abortBuilder;
     }
 }

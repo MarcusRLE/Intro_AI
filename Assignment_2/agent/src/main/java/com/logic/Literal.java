@@ -5,9 +5,21 @@ import java.util.List;
 
 public class Literal implements Expression {
     protected String name;
+    int weight;
 
     public Literal(String name) {
         this.name = name;
+        this.weight = randomWeight();
+    }
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 
     @Override
@@ -23,7 +35,7 @@ public class Literal implements Expression {
 
     @Override
     public boolean implies(Expression exp) {
-        return equals(exp);
+        return this.isEqual(exp);
     }
 
     @Override
@@ -50,6 +62,18 @@ public class Literal implements Expression {
     }
 
     @Override
+    public boolean isConsistent() {
+        return true;
+    }
+
+    @Override
+    public Expression copy() {
+        Expression copy = new Literal(name);
+        copy.setWeight(weight);
+        return copy;
+    }
+
+    @Override
     public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if (other instanceof Conjunction) {
@@ -57,6 +81,13 @@ public class Literal implements Expression {
                 if ((new Negation(exp)).isEqual(this)) {
                     throw new Contradiction("Contradiction");
                 }
+            }
+        } else if (other instanceof Implication) {
+            Implication implication = ((Implication)other);
+            if(implication.left.isEqual(this)){
+                conclusions.add(implication.right);
+            } else if(implication.right.isEqual(new Negation(this))){
+                conclusions.add(new Negation(implication.left));
             }
         } else {
            if ((new Negation(other)).isEqual(this)) {

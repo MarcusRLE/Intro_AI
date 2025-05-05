@@ -7,22 +7,8 @@ import java.util.stream.Collectors;
 public class Conjunction extends MultipleTermed implements Expression {
 
     public Conjunction(List<Expression> expressions) {
+        super();
         this.expressions = expressions;
-    }
-
-    @Override
-    public String toString(boolean withParentheses) {
-        StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
-        for (int i = 0; i < this.expressions.size(); i++) {
-            Expression exp = this.expressions.get(i);
-            result.append(exp != null ? exp.toString(true) : "[ EMPTY ]");
-            if (i < this.expressions.size() - 1) {
-                result.append(" ∧ ");
-            } else {
-                result.append(withParentheses ? ")" : "");
-            }
-        }
-        return result.toString();
     }
 
     @Override
@@ -44,18 +30,6 @@ public class Conjunction extends MultipleTermed implements Expression {
         // }
 
         return conclusions;
-    }
-
-    @Override
-    public boolean implies(Expression exp) {
-        for (Expression expression : expressions) {
-            if (!expression.implies(exp)) {
-                return true;
-            }
-        }
-
-
-        return false;
     }
 
     @Override
@@ -84,5 +58,33 @@ public class Conjunction extends MultipleTermed implements Expression {
         List <Expression> cnfMapped = unique.stream().map(Expression::CNFrecursive).collect(Collectors.toList());
 
         return new Conjunction(cnfMapped);
+    }
+
+//    @Override
+//    public Expression copy() {
+//        List<Expression> expressionsCopy = new ArrayList<>();
+//        if (expressions == null) {
+//            expressionsCopy = null;
+//        } else {
+//            for (Expression exp : expressions) {
+//                Expression innerCopy = exp == null ? null : exp.copy();
+//                expressionsCopy.add(innerCopy);
+//            }
+//        }
+//        Expression copy = new Disjunction(expressionsCopy);
+//        copy.setWeight(this.weight);
+//        return copy;
+//    }
+
+    @Override
+    Expression selfCopyWithList(List<Expression> expressions) {
+        Expression copy = new Conjunction(expressions);
+        copy.setWeight(this.weight);
+        return copy;
+    }
+
+    @Override
+    String connector() {
+        return " ∧ ";
     }
 } 

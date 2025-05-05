@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 public class Disjunction extends MultipleTermed {
 
     public Disjunction(List<Expression> expressions) {
+        super();
         if(expressions == null){
             this.expressions = null;
             return;
@@ -19,16 +20,6 @@ public class Disjunction extends MultipleTermed {
             }
         }
         this.expressions = newExpressions;
-    }
-
-    @Override
-    public boolean implies(Expression exp) {
-        for(Expression expr: expressions){
-            if(expr.implies(exp)){
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -124,17 +115,14 @@ public class Disjunction extends MultipleTermed {
     }
 
     @Override
-    public String toString(boolean withParentheses) {
-        StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
-        for (int i = 0; i < this.expressions.size(); i++) {
-            Expression exp = this.expressions.get(i);
-            result.append(exp != null ? exp.toString(true) : "[ EMPTY ]");
-            if (i < this.expressions.size() - 1) {
-                result.append(" ∨ ");
-            } else {
-                result.append(withParentheses ? ")" : "");
-            }
-        }
-        return result.toString();
+    String connector() {
+        return " v ";
+    }
+
+    @Override
+    Expression selfCopyWithList(List<Expression> expressions) {
+        Expression copy = new Disjunction(expressions);
+        copy.setWeight(this.weight);
+        return copy;
     }
 } 

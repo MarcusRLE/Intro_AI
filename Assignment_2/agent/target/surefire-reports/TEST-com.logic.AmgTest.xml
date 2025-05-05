@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.logic.EqualityTest" time="0" tests="5" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.logic.AmgTest" time="0.01" tests="9" errors="0" skipped="0" failures="3">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -53,9 +53,27 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="test1" classname="com.logic.EqualityTest" time="0"/>
-  <testcase name="test2" classname="com.logic.EqualityTest" time="0"/>
-  <testcase name="test3" classname="com.logic.EqualityTest" time="0"/>
-  <testcase name="test4" classname="com.logic.EqualityTest" time="0"/>
-  <testcase name="test5" classname="com.logic.EqualityTest" time="0"/>
+  <testcase name="ContractionInclusion" classname="com.logic.AmgTest" time="0"/>
+  <testcase name="ContractionSuccess" classname="com.logic.AmgTest" time="0"/>
+  <testcase name="RevisionConsistency" classname="com.logic.AmgTest" time="0.005">
+    <failure message="Revised belief set should be consistent" type="java.lang.AssertionError">java.lang.AssertionError: Revised belief set should be consistent
+	at com.logic.AmgTest.RevisionConsistency(AmgTest.java:183)
+</failure>
+  </testcase>
+  <testcase name="RevisionExtensionality" classname="com.logic.AmgTest" time="0"/>
+  <testcase name="RevisionInclusion" classname="com.logic.AmgTest" time="0.001">
+    <failure message="Revised belief set should be included in the original belief set" type="java.lang.AssertionError">java.lang.AssertionError: Revised belief set should be included in the original belief set
+	at com.logic.AmgTest.RevisionInclusion(AmgTest.java:107)
+</failure>
+    <system-err><![CDATA[Contradiction occured adding 'P' to belief set: {A, B, B => ¬P, ¬P}
+]]></system-err>
+  </testcase>
+  <testcase name="RevisionSuccess" classname="com.logic.AmgTest" time="0.001"/>
+  <testcase name="ContractionExtensionality" classname="com.logic.AmgTest" time="0"/>
+  <testcase name="ContractionVacuity" classname="com.logic.AmgTest" time="0.001"/>
+  <testcase name="RevisionVacuity" classname="com.logic.AmgTest" time="0">
+    <failure message="The belief set should contain the same beliefs after revision" type="java.lang.AssertionError">java.lang.AssertionError: The belief set should contain the same beliefs after revision
+	at com.logic.AmgTest.RevisionVacuity(AmgTest.java:161)
+</failure>
+  </testcase>
 </testsuite>

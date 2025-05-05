@@ -1,2 +1,6 @@
-/home/marcusle/Documents/projects/Java-projects/intro_ai_ass_2/agent/src/test/java/com/logic/AppTest.java
-/home/marcusle/Documents/projects/Java-projects/intro_ai_ass_2/agent/src/test/java/com/logic/EqualityTest.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/ResolutionTest.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/BeliefSetTest.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/AmgTest.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/util.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/ContractionTest.java
+/home/marcusle/Documents/DTU/4_semester/1_blok/Intor_AI/projects/Intro_AI/Assignment_2/agent/src/test/java/com/logic/EqualityTest.java
