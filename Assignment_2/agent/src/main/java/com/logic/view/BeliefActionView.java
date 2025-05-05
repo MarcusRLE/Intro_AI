@@ -5,6 +5,7 @@ import com.logic.BeliefSetImpl;
 import com.logic.Contradiction;
 import com.logic.Expression;
 import com.logic.controller.BeliefController;
+import com.logic.model.UserAction;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,64 +23,34 @@ public class BeliefActionView {
 
     public void chooseAction() {
         System.out.println("\nPlease choose an action:");
-        System.out.println("[1] Build new belief\n" +
-                "[2] See belief set\n" +
-                "[3] Exit");
-        int chosenAction = getNumberInput(1,3);
+        List<UserAction> actions = getUserActions();
+        getAndExecuteCommand(actions);
+    }
 
-        switch (chosenAction) {
-            case 1:
-                beliefBuilderView.buildNewBelief();
-                newBeliefAction();
-                break;
-            case 2:
-                System.out.println(beliefController.getBeliefs().toString());
-                break;
-            case 3:
-                beliefController.setExitProgram(true);
-                break;
-            default:
-                break;
-        }
+    public List<UserAction> getUserActions() {
+        return List.of(
+                new UserAction("Build new belief", true, () -> {
+                    beliefBuilderView.buildNewBelief();
+                    newBeliefAction();
+                }),
+                new UserAction("See belief set", true, () -> {
+                    System.out.println(beliefController.getBeliefs().toString());
+                }),
+                new UserAction("Exit", false, () -> {
+                    beliefController.setExitProgram(true);
+                })
+        );
+
     }
 
     public void newBeliefAction() {
         System.out.println(beliefController.getCurrentNewBelief().toString(false));
 
-        System.out.println(
-                "[1] Add new belief\n" +
-                        "[2] Discard belief\n" +
-                        "[3] Check for contradiction\n" +
-                        "[4] See logical conclusions from new belief\n" +
-                        "[5] Exit"
-        );
+        List<UserAction> actions = getBeliefUserActions();
+        boolean willReturn = getAndExecuteCommand(actions);
 
-        int chosenAction = getNumberInput(1,5);
-        Expression newBelief = beliefController.getCurrentNewBelief();
-        switch (chosenAction) {
-            case 1:
-                try {
-                    beliefController.addNewBelief(newBelief);
-                } catch (Contradiction c) {
-                    System.out.println("Contradiction found when revising new belief");
-                    newBeliefAction();
-                }
-                return;
-            case 2:
-                return;
-            case 3:
-                boolean hasContradiction = beliefController.hasContradiction(newBelief);
-                String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
-                System.out.println(msg);
-                break;
-            case 4:
-                BeliefSet conclusions = new BeliefSetImpl(beliefController.logicalConclusion(newBelief));
-                String set = conclusions.toString();
-                System.out.println(set);
-                break;
-            case 5:
-                beliefController.setExitProgram(true);
-                return;
+        if(willReturn){
+            return;
         }
         newBeliefAction();
     }
@@ -101,5 +72,53 @@ public class BeliefActionView {
         return chosenNumber;
     }
 
+
+    private List<UserAction> getBeliefUserActions() {
+        Expression newBelief = beliefController.getCurrentNewBelief();
+
+        return List.of(
+                new UserAction("Add new belief", true, () -> {
+                    try {
+                        beliefController.addNewBelief(newBelief);
+                    } catch (Contradiction c) {
+                        System.out.println("Contradiction found when revising new belief");
+                        newBeliefAction();
+                    }
+                }),
+                new UserAction("Discard belief", true, () -> {
+                    // Do nothing
+                }),
+                new UserAction("See CNF of new belief", false, () -> {
+                    System.out.println(newBelief.CNF().toString(false));
+                }),
+                new UserAction("Check for contradictions",false, () -> {
+                    boolean hasContradiction = beliefController.hasContradiction(newBelief);
+                    String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
+                    System.out.println(msg);
+                }),
+                new UserAction("See logical conclusions from new belief", false, () -> {
+                    BeliefSet conclusions = new BeliefSetImpl(beliefController.logicalConclusion(newBelief));
+                    String set = conclusions.toString();
+                    System.out.println(set);
+                }),
+                new UserAction("Exit", true, () -> {
+                    beliefController.setExitProgram(true);
+                })
+        );
+    }
+
+    private boolean getAndExecuteCommand(List<UserAction> actions){
+        int size = actions.size();
+
+        for(int i = 0; i < size; i++) {
+            System.out.println("[" + (i + 1) + "] " + actions.get(i).toString());
+        }
+
+        int chosenAction = getNumberInput(1, actions.size());
+        UserAction action = actions.get(chosenAction - 1);
+        action.getCommand().executeCommand();
+
+        return action.willReturn();
+    }
 
 }
