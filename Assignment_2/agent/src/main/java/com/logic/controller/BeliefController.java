@@ -12,18 +12,21 @@ public class BeliefController {
     Expression currentTerm;
     Expression contradiction;
     boolean currentHasMultipleTerms;
-    boolean currentNewBeliefComplete;
     boolean currentTermIsLiteral;
     boolean buildingNewBelief;
     boolean exitProgram = false;
-    boolean hasContradiction = false;
 
     public BeliefController() {
-        beliefs = new BeliefSet();
+        beliefs = new BeliefSetImpl();
     }
 
-    public void addNewBelief(Expression newBelief) {
-        beliefs.addBelief(newBelief, false);
+    public void addNewBelief(Expression exp) throws Contradiction {
+        try {
+            beliefs.revision(exp);
+            beliefs.setBeliefs(beliefs.CN());
+        } catch (Contradiction c) {
+            throw c;
+        }
     }
 
     public void setCurrentNewBelief(BeliefType belief) {

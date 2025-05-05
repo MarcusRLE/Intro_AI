@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Negation implements Expression {
     protected Expression expression;
+    int weight;
 
     public Negation(Expression expression) {
         this.expression = expression;
+        this.weight = randomWeight();
     }
 
     @Override
@@ -120,5 +122,10 @@ public class Negation implements Expression {
         } else {
             return "¬(" + exprStr + ")";
         }
+    }
+
+    @Override
+    public boolean isConsistent() {
+        return expression.isConsistent();
     }
 } 

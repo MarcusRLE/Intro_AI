@@ -3,8 +3,15 @@ package com.logic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public interface Expression {
+
+    default int randomWeight() {
+        Random rand = new Random();
+        return rand.nextInt(100) + 1;
+    }
+
     default Expression CNFrecursive(){
         Expression cnf = this.CNF();
         String ownStr = this.toString(false);
@@ -69,4 +76,6 @@ public interface Expression {
     List<Expression> resolution(Expression other) throws Contradiction;
 
     String toString(boolean withParentheses);
+
+    boolean isConsistent();
 }

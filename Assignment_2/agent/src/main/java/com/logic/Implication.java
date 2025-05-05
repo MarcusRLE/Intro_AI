@@ -9,10 +9,12 @@ import java.util.List;
 public class Implication implements Expression {
     protected Expression left;
     protected Expression right;
+    int weight;
 
     public Implication(Expression left, Expression right) {
         this.left = left;
         this.right = right;
+        this.weight = randomWeight();
     }
 
     @Override
@@ -67,6 +69,11 @@ public class Implication implements Expression {
         result += " => ";
         result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
         return result;
+    }
+
+    @Override
+    public boolean isConsistent() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
