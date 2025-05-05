@@ -18,8 +18,6 @@ public class BeliefSetTest {
         );
         ArrayList<Expression> expected = new ArrayList<>(List.of(newBelief));
         beliefSet.addBelief(newBelief, true);
-        // for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
-        // for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
         newBelief = new Literal("A");
@@ -38,9 +36,21 @@ public class BeliefSetTest {
         beliefSet.addBelief(newBelief, true);
         expected.add(newBelief);
         expected.add(new Literal("C"));
-        for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (expected): " + exp.toString(false));};
-        for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (beliefset): " + exp.toString(false));};
+        for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
+        for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
+    }
 
+    @Test
+    public void test2() {
+        BeliefSet beliefSet = new BeliefSet();
+
+        ArrayList<Expression> expected = new ArrayList<>(List.of());
+        beliefSet.addBelief(new Implication(new Literal("A"),new Literal("B")), true);
+        beliefSet.addBelief(new Conjunction(List.of(new Literal("A"),new Literal("B"))), true);
+        // Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
+
+    //     for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
+    //     for (Expression exp: beliefSet.getBeliefs()) {System.err.println("from test1 in BeliefSetTest (2): " + exp.toString(false));};
     }
 }

@@ -10,13 +10,20 @@ public class BeliefController {
     BeliefSet beliefs;
     Expression currentNewBelief;
     Expression currentTerm;
+    Expression contradiction;
     boolean currentHasMultipleTerms;
     boolean currentNewBeliefComplete;
     boolean currentTermIsLiteral;
-
+    boolean buildingNewBelief;
+    boolean exitProgram = false;
+    boolean hasContradiction = false;
 
     public BeliefController() {
         beliefs = new BeliefSet();
+    }
+
+    public void addNewBelief(Expression newBelief) {
+        beliefs.addBelief(newBelief, false);
     }
 
     public void setCurrentNewBelief(BeliefType belief) {
@@ -37,6 +44,7 @@ public class BeliefController {
                 currentNewBelief = new Implication(null, null);
                 break;
         }
+        buildingNewBelief = true;
         currentTerm = currentNewBelief;
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
         currentTermIsLiteral = currentTerm instanceof Literal;
@@ -83,7 +91,8 @@ public class BeliefController {
     }
 
     public boolean isComplete(){
-        return !currentNewBelief.hasEmptyTerm();
+        buildingNewBelief = currentNewBelief.hasEmptyTerm();
+        return !buildingNewBelief;
     }
 
     public boolean currentHasMultipleTerms(){
@@ -100,5 +109,43 @@ public class BeliefController {
 
     public boolean currentTermIsLiteral(){
         return currentTermIsLiteral;
+    }
+
+    public BeliefSet getBeliefs() {
+        return beliefs;
+    }
+
+    public boolean getExitProgram() {
+        return exitProgram;
+    }
+
+    public void setExitProgram(boolean exitProgram) {
+        this.exitProgram = exitProgram;
+    }
+
+    public boolean hasContradiction(Expression exp){
+        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
+        try {
+            beliefs.logicalEntailment(List.of(exp), expressions);
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
+            return true;
+        }
+        return false;
+    }
+
+    public List<Expression> logicalConclusion(Expression exp) {
+        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
+        try {
+            expressions = beliefs.logicalEntailment(List.of(exp), expressions);
+        } catch (Contradiction c) {
+            contradiction = c.getContradictingConclusion();
+            return c.getConclusions();
+        }
+        return expressions;
+    }
+
+    public Expression getContradiction() {
+        return contradiction;
     }
 }
