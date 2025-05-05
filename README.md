@@ -1,4 +1,4 @@
-# 2048 AI
+#  Assigment 1 - 2048 AI
 To be able to run the program, all that is needed is python with the pygame packange installed.
 You can download python from python.org and pygame can be installed with the command:
 ```
@@ -25,7 +25,7 @@ Make sure you have **Java** and **Maven** installed.
 From the root of the project, run:
 
 ```bash
-mvn exec:java -Dexec.mainClass="com.logic.App"
+$ mvn exec:java -Dexec.mainClass="com.logic.App"
 ```
 
 ### Option 2: Run Manually with Java
@@ -33,12 +33,12 @@ mvn exec:java -Dexec.mainClass="com.logic.App"
 Navigate to the following directory:
 
 ```
-Assignment_2/agent/src/main/java/com/logic
+$ cd Assignment_2/agent/src/main/java/com/logic
 ```
 
 Then compile all Java source files and run the application:
 
 ```bash
-javac model/*.java view/*.java controller/*.java *.java && java App
+$ javac model/*.java view/*.java controller/*.java *.java && java App
 ```
 
