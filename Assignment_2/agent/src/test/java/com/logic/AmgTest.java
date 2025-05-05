@@ -157,7 +157,7 @@ public class AmgTest {
         Assert.assertFalse("belief set should not contain the belief to be revision", beliefSet.contains(new Negation(beliefToRevise)));
 
         // Assert that the revised belief set contains the same beliefs as the expanded belief set
-        Assert.assertTrue("The belief set should contain the same beliefs after revision", util.sameContent(revisedBeliefSet.getBeliefs(),expandedBeliefSet.getBeliefs()));
+        Assert.assertTrue("The expanded belief set should contain the same beliefs as the revised belief set", util.sameContent(revisedBeliefSet.getBeliefs(),expandedBeliefSet.getBeliefs()));
     }
 
     @Test
