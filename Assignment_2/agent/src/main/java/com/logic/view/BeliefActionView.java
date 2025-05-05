@@ -42,7 +42,7 @@ public class BeliefActionView {
                         BeliefSet beliefSet = new BeliefSetImpl(logicalEnt);
                         System.out.println("Logical entailment of belief state: " + beliefSet);
                     } catch (Contradiction c) {
-                        System.out.println("Contradiction found: " + c.getContradictingConclusion().toString(true) + "\nRemove by building new belief and contracting");
+                        System.out.println("Contradiction found - Remove by building new belief and contracting");
                     }
                 }),
                 new UserAction("Clear Belief", true, () -> {
@@ -119,7 +119,7 @@ public class BeliefActionView {
                 }),
                 new UserAction("Check for contradictions",false, () -> {
                     boolean hasContradiction = beliefController.hasContradiction(newBelief);
-                    String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
+                    String msg = hasContradiction ? "Contradiction detected" : "No contradiction detected";
                     System.out.println(msg);
                 }),
                 new UserAction("Exit", true, () -> {
