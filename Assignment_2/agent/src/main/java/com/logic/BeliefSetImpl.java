@@ -35,7 +35,16 @@ public class BeliefSetImpl implements BeliefSet {
 
     @Override
     public List<Expression> CN() throws Contradiction {
-        return null;
+        List<Expression> resolutions = new ArrayList<>();
+        for (Expression exp : beliefs) {
+            for (Expression exp2 : beliefs) {
+                if (!exp.isEqual(exp2)) {
+                    resolutions.addAll(exp.resolution(exp2));
+                }
+            }
+        }
+        resolutions = logicalEntailment(resolutions, new ArrayList<>(beliefs));
+        return resolutions;
     }
 
     @Override
