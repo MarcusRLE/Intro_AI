@@ -24,19 +24,22 @@ public class BeliefSetImpl implements BeliefSet {
 
     public List<Expression> contraction(Expression exp) {
         
-        Expression expToCnf = exp.CNF();
-        if (expToCnf instanceof Conjunction) {
-            Conjunction conjunction = (Conjunction) expToCnf;
-            for (Expression expression : conjunction.getExpressions()) {
-                if (!this.contains(expression)) {
-                    this.beliefs.remove(expression);
+        List<Expression> expressions = new ArrayList<>(beliefs);
+
+        List<Expression> contractedExpressions = expressions.stream()
+                .filter(e -> !exp.implies(e))
+                .collect(Collectors.toList());
+
+        for (Expression expression : beliefs) {
+            if(expression.implies(exp)){
+                if(expression.randomWeight() < exp.randomWeight()){
+                    contractedExpressions.remove(expression);
+                } else{
+                    contractedExpressions.remove(exp);
                 }
             }
-        } else if (!this.contains(expToCnf)) {
-            beliefs.remove(expToCnf);
-            
         }
-        return beliefs;
+        return contractedExpressions;
 
     }
 
