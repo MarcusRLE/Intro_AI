@@ -39,8 +39,8 @@ public class Implication extends BinaryTermed {
 
     @Override
     public Expression copy() {
-        Expression rightCopy = right.copy();
-        Expression leftCopy = left.copy();
+        Expression rightCopy = right == null ? null : right.copy();
+        Expression leftCopy = left == null ? null : left.copy();
         Expression copy = new Implication(leftCopy, rightCopy);
         copy.setWeight(this.weight);
         return copy;
