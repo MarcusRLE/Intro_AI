@@ -37,6 +37,10 @@ public class BeliefSetImpl implements BeliefSet {
                 } else{
                     contractedExpressions.remove(exp);
                 }
+                
+            }
+            if(expression.hasContradiction(exp)){
+                contractedExpressions.remove(exp);
             }
         }
         return contractedExpressions;
