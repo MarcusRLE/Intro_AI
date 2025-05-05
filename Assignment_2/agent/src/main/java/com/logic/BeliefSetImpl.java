@@ -29,9 +29,13 @@ public class BeliefSetImpl implements BeliefSet {
     @Override
     public void expansion(Expression exp) {
         if (exp instanceof Conjunction) {
-
-        }
-        if (!this.contains(exp)) {
+            Conjunction conjunction = (Conjunction) exp;
+            for (Expression expression : conjunction.getExpressions()) {
+                if(!this.contains(expression)) {
+                    this.beliefs.add(expression);
+                }
+            }
+        } else if (!this.contains(exp)) {
             beliefs.add(exp);
         }
     }
