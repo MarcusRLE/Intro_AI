@@ -86,4 +86,13 @@ public class Conjunction extends MultipleTermed implements Expression {
 
         return new Conjunction(cnfMapped);
     }
+
+    @Override
+    public Expression copy() {
+        ArrayList<Expression> expressionsCopy = new ArrayList<>();
+        for (Expression exp: expressions) {
+            expressionsCopy.add(exp.copy());
+        }
+        return new Conjunction(expressionsCopy);
+    }
 } 

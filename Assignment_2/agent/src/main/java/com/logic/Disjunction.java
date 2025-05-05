@@ -7,7 +7,7 @@ public class Disjunction extends MultipleTermed {
 
     public Disjunction(List<Expression> expressions) {
         super();
-        if(expressions == null){
+        if (expressions == null) {
             this.expressions = null;
             return;
         }
@@ -24,8 +24,8 @@ public class Disjunction extends MultipleTermed {
 
     @Override
     public boolean implies(Expression exp) {
-        for(Expression expr: expressions){
-            if(expr.implies(exp)){
+        for (Expression expr : expressions) {
+            if (expr.implies(exp)) {
                 return true;
             }
         }
@@ -55,11 +55,14 @@ public class Disjunction extends MultipleTermed {
             return unique.get(0);
         }
 
-        List <Expression> cnfMapped = unique.stream().map(Expression::CNFrecursive).collect(Collectors.toList());
+        List<Expression> cnfMapped = unique.stream().map(Expression::CNFrecursive).collect(Collectors.toList());
         Optional<Expression> reduced = cnfMapped.stream().reduce((a, b) -> {
-            if (a instanceof Conjunction) return nestedConj((Conjunction) a, b);
-            else if (b instanceof Conjunction) return nestedConj((Conjunction) b, a);
-            else return new Disjunction(Arrays.asList(a, b));
+            if (a instanceof Conjunction)
+                return nestedConj((Conjunction) a, b);
+            else if (b instanceof Conjunction)
+                return nestedConj((Conjunction) b, a);
+            else
+                return new Disjunction(Arrays.asList(a, b));
         });
 
         cnfMapped = reduced.map(Collections::singletonList)
@@ -67,14 +70,14 @@ public class Disjunction extends MultipleTermed {
 
         if (cnfMapped.size() == 1) {
             return cnfMapped.get(0);
-        } else  {
+        } else {
             return new Disjunction(cnfMapped);
         }
     }
 
-    private Expression nestedConj(Conjunction conj, Expression other){
+    private Expression nestedConj(Conjunction conj, Expression other) {
         List<Expression> conjExp = new ArrayList<>();
-        for (Expression exp : conj.expressions){
+        for (Expression exp : conj.expressions) {
             conjExp.add(new Disjunction(Arrays.asList(exp, other)));
         }
         return new Conjunction(conjExp);
@@ -91,18 +94,20 @@ public class Disjunction extends MultipleTermed {
             }
         }
 
-        if (unique.size() == 1) { return unique; }
+        if (unique.size() == 1) { return List.of(unique.get(0).copy()); }
 
         unique.removeIf(exp -> exp.isEqual(new Negation(other)));
 
-        if (unique.size() == 1) { return unique; }
+        if (unique.size() == 1) { return List.of(unique.get(0).copy()); }
 
-        if(other instanceof Disjunction){
-            for (Expression thisExp : unique){
-                for (Expression otherExp : ((Disjunction) other).expressions){
-                    if (thisExp.isEqual(new Negation(otherExp))){
-                        List<Expression> thisExps = unique.stream().filter(e -> e.isEqual(thisExp)).collect(Collectors.toList());
-                        List<Expression> otherExps = unique.stream().filter(e -> e.isEqual(otherExp) || e.isEqual(thisExp)).collect(Collectors.toList());
+        if (other instanceof Disjunction) {
+            for (Expression thisExp : unique) {
+                for (Expression otherExp : ((Disjunction) other).expressions) {
+                    if (thisExp.isEqual(new Negation(otherExp))) {
+                        List<Expression> thisExps = unique.stream().filter(e -> e.isEqual(thisExp))
+                                .collect(Collectors.toList());
+                        List<Expression> otherExps = unique.stream()
+                                .filter(e -> e.isEqual(otherExp) || e.isEqual(thisExp)).collect(Collectors.toList());
                         thisExps.addAll(otherExps);
                         conclusions.addAll(thisExps);
                     }
@@ -110,9 +115,9 @@ public class Disjunction extends MultipleTermed {
             }
         } else if (other instanceof Conjunction) {
             // for (Expression thisExp : unique) {
-                for (Expression otherExp : ((Conjunction) other).expressions) {
-                    unique.removeIf(exp -> exp.isEqual(new Negation(otherExp)));
-                }
+            for (Expression otherExp : ((Conjunction) other).expressions) {
+                unique.removeIf(exp -> exp.isEqual(new Negation(otherExp)));
+            }
             // }
             if (unique.size() == 1) {
                 conclusions.addAll(unique);
@@ -138,4 +143,13 @@ public class Disjunction extends MultipleTermed {
         }
         return result.toString();
     }
-} 
+
+    @Override
+    public Expression copy() {
+        ArrayList<Expression> expressionsCopy = new ArrayList<>();
+        for (Expression exp : expressions) {
+            expressionsCopy.add(exp.copy());
+        }
+        return new Disjunction(expressionsCopy);
+    }
+}

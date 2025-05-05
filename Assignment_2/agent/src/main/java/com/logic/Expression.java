@@ -78,4 +78,6 @@ public interface Expression {
     String toString(boolean withParentheses);
 
     boolean isConsistent();
+
+    public Expression copy();
 }

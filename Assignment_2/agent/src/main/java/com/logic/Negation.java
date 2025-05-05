@@ -128,4 +128,9 @@ public class Negation implements Expression {
     public boolean isConsistent() {
         return expression.isConsistent();
     }
+
+    @Override
+    Expression copy() {
+        return new Negation(expression.copy());
+    }
 } 

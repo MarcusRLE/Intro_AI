@@ -97,4 +97,9 @@ public class Implication implements Expression {
         }
         return conclusions.stream().distinct().collect(Collectors.toList());
     }
+
+    @Override
+    public Expression copy() {
+        return new Implication(left.copy(), right.copy());
+    }
 } 

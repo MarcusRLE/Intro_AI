@@ -90,4 +90,9 @@ public class Literal implements Expression {
     public void setName(String name){
         this.name = name;
     }
+
+    @Override
+    public Expression copy() {
+        return new Literal(name);
+    }
 }
