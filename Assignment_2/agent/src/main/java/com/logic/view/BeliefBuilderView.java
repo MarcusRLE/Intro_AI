@@ -62,10 +62,11 @@ public class BeliefBuilderView {
 
     public int getTypeInput(Scanner scanner) {
         int chosenNumber;
+        int size = BeliefType.values().length;
         try{
             chosenNumber = Integer.parseInt(scanner.nextLine());
-            if (chosenNumber <1 || chosenNumber > 5) {
-                System.out.println("Please enter a number between 1 and 5");
+            if (chosenNumber <1 || chosenNumber > size) {
+                System.out.println("Please enter a number between 1 and " + size);
                 chosenNumber = getTypeInput(scanner);
             }
         } catch (NumberFormatException e) {

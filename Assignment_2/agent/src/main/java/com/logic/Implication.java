@@ -6,36 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Implication implements Expression {
-    protected Expression left;
-    protected Expression right;
-    int weight;
+public class Implication extends BinaryTermed {
+
 
     public Implication(Expression left, Expression right) {
-        this.left = left;
-        this.right = right;
-        this.weight = randomWeight();
-    }
-
-    @Override
-    public void setNextTerm(Expression nextTerm) {
-        if(left == null){
-            left = nextTerm;
-        } else if (left.hasEmptyTerm()){
-            left.setNextTerm(nextTerm);
-        } else if (right == null){
-            right = nextTerm;
-        } else if (right.hasEmptyTerm()){
-            right.setNextTerm(nextTerm);
-        }
-    }
-
-    @Override
-    public boolean hasEmptyTerm() {
-        if(left == null || right == null) {
-            return true;
-        }
-        return left.hasEmptyTerm() || right.hasEmptyTerm();
+        super(left, right);
     }
 
     @Override
@@ -60,41 +35,5 @@ public class Implication implements Expression {
         Expression cnf = new Disjunction(Arrays.asList(new Negation(left), right));
 
         return cnf.CNF();
-    }
-
-    @Override
-    public String toString(boolean withParentheses) {
-        String result = withParentheses ? "(" : "";
-        result += this.left != null ? this.left.toString(withParentheses) : "[ EMPTY ]";
-        result += " => ";
-        result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
-        return result;
-    }
-
-    @Override
-    public boolean isConsistent() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Expression> resolution(Expression other) throws Contradiction {
-        List<Expression> conclusions = new ArrayList<>();
-        if(this.left.isEqual(other)){
-            conclusions.add(this.right);
-        } else if(this.right.isEqual(new Negation(other))){
-            conclusions.add(new Negation(this.left));
-        }
-        if (other instanceof Conjunction) {
-            for (Expression exp: ((Conjunction)other).expressions) {
-                if (exp.isEqual(this.left)) {
-                    conclusions.add(this.right);
-                }
-            }
-        } else {
-            if (other.isEqual(this.left)) {
-                conclusions.add(this.right);
-            }
-        }
-        return conclusions.stream().distinct().collect(Collectors.toList());
     }
 } 
