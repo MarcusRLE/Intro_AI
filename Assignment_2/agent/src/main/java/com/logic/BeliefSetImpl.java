@@ -23,7 +23,6 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public List<Expression> contraction(Expression exp) {
-        
         List<Expression> expressions = new ArrayList<>(beliefs);
 
         List<Expression> contractedExpressions = expressions.stream()
@@ -32,12 +31,11 @@ public class BeliefSetImpl implements BeliefSet {
 
         for (Expression expression : beliefs) {
             if(expression.implies(exp)){
+                if(expression instanceof Conjunction || expression instanceof Implication){
                 if(expression.randomWeight() < exp.randomWeight()){
                     contractedExpressions.remove(expression);
-                } else{
-                    contractedExpressions.remove(exp);
-                }
-                
+                } 
+            }
             }
             if(expression.hasContradiction(exp)){
                 contractedExpressions.remove(exp);
