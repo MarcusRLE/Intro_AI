@@ -6,6 +6,16 @@ public abstract class MultipleTermed implements Expression {
     List<Expression> expressions;
     int weight;
 
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
     public MultipleTermed() {
         weight = randomWeight();
     }

@@ -18,31 +18,16 @@ public class BeliefSetImpl implements BeliefSet {
 
     @Override
     public void revision(Expression exp) {
-        beliefs = this.contraction(exp);
+        beliefs = this.contraction(new Negation(exp));
         expansion(exp);
     }
 
     public List<Expression> contraction(Expression exp) {
         List<Expression> expressions = new ArrayList<>(beliefs);
 
-        List<Expression> contractedExpressions = expressions.stream()
-                .filter(e -> !exp.implies(e))
+        return expressions.stream()
+                .filter(e -> !e.implies(exp))
                 .collect(Collectors.toList());
-
-        for (Expression expression : beliefs) {
-            if(expression.implies(exp)){
-                if(expression instanceof Conjunction || expression instanceof Implication){
-                if(expression.randomWeight() < exp.randomWeight()){
-                    contractedExpressions.remove(expression);
-                } 
-            }
-            }
-            if(expression.hasContradiction(exp)){
-                contractedExpressions.remove(exp);
-            }
-        }
-        return contractedExpressions;
-
     }
 
     @Override
@@ -79,8 +64,6 @@ public class BeliefSetImpl implements BeliefSet {
         return false;
     }
 
-  
-
     public void convertToCNF() {
         // Copy the beliefs to a new list
         List<Expression> oldBeliefs = new ArrayList<>(beliefs);
@@ -106,65 +89,7 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public void addBelief(Expression belief, boolean convertToCNF) {
-        if (convertToCNF) {
-            belief = belief.CNF();
-        }
-
-        if (!this.contains(belief)) {
-            try {
-                List<Expression> logicalEntailments = new ArrayList<>(beliefs);
-                logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
-                beliefs.addAll(logicalEntailments);
-                beliefs = beliefs.stream().distinct().collect(Collectors.toList());
-            } catch (Contradiction e) {
-                // Handle error
-                System.err.println(
-                        "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
-            }
-        }
-    }
-
-    public void addBeliefsWithConclusion(Expression exp) {
-        try {
-            BeliefSet conclusions = this.logicalConclusion(exp);
-            for (Expression conclusion : conclusions.getBeliefs()) {
-                beliefs.add(conclusion);
-            }
-        } catch (Contradiction e) {
-            System.out.println(e);
-        }
-    }
-
-    public void removeBelief(Expression belief) {
-        beliefs.remove(belief);
-    }
-
-    public BeliefSet logicalConclusion(Expression exp) throws Contradiction {
-        BeliefSet conclusions = new BeliefSetImpl();
-        for (Expression belief : beliefs) {
-            List<Expression> currentConclusions = belief.resolution(exp);
-            for (Expression conclusion : currentConclusions) {
-                conclusions.addBelief(conclusion, false);
-            }
-        }
-
-        if (conclusions.getBeliefs().isEmpty()) {
-            conclusions.addBelief(exp, false);
-            return conclusions;
-        } else {
-            BeliefSet nextConclusions = new BeliefSetImpl();
-            for (Expression conclusion : conclusions.getBeliefs()) {
-                BeliefSet currentConclusions = this.logicalConclusion(conclusion);
-                for (Expression currentConclusion : currentConclusions.getBeliefs()) {
-                    nextConclusions.addBelief(currentConclusion, false);
-                }
-            }
-            for (Expression conclusion : nextConclusions.getBeliefs()) {
-                conclusions.addBelief(conclusion, false);
-            }
-        }
-
-        return conclusions;
+        throw new UnsupportedOperationException("Function addBelieft is deprecated - use 'expansion()' for simple adding of belief.");
     }
 
     public List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
@@ -202,10 +127,14 @@ public class BeliefSetImpl implements BeliefSet {
 
     public String toString() {
         String result = "{";
-        for (int i = 0; i < beliefs.size(); i++) {
-            result += beliefs.get(i).toString(false);
-            if (i < beliefs.size() - 1) {
-                result += ", ";
+        if(beliefs.isEmpty()) {
+            result += "∅";
+        } else {
+            for (int i = 0; i < beliefs.size(); i++) {
+                result += beliefs.get(i).toString(false);
+                if (i < beliefs.size() - 1) {
+                    result += ", ";
+                }
             }
         }
         result += "}";

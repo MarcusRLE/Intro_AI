@@ -22,8 +22,12 @@ public class BeliefBuilderView {
             beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
         }
         while (!beliefController.isComplete()){
+            if(beliefController.getAbortBuilder()){
+                System.out.println();
+                System.out.println("Abort building term");
+                return;
+            }
             buildTerm(scanner);
-
         }
         System.out.println("New belief Complete");
     }
@@ -36,7 +40,12 @@ public class BeliefBuilderView {
         } else {
             printCurrentNewBelief();
             System.out.println("Create next term");
-            BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
+            int chosenTerm = getBeliefType(scanner);
+            if (chosenTerm == BeliefType.values().length + 1){
+                beliefController.setAbortBuilder(true);
+                return;
+            }
+            BeliefType chosenBelief = BeliefType.fromCode(chosenTerm);
             beliefController.setCurrentTerm(chosenBelief);
             if(beliefController.currentHasMultipleTerms()){
                 beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
@@ -52,20 +61,23 @@ public class BeliefBuilderView {
     }
 
     public int getBeliefType(Scanner scanner) {
-        StringBuilder msg = new StringBuilder("Enter Belief Type:");
+        StringBuilder msg = new StringBuilder("Choose belief type:");
         for (BeliefType beliefType : BeliefType.values()) {
             msg.append("\n[").append(beliefType.getCode()).append("] ").append(beliefType.name());
         }
+        int abortOption = BeliefType.values().length + 1;
+        msg.append("\n[").append(abortOption).append("] Abort");
         System.out.println(msg);
         return getTypeInput(scanner);
     }
 
     public int getTypeInput(Scanner scanner) {
         int chosenNumber;
+        int size = BeliefType.values().length + 1;
         try{
             chosenNumber = Integer.parseInt(scanner.nextLine());
-            if (chosenNumber <1 || chosenNumber > 5) {
-                System.out.println("Please enter a number between 1 and 5");
+            if (chosenNumber <1 || chosenNumber > size) {
+                System.out.println("Please enter a number between 1 and " + size);
                 chosenNumber = getTypeInput(scanner);
             }
         } catch (NumberFormatException e) {

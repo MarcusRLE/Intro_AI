@@ -15,6 +15,7 @@ public class BeliefController {
     boolean currentTermIsLiteral;
     boolean buildingNewBelief;
     boolean exitProgram = false;
+    boolean abortBuilder = false;
 
     public BeliefController() {
         beliefs = new BeliefSetImpl();
@@ -30,23 +31,7 @@ public class BeliefController {
     }
 
     public void setCurrentNewBelief(BeliefType belief) {
-        switch (belief) {
-            case LITERAL:
-                currentNewBelief = new Literal(null);
-                break;
-            case NEGATION:
-                currentNewBelief = new Negation(null);
-                break;
-            case CONJUNCTION:
-                currentNewBelief = new Conjunction(null);
-                break;
-            case DISJUNCTION:
-                currentNewBelief = new Disjunction(null);
-                break;
-            case IMPLICATION:
-                currentNewBelief = new Implication(null, null);
-                break;
-        }
+        currentNewBelief = belief.getNullExp().copy();
         buildingNewBelief = true;
         currentTerm = currentNewBelief;
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
@@ -150,5 +135,13 @@ public class BeliefController {
 
     public Expression getContradiction() {
         return contradiction;
+    }
+
+    public void setAbortBuilder(boolean abortBuilder) {
+        this.abortBuilder = abortBuilder;
+    }
+
+    public boolean getAbortBuilder() {
+        return abortBuilder;
     }
 }

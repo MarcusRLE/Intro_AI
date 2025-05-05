@@ -1,8 +1,7 @@
-com/logic/Disjunction.class
-com/logic/App.class
 com/logic/Negation.class
-com/logic/Implication.class
-com/logic/Conjuction.class
 com/logic/Literal.class
 com/logic/BeliefSet.class
+com/logic/Disjunction.class
+com/logic/App.class
+com/logic/Implication.class
 com/logic/Expression.class

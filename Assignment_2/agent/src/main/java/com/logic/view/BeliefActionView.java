@@ -22,7 +22,10 @@ public class BeliefActionView {
     }
 
     public void chooseAction() {
-        System.out.println("\nPlease choose an action:");
+        System.out.println("================================");
+        printBeliefSet();
+        System.out.println();
+        System.out.println("Please choose an action:");
         List<UserAction> actions = getUserActions();
         getAndExecuteCommand(actions);
     }
@@ -33,9 +36,9 @@ public class BeliefActionView {
                     beliefBuilderView.buildNewBelief();
                     newBeliefAction();
                 }),
-                new UserAction("See belief set", true, () -> {
-                    System.out.println(beliefController.getBeliefs().toString());
-                }),
+//                new UserAction("See belief set", true, () -> {
+//                    System.out.println(beliefController.getBeliefs().toString());
+//                }),
                 new UserAction("Exit", false, () -> {
                     beliefController.setExitProgram(true);
                 })
@@ -44,8 +47,12 @@ public class BeliefActionView {
     }
 
     public void newBeliefAction() {
-        System.out.println(beliefController.getCurrentNewBelief().toString(false));
-
+        if(beliefController.getAbortBuilder()){
+            return;
+        }
+        printBeliefSet();
+        printCurrentNewBelief();
+        System.out.println();
         List<UserAction> actions = getBeliefUserActions();
         boolean willReturn = getAndExecuteCommand(actions);
 
@@ -53,6 +60,14 @@ public class BeliefActionView {
             return;
         }
         newBeliefAction();
+    }
+
+    public void printCurrentNewBelief() {
+        System.out.println("New Belief: " + beliefController.getCurrentNewBelief().toString(false));
+    }
+
+    public void printBeliefSet(){
+        System.out.println("Belief set: " + beliefController.getBeliefs());
     }
 
     public int getNumberInput(int min, int max) {
@@ -82,7 +97,6 @@ public class BeliefActionView {
                         beliefController.addNewBelief(newBelief);
                     } catch (Contradiction c) {
                         System.out.println("Contradiction found when revising new belief");
-                        newBeliefAction();
                     }
                 }),
                 new UserAction("Discard belief", true, () -> {

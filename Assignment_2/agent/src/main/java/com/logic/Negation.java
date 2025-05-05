@@ -13,6 +13,16 @@ public class Negation implements Expression {
     }
 
     @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    @Override
     public void setNextTerm(Expression nextTerm) {
         if(expression == null){
             expression = nextTerm;
@@ -127,5 +137,13 @@ public class Negation implements Expression {
     @Override
     public boolean isConsistent() {
         return expression.isConsistent();
+    }
+
+    @Override
+    public Expression copy() {
+        Expression innerCopy = expression == null ? null : expression.copy();
+        Expression copy = new Negation(innerCopy);
+        copy.setWeight(weight);
+        return copy;
     }
 } 
