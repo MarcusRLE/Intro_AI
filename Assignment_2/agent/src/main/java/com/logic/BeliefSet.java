@@ -13,12 +13,11 @@ public interface BeliefSet {
     // Getter / Setter
     List<Expression> getBeliefs();
     void setBeliefs(List<Expression> beliefs);
+    List<Expression> logicalEntailmentFromOneBelief(Expression newBelief) throws Contradiction;
 
     boolean contains(Expression Exp);
     List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments) throws Contradiction;
 
-    // Redundant compared to 'expansion'
-    void addBelief(Expression belief, boolean convertToCNF);
 
 
 }

@@ -13,7 +13,7 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public BeliefSetImpl(List<Expression> beliefs) {
-        this.beliefs = beliefs;
+        this.beliefs = new ArrayList<>(beliefs);
     }
 
     @Override
@@ -61,7 +61,18 @@ public class BeliefSetImpl implements BeliefSet {
 
     @Override
     public boolean isConsistent() {
-        return false;
+        try {
+            this.CN();
+        } catch (Contradiction c){
+            return false;
+        }
+        return true;
+    }
+
+    public List<Expression> logicalEntailmentFromOneBelief(Expression newBelief) throws Contradiction {
+        List<Expression> expressions = new ArrayList<>(beliefs);
+        expressions = logicalEntailment(List.of(newBelief), expressions);
+        return expressions;
     }
 
     public void convertToCNF() {
@@ -71,7 +82,7 @@ public class BeliefSetImpl implements BeliefSet {
         beliefs.clear();
         for (Expression belief : oldBeliefs) {
             belief = belief.CNF();
-            addBelief(belief, false);
+            expansion(belief);
         }
     }
 
@@ -86,10 +97,6 @@ public class BeliefSetImpl implements BeliefSet {
             }
         }
         return false;
-    }
-
-    public void addBelief(Expression belief, boolean convertToCNF) {
-        throw new UnsupportedOperationException("Function addBelieft is deprecated - use 'expansion()' for simple adding of belief.");
     }
 
     public List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)

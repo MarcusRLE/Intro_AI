@@ -17,23 +17,23 @@ public class BeliefSetTest {
             List.of(new Literal("A"), new Literal("B"))
         );
         ArrayList<Expression> expected = new ArrayList<>(List.of(newBelief));
-        beliefSet.addBelief(newBelief, false);
+        beliefSet.expansion(newBelief);
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
         newBelief = new Literal("A");
-        beliefSet.addBelief(newBelief, false);
+        beliefSet.expansion(newBelief);
         expected.add(newBelief);
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
         newBelief = new Negation(new Literal("A"));
-        beliefSet.addBelief(newBelief, false);
+        beliefSet.expansion(newBelief);
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
         newBelief = new Implication(
                 new Literal("A"),
                 new Literal("C")
         );
-        beliefSet.addBelief(newBelief, false);
+        beliefSet.expansion(newBelief);
         expected.add(newBelief);
         expected.add(new Literal("C"));
         Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
@@ -44,8 +44,8 @@ public class BeliefSetTest {
         BeliefSet beliefSet = new BeliefSetImpl();
 
         ArrayList<Expression> expected = new ArrayList<>(List.of());
-        beliefSet.addBelief(new Implication(new Literal("A"),new Literal("B")), false);
-        beliefSet.addBelief(new Conjunction(List.of(new Literal("A"),new Literal("B"))), false);
+        beliefSet.expansion(new Implication(new Literal("A"),new Literal("B")));
+        beliefSet.expansion(new Conjunction(List.of(new Literal("A"),new Literal("B"))));
         // Assert.assertTrue("List not same content", util.sameContent(expected, beliefSet.getBeliefs()));
 
         for (Expression exp: expected) {System.err.println("from test1 in BeliefSetTest (1): " + exp.toString(false));};
