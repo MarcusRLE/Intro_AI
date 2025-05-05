@@ -23,21 +23,18 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public List<Expression> contraction(Expression exp) {
-        BeliefSetImpl newBeliefSet = new BeliefSetImpl();
-        newBeliefSet.getBeliefs();
+        BeliefSetImpl newBeliefSet = new BeliefSetImpl(this.beliefs);
+        
         for(Expression belief: beliefs) {
           if (belief.implies(exp)) {
              newBeliefSet.removeBelief(exp);
             } 
              
-          
-          
           if(!belief.hasContradiction(exp)) {
             newBeliefSet.expansion(exp);
             break;
           }
 
-          
           newBeliefSet.addBelief(belief, false);
 
         }
