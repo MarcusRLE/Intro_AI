@@ -103,7 +103,7 @@ public class BeliefActionView {
                     // Do nothing
                 }),
                 new UserAction("See CNF of new belief", false, () -> {
-                    System.out.println(newBelief.CNF().toString(false));
+                    System.out.println(newBelief.copy().CNF().toString(false));
                 }),
                 new UserAction("Check for contradictions",false, () -> {
                     boolean hasContradiction = beliefController.hasContradiction(newBelief);

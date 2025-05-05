@@ -13,7 +13,7 @@ public interface Expression {
     }
 
     default Expression CNFrecursive(){
-        Expression cnf = this.CNF();
+        Expression cnf = this.copy().CNF();
         String ownStr = this.toString(false);
         String cnfStr = cnf.toString(false);
 
