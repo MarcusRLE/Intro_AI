@@ -123,13 +123,39 @@ public class BeliefSetImpl implements BeliefSet {
                 List<Expression> logicalEntailments = new ArrayList<>(beliefs);
                 logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
                 beliefs.addAll(logicalEntailments);
-                beliefs = beliefs.stream().distinct().collect(Collectors.toList());
+                cleanupBeliefs();
             } catch (Contradiction e) {
                 // Handle error
                 System.err.println(
                         "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
             }
         }
+    }
+
+    // Removes unnecessary beliefs
+    private void cleanupBeliefs() {
+        ArrayList<Expression> toRemove = new ArrayList<>();
+        for (Expression belief: beliefs) {
+            // if (belief instanceof Conjunction) {
+            // } else
+            if (belief instanceof Disjunction) {
+                for (Expression exp: ((Disjunction)belief).expressions) {
+                    if (this.contains(exp)) {
+                        toRemove.add(belief);
+                        // System.out.println("cleanup: " + belief.toString(false));
+                        break;
+                    }
+                }
+            }
+            // else if (belief instanceof Negation || belief instanceof Literal) {
+            // }
+        }
+        for (Expression exp: toRemove) {
+            System.out.println("cleanup (1): " + exp.toString(false));
+            beliefs.remove(exp);
+        }
+        beliefs.removeAll(toRemove);
+        beliefs = beliefs.stream().distinct().collect(Collectors.toList());
     }
 
     public void addBeliefsWithConclusion(Expression exp) {
