@@ -50,7 +50,13 @@ public class BeliefController {
         beliefs.setBeliefs(beliefs.contraction(exp));
     }
 
-    public void checkLogicalEntailment() throws Contradiction {}
+    public List<Expression> checkLogicalEntailment() throws Contradiction {
+        return beliefs.CN();
+    }
+
+    public void clearBeliefState() {
+        beliefs = new BeliefSetImpl();
+    }
 
     public void setCurrentNewBelief(BeliefType belief) {
         currentNewBelief = belief.getNullExp().copy();

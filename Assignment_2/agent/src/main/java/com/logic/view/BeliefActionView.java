@@ -36,9 +36,18 @@ public class BeliefActionView {
                     beliefBuilderView.buildNewBelief();
                     newBeliefAction();
                 }),
-//                new UserAction("See belief set", true, () -> {
-//                    System.out.println(beliefController.getBeliefs().toString());
-//                }),
+                new UserAction("See logical entailment of belief state", true, () -> {
+                    try {
+                        List<Expression> logicalEnt = beliefController.checkLogicalEntailment();
+                        BeliefSet beliefSet = new BeliefSetImpl(logicalEnt);
+                        System.out.println("Logical entailment of belief state: " + beliefSet);
+                    } catch (Contradiction c) {
+                        System.out.println("Contradiction found: " + c.getContradictingConclusion().toString(true) + "\nRemove by building new belief and contracting");
+                    }
+                }),
+                new UserAction("Clear Belief", true, () -> {
+                    beliefController.clearBeliefState();
+                }),
                 new UserAction("Exit", false, () -> {
                     beliefController.setExitProgram(true);
                 })
