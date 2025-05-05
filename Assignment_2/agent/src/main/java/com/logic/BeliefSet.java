@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface BeliefSet {
     void revision(Expression exp);
-    BeliefSet contraction(Expression exp);
+    List<Expression> contraction(Expression exp);
     void expansion(Expression exp);
 
-    BeliefSet CN() throws Contradiction;
+    List<Expression> CN() throws Contradiction;
     boolean isConsistent();
 
     // Getter / Setter

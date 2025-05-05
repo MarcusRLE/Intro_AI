@@ -22,8 +22,17 @@ public class BeliefController {
         beliefs = new BeliefSetImpl();
     }
 
-    public void addNewBelief(Expression newBelief) {
-        beliefs.addBelief(newBelief, false);
+//    public void addNewBelief(Expression newBelief) {
+//        beliefs.addBelief(newBelief, false);
+//    }
+
+    public void addNewBelief(Expression exp) throws Contradiction {
+        try {
+            beliefs.revision(exp);
+            beliefs.setBeliefs(beliefs.CN());
+        } catch (Contradiction c) {
+            throw c;
+        }
     }
 
     public void setCurrentNewBelief(BeliefType belief) {

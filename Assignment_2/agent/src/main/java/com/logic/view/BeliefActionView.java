@@ -2,6 +2,7 @@ package com.logic.view;
 
 import com.logic.BeliefSet;
 import com.logic.BeliefSetImpl;
+import com.logic.Contradiction;
 import com.logic.Expression;
 import com.logic.controller.BeliefController;
 
@@ -57,7 +58,12 @@ public class BeliefActionView {
         Expression newBelief = beliefController.getCurrentNewBelief();
         switch (chosenAction) {
             case 1:
-                beliefController.addNewBelief(newBelief);
+                try {
+                    beliefController.addNewBelief(newBelief);
+                } catch (Contradiction c) {
+                    System.out.println("Contradiction found when revising new belief");
+                    newBeliefAction();
+                }
                 return;
             case 2:
                 return;

@@ -18,10 +18,11 @@ public class BeliefSetImpl implements BeliefSet {
 
     @Override
     public void revision(Expression exp) {
-
+        beliefs = this.contraction(exp);
+        expansion(exp);
     }
 
-    public BeliefSet contraction(Expression exp) {
+    public List<Expression> contraction(Expression exp) {
         throw new RuntimeException("Method 'contraction(Expression exp)' is not implemented yet");
     }
 
@@ -33,7 +34,7 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     @Override
-    public BeliefSet CN() throws Contradiction {
+    public List<Expression> CN() throws Contradiction {
         return null;
     }
 
