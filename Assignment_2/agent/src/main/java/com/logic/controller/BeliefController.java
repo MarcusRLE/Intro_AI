@@ -31,7 +31,7 @@ public class BeliefController {
     }
 
     public void setCurrentNewBelief(BeliefType belief) {
-        currentNewBelief = belief.getNullExp();
+        currentNewBelief = belief.getNullExp().copy();
         buildingNewBelief = true;
         currentTerm = currentNewBelief;
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;

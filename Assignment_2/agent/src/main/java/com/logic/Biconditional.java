@@ -31,4 +31,13 @@ public class Biconditional extends BinaryTermed{
         Expression leftImplToCnf = leftImpl.CNF();
         return new Conjunction(List.of(rightImplToCnf, leftImplToCnf));
     }
+
+    @Override
+    public Expression copy() {
+        Expression rightCopy = right.copy();
+        Expression leftCopy = left.copy();
+        Expression copy = new Biconditional(leftCopy, rightCopy);
+        copy.setWeight(this.weight);
+        return copy;
+    }
 }

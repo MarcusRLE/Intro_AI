@@ -36,4 +36,13 @@ public class Implication extends BinaryTermed {
 
         return cnf.CNF();
     }
+
+    @Override
+    public Expression copy() {
+        Expression rightCopy = right.copy();
+        Expression leftCopy = left.copy();
+        Expression copy = new Implication(leftCopy, rightCopy);
+        copy.setWeight(this.weight);
+        return copy;
+    }
 } 

@@ -97,7 +97,6 @@ public class BeliefActionView {
                         beliefController.addNewBelief(newBelief);
                     } catch (Contradiction c) {
                         System.out.println("Contradiction found when revising new belief");
-                        newBeliefAction();
                     }
                 }),
                 new UserAction("Discard belief", true, () -> {

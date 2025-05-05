@@ -138,4 +138,15 @@ public class Disjunction extends MultipleTermed {
         }
         return result.toString();
     }
+
+    @Override
+    public Expression copy() {
+        List<Expression> expressionsCopy = new ArrayList<>();
+        for (Expression exp : expressions) {
+            expressionsCopy.add(exp.copy());
+        }
+        Expression copy = new Disjunction(expressionsCopy);
+        copy.setWeight(this.weight);
+        return copy;
+    }
 } 
