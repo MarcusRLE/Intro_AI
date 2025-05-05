@@ -127,7 +127,7 @@ public class AmgTest {
         BeliefSet contractedBeliefSet = new BeliefSetImpl(beliefSet.contraction(beliefToContract));
 
         // Assert that the CN belief set does not contain the belief to be contracted
-        Assert.assertFalse("CNF belief set should not contain the belief to be contracted", cnBeliefSet.contains(beliefToContract));
+        Assert.assertFalse("CN belief set should not contain the belief to be contracted", cnBeliefSet.contains(beliefToContract));
 
         // Assert that the belief set contains the same beliefs after contraction
         Assert.assertTrue("The belief set  should contain the same beliefs after contraction", util.sameContent(beliefSet.getBeliefs(),contractedBeliefSet.getBeliefs()));
