@@ -22,7 +22,13 @@ This project implements a belief base with support for logical entailment and be
 
 Make sure you have **Java** and **Maven** installed.
 
-From the root of the project, run:
+Navigate to the following directory:
+
+```bash
+$ cd Assignment_2/agent
+```
+
+Then run:
 
 ```bash
 $ mvn exec:java -Dexec.mainClass="com.logic.App"
