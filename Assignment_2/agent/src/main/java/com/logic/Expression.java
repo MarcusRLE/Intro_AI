@@ -82,19 +82,30 @@ public interface Expression {
     public Expression copy();
 
     public static List<Expression> removeDuplicates(List<Expression> list) {
-        List<Expression> newList = new ArrayList<>();
+        List<Expression> deduplicated = new ArrayList<>();
         for (Expression e : list) {
-            boolean alreadyExists = false;
-            for (Expression existing : newList) {
-                if (e.isEqual(existing)) {
-                    alreadyExists = true;
-                    break;
-                }
-            }
-            if (!alreadyExists) {
-                newList.add(e);
+            if (deduplicated.stream().noneMatch(d -> d.isEqual(e))) {
+                deduplicated.add(e);
             }
         }
-        return newList;
+        return deduplicated;
+    }
+
+    public static boolean sameContent(List<Expression> list1, List<Expression> list2) {
+        if (list1.size() != list2.size()) { return false; }
+        List<Expression> list2copy = new ArrayList<>(list2);
+        for (Expression exp1 : list1) {
+            boolean found = false;
+            for (int i = 0; i < list2copy.size(); i++) {
+                if (exp1.isEqual(list2copy.get(i))) {
+                    list2copy.remove(i);
+                    found = true;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return list2copy.isEmpty();
     }
 }

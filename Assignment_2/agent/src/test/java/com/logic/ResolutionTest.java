@@ -20,9 +20,6 @@ public class ResolutionTest {
 
         try {
                 List<Expression> resolutions = implication.resolution(literal);
-                for (Expression exp: resolutions) {
-                                System.out.println("from ResTest, test1: " + exp.toString(false));
-                }
                 Assert.assertEquals(1, resolutions.size());
                 Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
         } catch (Contradiction e) {
@@ -158,12 +155,33 @@ public class ResolutionTest {
 
         try {
             List<Expression> resolutions = disjunction.resolution(literal);
-            // for (Expression exp : expected) { System.out.println("from test6: " + exp.toString(false)); }
-            // for (Expression exp : resolutions) { System.out.println("from test6: " + exp.toString(false)); }
-            // if (resolutions.isEmpty()) { System.out.println("from test6: res is empty"); }
             Assert.assertTrue("List not same content", util.sameContent(expected, resolutions));
         } catch (Contradiction e) {
             Assert.assertTrue(false);
         }
     }
+
+    @Test
+    public void test7(){
+        List<Expression> expected = List.of(new Literal("B"));
+
+        Expression disjunction = new Disjunction(
+                Arrays.asList(
+                        new Literal("B"),
+                        new Negation(new Literal("A"))
+                )
+        );
+        Expression literal = new Literal("A");
+
+        try {
+            List<Expression> resolutions = disjunction.resolution(literal);
+
+            for (Expression exp : resolutions) { System.out.println("from test6: " + exp.toString(false)); }
+            if (resolutions.isEmpty()) { System.out.println("from test6: res is empty"); }
+            Assert.assertTrue("List not same content", util.sameContent(expected, resolutions));
+        } catch (Contradiction e) {
+            Assert.assertTrue(false);
+        }
+    }
+
 }

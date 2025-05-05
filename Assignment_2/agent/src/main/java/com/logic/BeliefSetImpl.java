@@ -96,7 +96,7 @@ public class BeliefSetImpl implements BeliefSet {
         beliefs.clear();
         for (Expression belief : oldBeliefs) {
             belief = belief.CNF();
-            addBelief(belief, false);
+            addBelief(belief.copy(), false);
         }
     }
 
@@ -123,38 +123,49 @@ public class BeliefSetImpl implements BeliefSet {
                 List<Expression> logicalEntailments = new ArrayList<>(beliefs);
                 logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
                 beliefs.addAll(logicalEntailments);
-                cleanupBeliefs();
+                for (Expression exp: logicalEntailments) {
+                    System.out.println("logicalEntailments: " + exp.toString(false));
+                }
             } catch (Contradiction e) {
                 // Handle error
                 System.err.println(
                         "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
             }
         }
+        cleanupBeliefs();
     }
 
-    // Removes unnecessary beliefs
     private void cleanupBeliefs() {
         ArrayList<Expression> toRemove = new ArrayList<>();
+
         for (Expression belief: beliefs) {
-            // if (belief instanceof Conjunction) {
-            // } else
+            System.out.println("from cleanup: " + belief.toString(false));
             if (belief instanceof Disjunction) {
+                // System.out.println("abc: " + belief.toString(false));
                 for (Expression exp: ((Disjunction)belief).expressions) {
                     if (this.contains(exp)) {
+                        // System.out.println("toRemove: " + belief.toString(false));
                         toRemove.add(belief);
-                        // System.out.println("cleanup: " + belief.toString(false));
                         break;
                     }
                 }
             }
-            // else if (belief instanceof Negation || belief instanceof Literal) {
-            // }
         }
-        for (Expression exp: toRemove) {
-            System.out.println("cleanup (1): " + exp.toString(false));
+        for (int i = 0; i < toRemove.size(); i++) {
+            System.out.println("toRemove(" + i + "): " + toRemove.get(i).toString(false));
+            if (contains(toRemove.get(i))) {
+                removeBelief(toRemove.get(i));
+            }
         }
-        beliefs.removeAll(toRemove);
-        beliefs = beliefs.stream().distinct().collect(Collectors.toList());
+        // beliefs.removeIf(b -> toRemove.stream().anyMatch(r -> b.isEqual(r)));
+
+        List<Expression> deduplicated = new ArrayList<>();
+        for (Expression b : beliefs) {
+            if (deduplicated.stream().noneMatch(d -> d.isEqual(b))) {
+                deduplicated.add(b);
+            }
+        }
+        beliefs = deduplicated;
     }
 
     public void addBeliefsWithConclusion(Expression exp) {
@@ -169,7 +180,16 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public void removeBelief(Expression belief) {
-        beliefs.remove(belief);
+        ArrayList<Expression> toRemove = new ArrayList<>();
+        for (Expression b: beliefs) {
+            if (b.isEqual(belief)) {
+                toRemove.add(b);
+            }
+        }
+        for (Expression b: toRemove) {
+            beliefs.remove(b);
+        }
+
     }
 
     public BeliefSet logicalConclusion(Expression exp) throws Contradiction {
@@ -177,7 +197,7 @@ public class BeliefSetImpl implements BeliefSet {
         for (Expression belief : beliefs) {
             List<Expression> currentConclusions = belief.resolution(exp);
             for (Expression conclusion : currentConclusions) {
-                conclusions.addBelief(conclusion, false);
+                conclusions.addBelief(conclusion.copy(), false);
             }
         }
 
@@ -189,11 +209,11 @@ public class BeliefSetImpl implements BeliefSet {
             for (Expression conclusion : conclusions.getBeliefs()) {
                 BeliefSet currentConclusions = this.logicalConclusion(conclusion);
                 for (Expression currentConclusion : currentConclusions.getBeliefs()) {
-                    nextConclusions.addBelief(currentConclusion, false);
+                    nextConclusions.addBelief(currentConclusion.copy(), false);
                 }
             }
             for (Expression conclusion : nextConclusions.getBeliefs()) {
-                conclusions.addBelief(conclusion, false);
+                conclusions.addBelief(conclusion.copy(), false);
             }
         }
 
