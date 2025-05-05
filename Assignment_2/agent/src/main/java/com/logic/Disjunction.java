@@ -23,16 +23,6 @@ public class Disjunction extends MultipleTermed {
     }
 
     @Override
-    public boolean implies(Expression exp) {
-        for(Expression expr: expressions){
-            if(expr.implies(exp)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public boolean hasContradiction(Expression exp) {
         return false;
     }

@@ -14,11 +14,6 @@ public class Implication extends BinaryTermed {
     }
 
     @Override
-    public boolean implies(Expression exp) {
-        return this.right.implies(exp) || this.left.equals(exp) || this.equals(exp);
-    }
-
-    @Override
     public boolean hasContradiction(Expression exp) {
         return false;
     }

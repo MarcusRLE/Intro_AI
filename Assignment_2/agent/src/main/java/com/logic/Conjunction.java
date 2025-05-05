@@ -48,18 +48,6 @@ public class Conjunction extends MultipleTermed implements Expression {
     }
 
     @Override
-    public boolean implies(Expression exp) {
-        for (Expression expression : expressions) {
-            if (!expression.implies(exp)) {
-                return true;
-            }
-        }
-
-
-        return false;
-    }
-
-    @Override
     public boolean hasContradiction(Expression exp) {
         return false;
     }
