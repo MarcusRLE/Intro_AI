@@ -141,12 +141,7 @@ public class Negation implements Expression {
 
     @Override
     public Expression copy() {
-        Expression innerCopy;
-        if (expression == null) {
-            innerCopy = null;
-        } else {
-            innerCopy = expression.copy();
-        }
+        Expression innerCopy = expression == null ? null : expression.copy();
         Expression copy = new Negation(innerCopy);
         copy.setWeight(weight);
         return copy;

@@ -91,7 +91,8 @@ public class Conjunction extends MultipleTermed implements Expression {
     public Expression copy() {
         List<Expression> expressionsCopy = new ArrayList<>();
         for (Expression exp : expressions) {
-            expressionsCopy.add(exp.copy());
+            Expression innerCopy = exp == null ? null : exp.copy();
+            expressionsCopy.add(innerCopy);
         }
         Expression copy = new Disjunction(expressionsCopy);
         copy.setWeight(this.weight);

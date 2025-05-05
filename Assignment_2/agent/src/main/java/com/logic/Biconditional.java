@@ -34,8 +34,8 @@ public class Biconditional extends BinaryTermed{
 
     @Override
     public Expression copy() {
-        Expression rightCopy = right.copy();
-        Expression leftCopy = left.copy();
+        Expression rightCopy = right == null ? null : right.copy();
+        Expression leftCopy = left == null ? null : left.copy();
         Expression copy = new Biconditional(leftCopy, rightCopy);
         copy.setWeight(this.weight);
         return copy;
