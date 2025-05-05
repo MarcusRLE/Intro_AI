@@ -112,9 +112,10 @@ public class BeliefController {
     }
 
     public boolean hasContradiction(Expression exp){
-        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
+        BeliefSet copy = new BeliefSetImpl(beliefs.getBeliefs());
         try {
-            beliefs.logicalEntailment(List.of(exp), expressions);
+            copy.expansion(exp);
+            copy.CN();
         } catch (Contradiction c) {
             contradiction = c.getContradictingConclusion();
             return true;
@@ -123,14 +124,14 @@ public class BeliefController {
     }
 
     public List<Expression> logicalConclusion(Expression exp) {
-        List<Expression> expressions = new ArrayList<>(beliefs.getBeliefs());
+        List<Expression> conclusions;
         try {
-            expressions = beliefs.logicalEntailment(List.of(exp), expressions);
+            conclusions = beliefs.logicalEntailmentFromOneBelief(exp);
         } catch (Contradiction c) {
             contradiction = c.getContradictingConclusion();
             return c.getConclusions();
         }
-        return expressions;
+        return conclusions;
     }
 
     public Expression getContradiction() {
