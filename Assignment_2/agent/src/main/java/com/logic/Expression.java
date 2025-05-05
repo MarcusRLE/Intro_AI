@@ -24,6 +24,9 @@ public interface Expression {
         }
     }
 
+    int getWeight();
+    void setWeight(int weight);
+
     void setNextTerm(Expression nextTerm);
 
     boolean hasEmptyTerm();
@@ -78,4 +81,6 @@ public interface Expression {
     String toString(boolean withParentheses);
 
     boolean isConsistent();
+
+    Expression copy();
 }

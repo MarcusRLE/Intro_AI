@@ -13,6 +13,16 @@ public class Literal implements Expression {
     }
 
     @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    @Override
     public void setNextTerm(Expression nextTerm) {
         // Shouldn't happen
         throw new UnsupportedOperationException("Should never be called");
@@ -54,6 +64,13 @@ public class Literal implements Expression {
     @Override
     public boolean isConsistent() {
         return true;
+    }
+
+    @Override
+    public Expression copy() {
+        Expression copy = new Literal(name);
+        copy.setWeight(weight);
+        return copy;
     }
 
     @Override

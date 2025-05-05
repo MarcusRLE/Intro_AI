@@ -25,16 +25,9 @@ public class BeliefSetImpl implements BeliefSet {
     public List<Expression> contraction(Expression exp) {
         List<Expression> expressions = new ArrayList<>(beliefs);
 
-        List<Expression> contractedExpressions = expressions.stream()
-                .filter(e -> !exp.implies(e))
+        return expressions.stream()
+                .filter(e -> !e.implies(exp))
                 .collect(Collectors.toList());
-
-        for (Expression expression : beliefs) {
-            if(expression.implies(exp)){
-                contractedExpressions.remove(expression);
-            }
-        }
-        return contractedExpressions;
     }
 
     @Override

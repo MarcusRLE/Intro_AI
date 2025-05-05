@@ -45,7 +45,7 @@ public class BeliefBuilderView {
                 beliefController.setAbortBuilder(true);
                 return;
             }
-            BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
+            BeliefType chosenBelief = BeliefType.fromCode(chosenTerm);
             beliefController.setCurrentTerm(chosenBelief);
             if(beliefController.currentHasMultipleTerms()){
                 beliefController.setSizeOfBelief(getNumberOfTerms(scanner));

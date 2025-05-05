@@ -13,6 +13,16 @@ abstract class BinaryTermed implements Expression{
     }
 
     @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    @Override
     public void setNextTerm(Expression nextTerm) {
         if(left == null){
             left = nextTerm;
