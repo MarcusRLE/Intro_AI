@@ -14,22 +14,33 @@ public class BeliefBuilderView {
     }
 
     public void buildNewBelief(){
+        beliefController.setAbortBuilder(false);
         System.out.println("Create new belief to insert in belief set");
         Scanner scanner = new Scanner(System.in);
-        BeliefType chosenBelief = BeliefType.fromCode(getBeliefType(scanner));
+        int chosenTerm = getBeliefType(scanner);
+        if (chosenTerm == BeliefType.values().length + 1){
+            abort();
+            return;
+        }
+        BeliefType chosenBelief = BeliefType.fromCode(chosenTerm);
+        System.out.println("Chosen Belief Type: " + chosenBelief);
         beliefController.setCurrentNewBelief(chosenBelief);
         if(beliefController.currentHasMultipleTerms()){
             beliefController.setSizeOfBelief(getNumberOfTerms(scanner));
         }
         while (!beliefController.isComplete()){
             if(beliefController.getAbortBuilder()){
-                System.out.println();
-                System.out.println("Abort building term");
                 return;
             }
             buildTerm(scanner);
         }
         System.out.println("New belief Complete");
+    }
+
+    private void abort(){
+        System.out.println();
+        System.out.println("Abort building term");
+        beliefController.setAbortBuilder(true);
     }
 
     public void buildTerm(Scanner scanner) {
@@ -42,7 +53,7 @@ public class BeliefBuilderView {
             System.out.println("Create next term");
             int chosenTerm = getBeliefType(scanner);
             if (chosenTerm == BeliefType.values().length + 1){
-                beliefController.setAbortBuilder(true);
+                abort();
                 return;
             }
             BeliefType chosenBelief = BeliefType.fromCode(chosenTerm);

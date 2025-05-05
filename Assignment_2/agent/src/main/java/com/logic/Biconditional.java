@@ -39,7 +39,7 @@ public class Biconditional extends BinaryTermed{
 
     @Override
     Expression selfCopyWithExp(Expression right, Expression left) {
-        Expression copy = new Implication(left, right);
+        Expression copy = new Biconditional(left, right);
         copy.setWeight(this.weight);
         return copy;
     }
