@@ -39,23 +39,7 @@ public class BeliefController {
     }
 
     public void setCurrentTerm(BeliefType belief) {
-        switch (belief) {
-            case LITERAL:
-                currentTerm = new Literal(null);
-                break;
-            case NEGATION:
-                currentTerm = new Negation(null);
-                break;
-            case CONJUNCTION:
-                currentTerm = new Conjunction(null);
-                break;
-            case DISJUNCTION:
-                currentTerm = new Disjunction(null);
-                break;
-            case IMPLICATION:
-                currentTerm = new Implication(null, null);
-                break;
-        }
+        currentTerm = belief.getNullExp().copy();
         currentHasMultipleTerms = currentTerm instanceof MultipleTermed;
         currentTermIsLiteral = currentTerm instanceof Literal;
     }
