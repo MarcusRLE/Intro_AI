@@ -9,10 +9,12 @@ import java.util.List;
 public class Implication implements Expression {
     protected Expression left;
     protected Expression right;
+    int weight;
 
     public Implication(Expression left, Expression right) {
         this.left = left;
         this.right = right;
+        this.weight = randomWeight();
     }
 
     @Override
