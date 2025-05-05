@@ -70,6 +70,11 @@ public class Implication implements Expression {
     }
 
     @Override
+    public boolean isConsistent() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){

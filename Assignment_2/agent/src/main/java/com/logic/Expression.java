@@ -69,4 +69,6 @@ public interface Expression {
     List<Expression> resolution(Expression other) throws Contradiction;
 
     String toString(boolean withParentheses);
+
+    boolean isConsistent();
 }

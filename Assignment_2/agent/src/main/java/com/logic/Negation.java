@@ -121,4 +121,9 @@ public class Negation implements Expression {
             return "¬(" + exprStr + ")";
         }
     }
+
+    @Override
+    public boolean isConsistent() {
+        return expression.isConsistent();
+    }
 } 

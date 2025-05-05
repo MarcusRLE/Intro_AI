@@ -19,7 +19,7 @@ public class BeliefController {
     boolean hasContradiction = false;
 
     public BeliefController() {
-        beliefs = new BeliefSet();
+        beliefs = new BeliefSetImpl();
     }
 
     public void addNewBelief(Expression newBelief) {

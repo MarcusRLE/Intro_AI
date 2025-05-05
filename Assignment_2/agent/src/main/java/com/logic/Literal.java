@@ -50,6 +50,11 @@ public class Literal implements Expression {
     }
 
     @Override
+    public boolean isConsistent() {
+        return true;
+    }
+
+    @Override
     public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if (other instanceof Conjunction) {

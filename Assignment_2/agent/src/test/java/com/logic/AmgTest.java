@@ -10,9 +10,9 @@ import java.util.ArrayList;
 public class AmgTest {
     
     @Test
-    public void ContractionSuccess() {
+    public void ContractionSuccess() throws Contradiction {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -24,7 +24,7 @@ public class AmgTest {
         BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
 
         // Get CN
-        contractedBeliefSet.CN();
+        contractedBeliefSet = contractedBeliefSet.CN();
 
         // Assert that the belief set does not contain the contracted belief
         Assert.assertFalse("Belief set should not contain the contracted belief", contractedBeliefSet.contains(beliefToContract));
@@ -33,7 +33,7 @@ public class AmgTest {
     @Test 
     public void RevisionSuccess() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -52,7 +52,7 @@ public class AmgTest {
     @Test
     public void ContractionInclusion() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -79,7 +79,7 @@ public class AmgTest {
     @Test 
     public void RevisionInclusion() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -109,9 +109,9 @@ public class AmgTest {
     }
 
     @Test
-    public void ContractionVacuity() {
+    public void ContractionVacuity() throws Contradiction {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -120,9 +120,9 @@ public class AmgTest {
         Expression beliefToContract = new Literal("P");
 
         // Convert to CN
-        BeliefSet cnBeliefSet = new BeliefSet();
+        BeliefSet cnBeliefSet = new BeliefSetImpl();
         cnBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
-        cnBeliefSet.CN();
+        cnBeliefSet = cnBeliefSet.CN();
 
         // Contract the belief
         BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
@@ -137,7 +137,7 @@ public class AmgTest {
     @Test
     public void RevisionVacuity() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -150,7 +150,7 @@ public class AmgTest {
         revisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Expand the belief set to include the revised belief
-        BeliefSet expandedBeliefSet = new BeliefSet();
+        BeliefSet expandedBeliefSet = new BeliefSetImpl();
         expandedBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
         expandedBeliefSet.addBelief(beliefToRevise, false);
 
@@ -164,7 +164,7 @@ public class AmgTest {
     @Test
     public void RevisionConsistency() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -186,11 +186,11 @@ public class AmgTest {
     @Test
     public void ContractionExtensionality() {
         // Set up the initial belief sets
-        BeliefSet beliefSet1 = new BeliefSet();
+        BeliefSet beliefSet1 = new BeliefSetImpl();
         beliefSet1.addBelief(new Literal("A"), false);
         beliefSet1.addBelief(new Literal("B"), false);
         beliefSet1.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
-        BeliefSet beliefSet2 = new BeliefSet();
+        BeliefSet beliefSet2 = new BeliefSetImpl();
         beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
 
         // Belief to be contracted
@@ -208,11 +208,11 @@ public class AmgTest {
     @Test
     public void RevisionExtensionality() {
         // Set up the initial belief sets
-        BeliefSet beliefSet1 = new BeliefSet();
+        BeliefSet beliefSet1 = new BeliefSetImpl();
         beliefSet1.addBelief(new Literal("A"), false);
         beliefSet1.addBelief(new Literal("B"), false);
         beliefSet1.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
-        BeliefSet beliefSet2 = new BeliefSet();
+        BeliefSet beliefSet2 = new BeliefSetImpl();
         beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
 
         // Belief to be revised

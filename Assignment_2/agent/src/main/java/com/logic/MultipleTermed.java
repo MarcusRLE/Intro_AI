@@ -37,4 +37,9 @@ public abstract class MultipleTermed implements Expression {
         }
         return false;
     }
+
+    @Override
+    public boolean isConsistent() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
