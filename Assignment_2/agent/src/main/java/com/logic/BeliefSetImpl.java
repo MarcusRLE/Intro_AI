@@ -25,11 +25,12 @@ public class BeliefSetImpl implements BeliefSet {
     public List<Expression> contraction(Expression exp) {
         BeliefSetImpl newBeliefSet = new BeliefSetImpl();
         for(Expression belief: beliefs) {
-          if (belief.implies(exp)|| belief.implies(new Negation(exp))) {
+          if (!belief.implies(exp)) {
             if (belief.randomWeight() > exp.randomWeight()) {
               newBeliefSet.removeBelief(exp);
+              break;
             } 
-             continue;
+             
           }
           newBeliefSet.addBelief(belief, false);
 
