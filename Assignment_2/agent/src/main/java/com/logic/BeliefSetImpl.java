@@ -96,22 +96,7 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public void addBelief(Expression belief, boolean convertToCNF) {
-        if (convertToCNF) {
-            belief = belief.CNF();
-        }
-
-        if (!this.contains(belief)) {
-            try {
-                List<Expression> logicalEntailments = new ArrayList<>(beliefs);
-                logicalEntailments = logicalEntailment(Arrays.asList(belief), logicalEntailments);
-                beliefs.addAll(logicalEntailments);
-                beliefs = beliefs.stream().distinct().collect(Collectors.toList());
-            } catch (Contradiction e) {
-                // Handle error
-                System.err.println(
-                        "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
-            }
-        }
+        throw new UnsupportedOperationException("Function addBelieft is deprecated - use 'expansion()' for simple adding of belief.");
     }
 
     public List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
@@ -149,10 +134,14 @@ public class BeliefSetImpl implements BeliefSet {
 
     public String toString() {
         String result = "{";
-        for (int i = 0; i < beliefs.size(); i++) {
-            result += beliefs.get(i).toString(false);
-            if (i < beliefs.size() - 1) {
-                result += ", ";
+        if(beliefs.isEmpty()) {
+            result += "∅";
+        } else {
+            for (int i = 0; i < beliefs.size(); i++) {
+                result += beliefs.get(i).toString(false);
+                if (i < beliefs.size() - 1) {
+                    result += ", ";
+                }
             }
         }
         result += "}";

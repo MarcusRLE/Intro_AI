@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.logic.AmgTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 3, Errors: 0, Skipped: 0, Time elapsed: 0.01 s <<< FAILURE! - in com.logic.AmgTest
+RevisionConsistency(com.logic.AmgTest)  Time elapsed: 0.005 s  <<< FAILURE!
+java.lang.AssertionError: Revised belief set should be consistent
+	at com.logic.AmgTest.RevisionConsistency(AmgTest.java:183)
+
+RevisionInclusion(com.logic.AmgTest)  Time elapsed: 0.001 s  <<< FAILURE!
+java.lang.AssertionError: Revised belief set should be included in the original belief set
+	at com.logic.AmgTest.RevisionInclusion(AmgTest.java:107)
+
+RevisionVacuity(com.logic.AmgTest)  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: The belief set should contain the same beliefs after revision
+	at com.logic.AmgTest.RevisionVacuity(AmgTest.java:161)
+
