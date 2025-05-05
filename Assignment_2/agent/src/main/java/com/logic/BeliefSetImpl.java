@@ -23,7 +23,19 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public List<Expression> contraction(Expression exp) {
-        throw new RuntimeException("Method 'contraction(Expression exp)' is not implemented yet");
+        BeliefSetImpl newBeliefSet = new BeliefSetImpl();
+        for(Expression belief: beliefs) {
+          if (belief.implies(exp)|| belief.implies(new Negation(exp))) {
+            if (belief.randomWeight() > exp.randomWeight()) {
+              newBeliefSet.removeBelief(exp);
+            } 
+             continue;
+          }
+          newBeliefSet.addBelief(belief, false);
+
+        }
+        return newBeliefSet.getBeliefs();
+
     }
 
     @Override
@@ -59,34 +71,7 @@ public class BeliefSetImpl implements BeliefSet {
         return false;
     }
 
-    public BeliefSet contraction() {
-        BeliefSet contractedBeliefSet = new BeliefSetImpl();
-
-        // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()"
-        // funkitonen fra Expression interface
-        for (Expression belief : this.beliefs) {
-            BeliefSet temBeliefSet = new BeliefSetImpl();
-            for (Expression otherBelief : beliefs) {
-                if (!belief.implies(otherBelief)) {
-                    temBeliefSet.addBelief(otherBelief, false);
-                }
-            }
-            boolean isConsistent = true;
-            for (Expression otherBelief : temBeliefSet.getBeliefs()) {
-                if (otherBelief.implies(belief)) {
-                    isConsistent = false;
-                    break;
-
-                }
-            }
-            if (isConsistent) {
-                contractedBeliefSet.addBelief(belief, false);
-            }
-
-        }
-
-        return contractedBeliefSet;
-    }
+  
 
     public void convertToCNF() {
         // Copy the beliefs to a new list
