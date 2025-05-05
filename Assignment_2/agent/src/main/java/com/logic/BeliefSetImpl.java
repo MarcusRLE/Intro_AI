@@ -149,10 +149,14 @@ public class BeliefSetImpl implements BeliefSet {
 
     public String toString() {
         String result = "{";
-        for (int i = 0; i < beliefs.size(); i++) {
-            result += beliefs.get(i).toString(false);
-            if (i < beliefs.size() - 1) {
-                result += ", ";
+        if(beliefs.isEmpty()) {
+            result += "∅";
+        } else {
+            for (int i = 0; i < beliefs.size(); i++) {
+                result += beliefs.get(i).toString(false);
+                if (i < beliefs.size() - 1) {
+                    result += ", ";
+                }
             }
         }
         result += "}";

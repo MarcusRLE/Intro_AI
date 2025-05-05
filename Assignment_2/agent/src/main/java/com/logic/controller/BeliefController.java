@@ -15,6 +15,7 @@ public class BeliefController {
     boolean currentTermIsLiteral;
     boolean buildingNewBelief;
     boolean exitProgram = false;
+    boolean abortBuilder = false;
 
     public BeliefController() {
         beliefs = new BeliefSetImpl();
@@ -134,5 +135,13 @@ public class BeliefController {
 
     public Expression getContradiction() {
         return contradiction;
+    }
+
+    public void setAbortBuilder(boolean abortBuilder) {
+        this.abortBuilder = abortBuilder;
+    }
+
+    public boolean getAbortBuilder() {
+        return abortBuilder;
     }
 }
