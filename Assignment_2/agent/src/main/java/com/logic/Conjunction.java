@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 public class Conjunction extends MultipleTermed implements Expression {
 
     public Conjunction(List<Expression> expressions) {
+        super();
         this.expressions = expressions;
     }
 

@@ -4,6 +4,11 @@ import java.util.List;
 
 public abstract class MultipleTermed implements Expression {
     List<Expression> expressions;
+    int weight;
+
+    public MultipleTermed() {
+        weight = randomWeight();
+    }
 
     public List<Expression> getExpressions() {
         return expressions;
@@ -36,5 +41,10 @@ public abstract class MultipleTermed implements Expression {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isConsistent() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

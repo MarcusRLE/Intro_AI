@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Literal implements Expression {
     protected String name;
+    int weight;
 
     public Literal(String name) {
         this.name = name;
+        this.weight = randomWeight();
     }
 
     @Override
@@ -47,6 +49,11 @@ public class Literal implements Expression {
             return "[ EMPTY ]";
         }
         return name;
+    }
+
+    @Override
+    public boolean isConsistent() {
+        return true;
     }
 
     @Override

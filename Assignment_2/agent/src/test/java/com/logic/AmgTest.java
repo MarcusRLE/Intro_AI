@@ -10,9 +10,9 @@ import java.util.ArrayList;
 public class AmgTest {
     
     @Test
-    public void ContractionSuccess() {
+    public void ContractionSuccess() throws Contradiction {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -21,10 +21,10 @@ public class AmgTest {
         Expression beliefToContract = new Literal("P");
 
         // Contract the belief
-        BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
+        BeliefSet contractedBeliefSet = new BeliefSetImpl(beliefSet.contraction(beliefToContract));
 
         // Get CN
-        contractedBeliefSet.CN();
+        contractedBeliefSet.setBeliefs(contractedBeliefSet.CN());
 
         // Assert that the belief set does not contain the contracted belief
         Assert.assertFalse("Belief set should not contain the contracted belief", contractedBeliefSet.contains(beliefToContract));
@@ -33,7 +33,7 @@ public class AmgTest {
     @Test 
     public void RevisionSuccess() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -42,7 +42,7 @@ public class AmgTest {
         Expression beliefToRevise = new Literal("P");
 
         // Revise the belief using Levi identity
-        BeliefSet revisedBeliefSet = beliefSet.contraction(new Negation(beliefToRevise));
+        BeliefSet revisedBeliefSet = new BeliefSetImpl(beliefSet.contraction(new Negation(beliefToRevise)));
         revisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Assert that the belief set contains the revised belief
@@ -52,7 +52,7 @@ public class AmgTest {
     @Test
     public void ContractionInclusion() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -61,7 +61,7 @@ public class AmgTest {
         Expression beliefToContract = new Literal("P");
 
         // Contract the belief
-        BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
+        BeliefSet contractedBeliefSet = new BeliefSetImpl(beliefSet.contraction(beliefToContract));
 
         // Contains the contracted belief set
         boolean containsContractedBeliefSet = true;
@@ -79,7 +79,7 @@ public class AmgTest {
     @Test 
     public void RevisionInclusion() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -88,7 +88,7 @@ public class AmgTest {
         Expression beliefToRevise = new Literal("P");
 
         // Revise the belief using Levi identity
-        BeliefSet revisedBeliefSet = beliefSet.contraction(new Negation(beliefToRevise));
+        BeliefSet revisedBeliefSet = new BeliefSetImpl(beliefSet.contraction(new Negation(beliefToRevise)));
         revisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Add the revised belief to the original belief set
@@ -109,9 +109,9 @@ public class AmgTest {
     }
 
     @Test
-    public void ContractionVacuity() {
+    public void ContractionVacuity() throws Contradiction {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -120,12 +120,12 @@ public class AmgTest {
         Expression beliefToContract = new Literal("P");
 
         // Convert to CN
-        BeliefSet cnBeliefSet = new BeliefSet();
+        BeliefSet cnBeliefSet = new BeliefSetImpl();
         cnBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
-        cnBeliefSet.CN();
+        cnBeliefSet.setBeliefs(cnBeliefSet.CN());
 
         // Contract the belief
-        BeliefSet contractedBeliefSet = beliefSet.contraction(beliefToContract);
+        BeliefSet contractedBeliefSet = new BeliefSetImpl(beliefSet.contraction(beliefToContract));
 
         // Assert that the CN belief set does not contain the belief to be contracted
         Assert.assertFalse("CNF belief set should not contain the belief to be contracted", cnBeliefSet.contains(beliefToContract));
@@ -137,7 +137,7 @@ public class AmgTest {
     @Test
     public void RevisionVacuity() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
@@ -146,11 +146,11 @@ public class AmgTest {
         Expression beliefToRevise = new Literal("P");
 
         // Revise the belief using Levi identity
-        BeliefSet revisedBeliefSet = beliefSet.contraction(new Negation(beliefToRevise));
+        BeliefSet revisedBeliefSet = new BeliefSetImpl(beliefSet.contraction(new Negation(beliefToRevise)));
         revisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Expand the belief set to include the revised belief
-        BeliefSet expandedBeliefSet = new BeliefSet();
+        BeliefSet expandedBeliefSet = new BeliefSetImpl();
         expandedBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
         expandedBeliefSet.addBelief(beliefToRevise, false);
 
@@ -164,7 +164,7 @@ public class AmgTest {
     @Test
     public void RevisionConsistency() {
         // Set up the initial belief set
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
         beliefSet.addBelief(new Literal("A"), false);
         beliefSet.addBelief(new Literal("B"), false);
         beliefSet.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
@@ -173,7 +173,7 @@ public class AmgTest {
         Expression beliefToRevise = new Literal("P");
 
         // Revise the belief using Levi identity
-        BeliefSet revisedBeliefSet = beliefSet.contraction(new Negation(beliefToRevise));
+        BeliefSet revisedBeliefSet = new BeliefSetImpl(beliefSet.contraction(new Negation(beliefToRevise)));
         revisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Assert that the revised belief is consistent
@@ -186,19 +186,19 @@ public class AmgTest {
     @Test
     public void ContractionExtensionality() {
         // Set up the initial belief sets
-        BeliefSet beliefSet1 = new BeliefSet();
+        BeliefSet beliefSet1 = new BeliefSetImpl();
         beliefSet1.addBelief(new Literal("A"), false);
         beliefSet1.addBelief(new Literal("B"), false);
         beliefSet1.addBelief(new Implication(new Literal("B"), new Literal("P")), false);
-        BeliefSet beliefSet2 = new BeliefSet();
+        BeliefSet beliefSet2 = new BeliefSetImpl();
         beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
 
         // Belief to be contracted
         Expression beliefToContract = new Literal("P");
 
         // Contract the belief
-        BeliefSet firstContractedBeliefSet = beliefSet1.contraction(beliefToContract);
-        BeliefSet secondContractedBeliefSet = beliefSet2.contraction(beliefToContract);
+        BeliefSet firstContractedBeliefSet = new BeliefSetImpl(beliefSet1.contraction(beliefToContract));
+        BeliefSet secondContractedBeliefSet = new BeliefSetImpl(beliefSet2.contraction(beliefToContract));
 
         // Assert that the contracted belief sets contains the same beliefs
         Assert.assertTrue("The belief set should contain the same beliefs after contraction", util.sameContent(firstContractedBeliefSet.getBeliefs(),secondContractedBeliefSet.getBeliefs()));
@@ -208,20 +208,20 @@ public class AmgTest {
     @Test
     public void RevisionExtensionality() {
         // Set up the initial belief sets
-        BeliefSet beliefSet1 = new BeliefSet();
+        BeliefSet beliefSet1 = new BeliefSetImpl();
         beliefSet1.addBelief(new Literal("A"), false);
         beliefSet1.addBelief(new Literal("B"), false);
         beliefSet1.addBelief(new Implication(new Literal("B"), new Negation(new Literal("P"))), false);
-        BeliefSet beliefSet2 = new BeliefSet();
+        BeliefSet beliefSet2 = new BeliefSetImpl();
         beliefSet2.setBeliefs(new ArrayList<>(beliefSet1.getBeliefs()));
 
         // Belief to be revised
         Expression beliefToRevise = new Literal("P");
 
         // Revise the belief using Levi identity
-        BeliefSet firstRevisedBeliefSet = beliefSet1.contraction(new Negation(beliefToRevise));
+        BeliefSet firstRevisedBeliefSet = new BeliefSetImpl(beliefSet1.contraction(new Negation(beliefToRevise)));
         firstRevisedBeliefSet.addBelief(beliefToRevise, false);
-        BeliefSet secondRevisedBeliefSet = beliefSet2.contraction(new Negation(beliefToRevise));
+        BeliefSet secondRevisedBeliefSet = new BeliefSetImpl(beliefSet2.contraction(new Negation(beliefToRevise)));
         secondRevisedBeliefSet.addBelief(beliefToRevise, false);
 
         // Assert that the revised belief sets contains the same beliefs

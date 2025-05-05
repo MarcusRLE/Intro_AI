@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 public class Disjunction extends MultipleTermed {
 
     public Disjunction(List<Expression> expressions) {
+        super();
         if(expressions == null){
             this.expressions = null;
             return;

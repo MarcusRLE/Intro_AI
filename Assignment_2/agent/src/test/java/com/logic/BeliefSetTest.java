@@ -11,7 +11,7 @@ public class BeliefSetTest {
 
     @Test
     public void test1() {
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
 
         Expression newBelief = new Disjunction(
             List.of(new Literal("A"), new Literal("B"))
@@ -41,7 +41,7 @@ public class BeliefSetTest {
 
     @Test
     public void test2() {
-        BeliefSet beliefSet = new BeliefSet();
+        BeliefSet beliefSet = new BeliefSetImpl();
 
         ArrayList<Expression> expected = new ArrayList<>(List.of());
         beliefSet.addBelief(new Implication(new Literal("A"),new Literal("B")), false);
