@@ -24,9 +24,13 @@ public class BeliefSet {
         for (Expression belief : this.beliefs) {
             if (belief.implies(exp)) {
                contractedBeliefSet.removeBelief(belief);
+            } else if (belief.implies(new Negation(exp))) {
+                contractedBeliefSet.removeBelief(belief);
             }
-
             contractedBeliefSet.addBelief(belief, false);
+
+
+            
             
 
 
