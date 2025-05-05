@@ -5,12 +5,9 @@ import com.logic.BeliefSetImpl;
 import com.logic.Contradiction;
 import com.logic.Expression;
 import com.logic.controller.BeliefController;
-import com.logic.model.ActionCommand;
 import com.logic.model.UserAction;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class BeliefActionView {
@@ -27,15 +24,6 @@ public class BeliefActionView {
     public void chooseAction() {
         System.out.println("\nPlease choose an action:");
         List<UserAction> actions = getUserActions();
-//        int size = actions.size();
-//
-//        for(int i = 0; i < size; i++) {
-//            System.out.println("[" + (i + 1) + "] " + actions.get(i).toString());
-//        }
-//
-//        int chosenAction = getNumberInput(1, actions.size());
-//        UserAction action = actions.get(chosenAction - 1);
-//        action.getCommand().executeCommand();
         getAndExecuteCommand(actions);
     }
 
