@@ -36,9 +36,18 @@ public class BeliefActionView {
                     beliefBuilderView.buildNewBelief();
                     newBeliefAction();
                 }),
-//                new UserAction("See belief set", true, () -> {
-//                    System.out.println(beliefController.getBeliefs().toString());
-//                }),
+                new UserAction("See logical entailment of belief state", true, () -> {
+                    try {
+                        List<Expression> logicalEnt = beliefController.checkLogicalEntailment();
+                        BeliefSet beliefSet = new BeliefSetImpl(logicalEnt);
+                        System.out.println("Logical entailment of belief state: " + beliefSet);
+                    } catch (Contradiction c) {
+                        System.out.println("Contradiction found: " + c.getContradictingConclusion().toString(true) + "\nRemove by building new belief and contracting");
+                    }
+                }),
+                new UserAction("Clear Belief", true, () -> {
+                    beliefController.clearBeliefState();
+                }),
                 new UserAction("Exit", false, () -> {
                     beliefController.setExitProgram(true);
                 })
@@ -92,28 +101,26 @@ public class BeliefActionView {
         Expression newBelief = beliefController.getCurrentNewBelief();
 
         return List.of(
-                new UserAction("Add new belief", true, () -> {
+                new UserAction("Add with revision", true, () -> {
                     try {
-                        beliefController.addNewBelief(newBelief);
+                        beliefController.addWithRevision(newBelief);
                     } catch (Contradiction c) {
                         System.out.println("Contradiction found when revising new belief");
                     }
                 }),
+                new UserAction("Add with expansion", true, () -> {
+                    beliefController.addWithExpansion(newBelief);
+                }),
+                new UserAction("Contract with new belief", true, () -> {
+                    beliefController.contract(newBelief);
+                }),
                 new UserAction("Discard belief", true, () -> {
                     // Do nothing
-                }),
-                new UserAction("See CNF of new belief", false, () -> {
-                    System.out.println(newBelief.copy().CNF().toString(false));
                 }),
                 new UserAction("Check for contradictions",false, () -> {
                     boolean hasContradiction = beliefController.hasContradiction(newBelief);
                     String msg = hasContradiction ? "Contradiction detected: {" + beliefController.getContradiction().toString(false) + "}" : "No contradiction detected";
                     System.out.println(msg);
-                }),
-                new UserAction("See logical conclusions from new belief", false, () -> {
-                    BeliefSet conclusions = new BeliefSetImpl(beliefController.logicalConclusion(newBelief));
-                    String set = conclusions.toString();
-                    System.out.println(set);
                 }),
                 new UserAction("Exit", true, () -> {
                     beliefController.setExitProgram(true);
