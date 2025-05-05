@@ -20,6 +20,9 @@ public class ResolutionTest {
 
         try {
                 List<Expression> resolutions = implication.resolution(literal);
+                for (Expression exp: resolutions) {
+                                System.out.println("from ResTest, test1: " + exp.toString(false));
+                }
                 Assert.assertEquals(1, resolutions.size());
                 Assert.assertTrue(util.falseEquality(expected, resolutions.get(0)), expected.isEqual(resolutions.get(0)));
         } catch (Contradiction e) {

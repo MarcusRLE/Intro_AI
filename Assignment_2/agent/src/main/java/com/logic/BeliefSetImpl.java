@@ -152,7 +152,6 @@ public class BeliefSetImpl implements BeliefSet {
         }
         for (Expression exp: toRemove) {
             System.out.println("cleanup (1): " + exp.toString(false));
-            beliefs.remove(exp);
         }
         beliefs.removeAll(toRemove);
         beliefs = beliefs.stream().distinct().collect(Collectors.toList());

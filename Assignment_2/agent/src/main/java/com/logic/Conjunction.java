@@ -38,7 +38,7 @@ public class Conjunction extends MultipleTermed implements Expression {
                 // copy.remove(exp);
                 // isNewExpression = true;
             }
-            conclusions.addAll(exp.resolution(other));
+            for (Expression expression: exp.resolution(other)) { conclusions.add(expression.copy()); }
         }
         // if(isNewExpression){
         //     conclusions.add(new Conjunction(copy));
@@ -75,7 +75,7 @@ public class Conjunction extends MultipleTermed implements Expression {
         List<Expression> unique = new ArrayList<>();
         for (Expression exp : expressions) {
             if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
-                unique.add(exp);
+                unique.add(exp.copy());
             }
         }
         if (unique.size() == 1){

@@ -16,7 +16,9 @@ public class Disjunction extends MultipleTermed {
         for (Expression expression : expressions) {
             if (expression instanceof Disjunction) {
                 newExpressions.remove(expression);
-                newExpressions.addAll(((Disjunction) expression).expressions);
+                for (Expression exp: ((Disjunction) expression).expressions) {
+                    newExpressions.add(exp.copy());
+                }
             }
         }
         this.expressions = newExpressions;
@@ -90,7 +92,7 @@ public class Disjunction extends MultipleTermed {
         List<Expression> unique = new ArrayList<>();
         for (Expression exp : expressions) {
             if (unique.stream().noneMatch(e -> e.isEqual(exp))) {
-                unique.add(exp);
+                unique.add(exp.copy());
             }
         }
 
@@ -108,8 +110,8 @@ public class Disjunction extends MultipleTermed {
                                 .collect(Collectors.toList());
                         List<Expression> otherExps = unique.stream()
                                 .filter(e -> e.isEqual(otherExp) || e.isEqual(thisExp)).collect(Collectors.toList());
-                        thisExps.addAll(otherExps);
-                        conclusions.addAll(thisExps);
+                        for (Expression exp: otherExps) { thisExps.add(exp.copy()); }
+                        for (Expression exp: thisExps) { conclusions.add(exp.copy()); }
                     }
                 }
             }
@@ -120,8 +122,8 @@ public class Disjunction extends MultipleTermed {
             }
             // }
             if (unique.size() == 1) {
-                conclusions.addAll(unique);
-                conclusions.addAll(((Conjunction) other).expressions);
+                for (Expression exp: unique) { conclusions.add(exp.copy()); }
+                for (Expression exp: ((Conjunction) other).expressions) { conclusions.add(exp.copy()); }
                 return conclusions;
             }
         }

@@ -68,9 +68,9 @@ public class Literal implements Expression {
         } else if (other instanceof Implication) {
             Implication implication = ((Implication)other);
             if(implication.left.isEqual(this)){
-                conclusions.add(implication.right);
+                conclusions.add(implication.right.copy());
             } else if(implication.right.isEqual(new Negation(this))){
-                conclusions.add(new Negation(implication.left));
+                conclusions.add(new Negation(implication.left.copy()));
             }
         } else {
            if ((new Negation(other)).isEqual(this)) {

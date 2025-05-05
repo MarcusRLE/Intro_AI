@@ -80,4 +80,21 @@ public interface Expression {
     boolean isConsistent();
 
     public Expression copy();
+
+    public static List<Expression> removeDuplicates(List<Expression> list) {
+        List<Expression> newList = new ArrayList<>();
+        for (Expression e : list) {
+            boolean alreadyExists = false;
+            for (Expression existing : newList) {
+                if (e.isEqual(existing)) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if (!alreadyExists) {
+                newList.add(e);
+            }
+        }
+        return newList;
+    }
 }

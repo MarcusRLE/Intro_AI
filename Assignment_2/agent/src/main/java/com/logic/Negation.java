@@ -79,7 +79,7 @@ public class Negation implements Expression {
             for (Expression expression : disjunction.expressions) {
                 Expression newExpression = new Negation(expression);
                 newExpression = newExpression.CNF();
-                newExpressions.add(newExpression);
+                newExpressions.add(newExpression.copy());
             }
             // Apply De Morgan's Law
             return new Conjunction(newExpressions);
@@ -89,7 +89,7 @@ public class Negation implements Expression {
             for (Expression expression : conjunction.expressions) {
                 Expression newExpression = new Negation(expression);
                 newExpression = newExpression.CNF();
-                newExpressions.add(newExpression);
+                newExpressions.add(newExpression.copy());
             }
             // Apply De Morgan's Law
             return new Disjunction(newExpressions);
@@ -130,7 +130,7 @@ public class Negation implements Expression {
     }
 
     @Override
-    Expression copy() {
+    public Expression copy() {
         return new Negation(expression.copy());
     }
 } 

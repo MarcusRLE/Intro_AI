@@ -57,7 +57,7 @@ public class Implication implements Expression {
     public Expression CNF() {
         this.left = left.CNF();
         this.right = right.CNF();
-        Expression cnf = new Disjunction(Arrays.asList(new Negation(left), right));
+        Expression cnf = new Disjunction(Arrays.asList(new Negation(left.copy()), right.copy()));
 
         return cnf.CNF();
     }
@@ -80,22 +80,22 @@ public class Implication implements Expression {
     public List<Expression> resolution(Expression other) throws Contradiction {
         List<Expression> conclusions = new ArrayList<>();
         if(this.left.isEqual(other)){
-            conclusions.add(this.right);
+            conclusions.add(this.right.copy());
         } else if(this.right.isEqual(new Negation(other))){
-            conclusions.add(new Negation(this.left));
+            conclusions.add(new Negation(this.left.copy()));
         }
         if (other instanceof Conjunction) {
             for (Expression exp: ((Conjunction)other).expressions) {
                 if (exp.isEqual(this.left)) {
-                    conclusions.add(this.right);
+                    conclusions.add(this.right.copy());
                 }
             }
         } else {
             if (other.isEqual(this.left)) {
-                conclusions.add(this.right);
+                conclusions.add(this.right.copy());
             }
         }
-        return conclusions.stream().distinct().collect(Collectors.toList());
+        return Expression.removeDuplicates(conclusions);
     }
 
     @Override
