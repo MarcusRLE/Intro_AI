@@ -121,8 +121,7 @@ public class AmgTest {
 
         // Convert to CN
         BeliefSet cnBeliefSet = new BeliefSetImpl();
-        cnBeliefSet.setBeliefs(new ArrayList<>(beliefSet.getBeliefs()));
-        cnBeliefSet.setBeliefs(cnBeliefSet.CN());
+        cnBeliefSet.setBeliefs(new ArrayList<>(beliefSet.CN()));
 
         // Contract the belief
         BeliefSet contractedBeliefSet = new BeliefSetImpl(beliefSet.contraction(beliefToContract));
