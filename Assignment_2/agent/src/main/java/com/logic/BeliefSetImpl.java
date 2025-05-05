@@ -23,22 +23,20 @@ public class BeliefSetImpl implements BeliefSet {
     }
 
     public List<Expression> contraction(Expression exp) {
-        BeliefSetImpl newBeliefSet = new BeliefSetImpl(this.beliefs);
         
-        for(Expression belief: beliefs) {
-          if (belief.implies(exp)) {
-             newBeliefSet.removeBelief(exp);
-            } 
-             
-          if(!belief.hasContradiction(exp)) {
-            newBeliefSet.expansion(exp);
-            break;
-          }
-
-          newBeliefSet.addBelief(belief, false);
-
+        Expression expToCnf = exp.CNF();
+        if (expToCnf instanceof Conjunction) {
+            Conjunction conjunction = (Conjunction) expToCnf;
+            for (Expression expression : conjunction.getExpressions()) {
+                if (!this.contains(expression)) {
+                    this.beliefs.remove(expression);
+                }
+            }
+        } else if (!this.contains(expToCnf)) {
+            beliefs.remove(expToCnf);
+            
         }
-        return newBeliefSet.getBeliefs();
+        return beliefs;
 
     }
 
