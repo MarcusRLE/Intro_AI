@@ -1,5 +1,6 @@
 package com.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MultipleTermed implements Expression {
@@ -70,4 +71,37 @@ public abstract class MultipleTermed implements Expression {
         }
         return false;
     }
+
+    @Override
+    public Expression copy() {
+        List<Expression> expressionsCopy = new ArrayList<>();
+        if (expressions == null) {
+            expressionsCopy = null;
+        } else {
+            for (Expression exp : expressions) {
+                Expression innerCopy = exp == null ? null : exp.copy();
+                expressionsCopy.add(innerCopy);
+            }
+        }
+        return selfCopyWithList(expressionsCopy);
+    }
+
+    abstract Expression selfCopyWithList(List<Expression> expressions);
+
+    @Override
+    public String toString(boolean withParentheses) {
+        StringBuilder result = new StringBuilder(withParentheses ? "(" : "");
+        for (int i = 0; i < this.expressions.size(); i++) {
+            Expression exp = this.expressions.get(i);
+            result.append(exp != null ? exp.toString(true) : "[ EMPTY ]");
+            if (i < this.expressions.size() - 1) {
+                result.append(connector());
+            } else {
+                result.append(withParentheses ? ")" : "");
+            }
+        }
+        return result.toString();
+    }
+
+    abstract String connector();
 }

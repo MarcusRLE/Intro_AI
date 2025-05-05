@@ -14,6 +14,11 @@ public class Implication extends BinaryTermed {
     }
 
     @Override
+    String connector() {
+        return " => ";
+    }
+
+    @Override
     public boolean hasContradiction(Expression exp) {
         return false;
     }
@@ -33,10 +38,8 @@ public class Implication extends BinaryTermed {
     }
 
     @Override
-    public Expression copy() {
-        Expression rightCopy = right == null ? null : right.copy();
-        Expression leftCopy = left == null ? null : left.copy();
-        Expression copy = new Implication(leftCopy, rightCopy);
+    Expression selfCopyWithExp(Expression right, Expression left) {
+        Expression copy = new Implication(left, right);
         copy.setWeight(this.weight);
         return copy;
     }

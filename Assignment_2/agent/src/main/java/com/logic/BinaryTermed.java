@@ -45,18 +45,16 @@ abstract class BinaryTermed implements Expression{
 
     @Override
     public String toString(boolean withParentheses) {
-        String connector = "";
-        if(this instanceof Implication){
-            connector = " => ";
-        } else if (this instanceof Biconditional){
-            connector = " <=> ";
-        }
+
         String result = withParentheses ? "(" : "";
         result += this.left != null ? this.left.toString(withParentheses) : "[ EMPTY ]";
-        result += connector;
+        result += connector();
         result += this.right != null ? this.right.toString(withParentheses) : "[ EMPTY ]";
+        result += withParentheses ? ")" : "";
         return result;
     }
+
+    abstract String connector();
 
     @Override
     public boolean isConsistent() {
@@ -75,5 +73,14 @@ abstract class BinaryTermed implements Expression{
         }
         return this.right.implies(exp) || this.left.equals(exp);
     }
+
+    @Override
+    public Expression copy() {
+        Expression rightCopy = right == null ? null : right.copy();
+        Expression leftCopy = left == null ? null : left.copy();
+        return selfCopyWithExp(rightCopy, leftCopy);
+    }
+
+    abstract Expression selfCopyWithExp(Expression right, Expression left);
 
 }
