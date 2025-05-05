@@ -24,6 +24,7 @@ public class BeliefController {
     public void addNewBelief(Expression exp) throws Contradiction {
         try {
             beliefs.revision(exp);
+            beliefs.expansion(exp);
             beliefs.setBeliefs(beliefs.CN());
         } catch (Contradiction c) {
             throw c;
