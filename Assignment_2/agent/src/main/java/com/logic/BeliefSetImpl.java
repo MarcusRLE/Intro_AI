@@ -18,12 +18,23 @@ public class BeliefSetImpl implements BeliefSet {
 
     @Override
     public void revision(Expression exp) {
-        beliefs = this.contraction(exp);
+        beliefs = this.contraction(new Negation(exp));
         expansion(exp);
     }
 
     public List<Expression> contraction(Expression exp) {
-        throw new RuntimeException("Method 'contraction(Expression exp)' is not implemented yet");
+        List<Expression> expressions = new ArrayList<>(beliefs);
+
+        List<Expression> contractedExpressions = expressions.stream()
+                .filter(e -> !exp.implies(e))
+                .collect(Collectors.toList());
+
+        for (Expression expression : beliefs) {
+            if(expression.implies(exp)){
+                contractedExpressions.remove(expression);
+            }
+        }
+        return contractedExpressions;
     }
 
     @Override
@@ -58,35 +69,6 @@ public class BeliefSetImpl implements BeliefSet {
     @Override
     public boolean isConsistent() {
         return false;
-    }
-
-    public BeliefSet contraction() {
-        BeliefSet contractedBeliefSet = new BeliefSetImpl();
-
-        // TODO: (Benjamin) Implementér kode her - jeg foreslår at bruge "implies()"
-        // funkitonen fra Expression interface
-        for (Expression belief : this.beliefs) {
-            BeliefSet temBeliefSet = new BeliefSetImpl();
-            for (Expression otherBelief : beliefs) {
-                if (!belief.implies(otherBelief)) {
-                    temBeliefSet.addBelief(otherBelief, false);
-                }
-            }
-            boolean isConsistent = true;
-            for (Expression otherBelief : temBeliefSet.getBeliefs()) {
-                if (otherBelief.implies(belief)) {
-                    isConsistent = false;
-                    break;
-
-                }
-            }
-            if (isConsistent) {
-                contractedBeliefSet.addBelief(belief, false);
-            }
-
-        }
-
-        return contractedBeliefSet;
     }
 
     public void convertToCNF() {
@@ -130,49 +112,6 @@ public class BeliefSetImpl implements BeliefSet {
                         "Contradiction occured adding '" + belief.toString(false) + "' to belief set: " + toString());
             }
         }
-    }
-
-    public void addBeliefsWithConclusion(Expression exp) {
-        try {
-            BeliefSet conclusions = this.logicalConclusion(exp);
-            for (Expression conclusion : conclusions.getBeliefs()) {
-                beliefs.add(conclusion);
-            }
-        } catch (Contradiction e) {
-            System.out.println(e);
-        }
-    }
-
-    public void removeBelief(Expression belief) {
-        beliefs.remove(belief);
-    }
-
-    public BeliefSet logicalConclusion(Expression exp) throws Contradiction {
-        BeliefSet conclusions = new BeliefSetImpl();
-        for (Expression belief : beliefs) {
-            List<Expression> currentConclusions = belief.resolution(exp);
-            for (Expression conclusion : currentConclusions) {
-                conclusions.addBelief(conclusion, false);
-            }
-        }
-
-        if (conclusions.getBeliefs().isEmpty()) {
-            conclusions.addBelief(exp, false);
-            return conclusions;
-        } else {
-            BeliefSet nextConclusions = new BeliefSetImpl();
-            for (Expression conclusion : conclusions.getBeliefs()) {
-                BeliefSet currentConclusions = this.logicalConclusion(conclusion);
-                for (Expression currentConclusion : currentConclusions.getBeliefs()) {
-                    nextConclusions.addBelief(currentConclusion, false);
-                }
-            }
-            for (Expression conclusion : nextConclusions.getBeliefs()) {
-                conclusions.addBelief(conclusion, false);
-            }
-        }
-
-        return conclusions;
     }
 
     public List<Expression> logicalEntailment(List<Expression> newBeliefs, List<Expression> currentEntailments)
